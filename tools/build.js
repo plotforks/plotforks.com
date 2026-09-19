@@ -341,7 +341,7 @@ function buildHome(){
   const title = /<title>[\s\S]*?<\/title>\s*/.exec(frag)[0]; frag = frag.replace(title, '');
   const links = [...frag.matchAll(/<link [^>]*>\s*/g)].map(m => m[0]); links.forEach(l => { frag = frag.replace(l, ''); });
   const style = /<style>[\s\S]*?<\/style>\s*/.exec(frag)[0]; frag = frag.replace(style, '');
-  const desc = 'Interactive what-if stories from your favorite series. Play the whole of Breaking Bad or The Matrix, change the story at every turning point, and find every ending.';
+  const desc = 'Interactive what-if stories from your favorite series and movies. Play the whole of Breaking Bad or The Matrix, change the story at every turning point, and find every ending.';
   const staticNav = `<section class="staticnav">
   <h3>Browse every story</h3>
   <ul class="chaplist">
@@ -357,7 +357,7 @@ ${MOMENTS.map(m => `    <li><a href="/short-stories/${m.id}/">Short story: ${esc
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${SITE_NAME}: interactive what-if stories from your favorite series</title>
+<title>${SITE_NAME}: interactive what-if stories from your favorite series and movies</title>
 <meta name="description" content="${esc(desc)}">
 <link rel="canonical" href="${BASE_URL}/">
 <meta property="og:site_name" content="${SITE_NAME}">
