@@ -211,7 +211,7 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
     <li><a href="https://en.wikipedia.org/wiki/The_Matrix" target="_blank" rel="noopener">The Matrix on Wikipedia</a><br>The film's production, themes and legacy, told without any branches.</li>
   </ul>
 </section>
-<footer>Unofficial what-if stories, made as fan parody. Breaking Bad and The Matrix, and their characters, belong to their respective owners. Not affiliated with Sony Pictures Television, AMC or Warner Bros. All characters are drawn from scratch.</footer>
+<footer>Unofficial what-if stories, made as fan parody. Breaking Bad and The Matrix, and their characters, belong to their respective owners. Not affiliated with Sony Pictures Television, AMC or Warner Bros. All characters are drawn from scratch. We count anonymous plays, choices and endings, with no cookies and no personal data.</footer>
 </div>
 <script src="stories/bb-journey/journey.js"></script>
 <script src="stories/bb-journey/ch01.js"></script>
@@ -240,13 +240,24 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
 <script src="stories/matrix-journey/endings.js"></script>
 <script>
 (function(){
-const SITE = { paypalUrl: "https://paypal.me/plotforks", ideaFormUrl: "https://tally.so/r/rjXG1p", baseUrl: "https://plotforks.com", cfAnalyticsToken: "f665688338944dd6974436d5828774fe" };
+const SITE = { paypalUrl: "https://paypal.me/plotforks", ideaFormUrl: "https://tally.so/r/rjXG1p", baseUrl: "https://plotforks.com", cfAnalyticsToken: "f665688338944dd6974436d5828774fe", counterUrl: "https://plotforks-counter.dimos-chatzinikolaou.workers.dev/e" };
 /* Cloudflare Web Analytics (cookieless, no consent banner needed). Only injected when a token is set. */
 if (SITE.cfAnalyticsToken && typeof document !== 'undefined' && !document.querySelector('script[data-cf-beacon]')){
   const cf = document.createElement('script'); cf.defer = true;
   cf.src = 'https://static.cloudflareinsights.com/beacon.min.js';
   cf.setAttribute('data-cf-beacon', JSON.stringify({token: SITE.cfAnalyticsToken}));
   document.head.appendChild(cf);
+}
+/* Anonymous event counter (worker in counter/). Sends only {type, journey, chapter, choice}: no cookie, no id, no personal data.
+   A no-op without SITE.counterUrl, when Do Not Track / Global Privacy Control is on, or on any error. Never throws. */
+function track(ev){
+  try {
+    if (!SITE.counterUrl || navigator.doNotTrack === '1' || navigator.globalPrivacyControl === true) return;
+    const body = JSON.stringify(ev);
+    let sent = false;
+    if (navigator.sendBeacon) sent = navigator.sendBeacon(SITE.counterUrl, new Blob([body], {type: 'text/plain'}));
+    if (!sent && typeof fetch === 'function') fetch(SITE.counterUrl, {method: 'POST', body: body, keepalive: true, mode: 'no-cors'}).catch(() => {});
+  } catch (e) {}
 }
 /* Per-journey site metadata: URL slug, series name, share tagline, page theme. */
 const JOURNEY_META = {
@@ -1487,13 +1498,16 @@ if (typeof document !== 'undefined'){
 
   function freshJourneyState(journey){
     return {journeyId: journey.id, scores: Object.assign({}, journey.start), flags: new Set(),
-      afterN: 0, path: [], status: 'active', ending: null, earnedBadges: [], step: 0, activeChoiceId: null};
+      afterN: 0, path: [], status: 'active', ending: null, earnedBadges: [], step: 0, activeChoiceId: null, tracked: false, endSent: false};
   }
+  const RESUME_SENT = new Set();
   function loadJourneyState(journey){
     let raw = null;
     try { raw = JSON.parse(localStorage.getItem('up-journey-' + journey.id) || 'null'); } catch (e) {}
     if (raw && raw.status === 'active'){
-      return {journeyId: journey.id, scores: Object.assign({}, journey.start, raw.scores || {}),
+      const resumed = !!((raw.path && raw.path.length) || raw.activeChoiceId);
+      if (resumed && !RESUME_SENT.has(journey.id)){ RESUME_SENT.add(journey.id); track({t: 'resume', j: journey.id}); }
+      return {journeyId: journey.id, tracked: resumed, endSent: false, scores: Object.assign({}, journey.start, raw.scores || {}),
         flags: new Set(raw.flags || []), afterN: raw.afterN || 0, path: raw.path || [],
         status: 'active', ending: null, earnedBadges: [], step: raw.step || 0, activeChoiceId: raw.activeChoiceId || null};
     }
@@ -1603,6 +1617,7 @@ if (typeof document !== 'undefined'){
     const ending = resolveEnding(journey, JST, exitKey);
     const badges = computeBadges(journey, JST, ending);
     JST.status = 'ended'; JST.ending = ending; JST.earnedBadges = [...badges];
+    if (!JST.endSent){ JST.endSent = true; track({t: 'ending', j: journey.id, e: ending.id}); }
     const found = loadFound(journey); found.add((ending.kind === 'exit' ? 'exit:' : 'end:') + ending.id); saveFound(journey, found);
     const allBadges = loadBadges(journey); badges.forEach(b => allBadges.add(b)); saveBadges(journey, allBadges);
     clearJourneyState(journey);
@@ -1883,6 +1898,8 @@ if (typeof document !== 'undefined'){
       const journey = currentJourney();
       const chapter = nextChapter(journey, JST, JST.afterN);
       const choice = chapter.choices.find(c => c.id === t.dataset.jchoice);
+      if (!JST.tracked){ JST.tracked = true; track({t: 'start', j: journey.id}); }
+      track({t: 'choice', j: journey.id, c: chapter.id, o: choice.id});
       applyChoice(JST, choice);
       JST.activeChoiceId = choice.id; JST.step = 0;
       saveJourneyState(journey, JST);
@@ -1902,9 +1919,12 @@ if (typeof document !== 'undefined'){
       viewJourney(); settle();
       return;
     }
-    if ('share' in t.dataset){ share(); }
-    else if ('nativeShare' in t.dataset){ nativeShare(); }
+    if ('share' in t.dataset){ track({t: 'click', w: 'share'}); share(); }
+    else if ('nativeShare' in t.dataset){ track({t: 'click', w: 'share'}); nativeShare(); }
   });
+  panel.addEventListener('click', ev => { if (ev.target.closest('.sharerow a')) track({t: 'click', w: 'share'}); });
+  document.getElementById('donateRow').addEventListener('click', ev => { if (ev.target.closest('a')) track({t: 'click', w: 'donate'}); });
+  document.getElementById('ideaRow').addEventListener('click', ev => { if (ev.target.closest('a')) track({t: 'click', w: 'feedback'}); });
   resumeRowEl.addEventListener('click', ev => {
     const t = ev.target.closest('button[data-journey-restart]'); if (!t) return;
     const journey = currentJourney();

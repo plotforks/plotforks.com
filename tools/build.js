@@ -26,6 +26,7 @@ const siteVal = k => { const m = new RegExp(k + ':\\s*"([^"]*)"').exec(SITE_BLOC
 const BASE_URL = siteVal('baseUrl').replace(/\/$/, '');           // the one place the public URL comes from (SITE.baseUrl in index.html)
 const CF_TOKEN = siteVal('cfAnalyticsToken');                     // empty string = no analytics
 const SITE_NAME = 'plotforks';
+const COUNT_NOTE = 'We count anonymous plays, choices and endings, with no cookies and no personal data.';   // also in the footer of index.html
 const EDGE_CANDIDATES = [
   'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
   'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe'
@@ -178,7 +179,7 @@ ${o.crumbs ? crumbs(o.crumbs) : ''}
 <main class="page">
 ${o.body}
 </main>
-<footer>${esc(o.legal || 'Unofficial fan parody. Not affiliated with the studios or networks behind the shows. All characters are drawn from scratch.')} <a href="/" style="color:inherit">${SITE_NAME}</a></footer>
+<footer>${esc(o.legal || 'Unofficial fan parody. Not affiliated with the studios or networks behind the shows. All characters are drawn from scratch.')} ${esc(COUNT_NOTE)} <a href="/" style="color:inherit">${SITE_NAME}</a></footer>
 </div>
 </body>
 </html>
