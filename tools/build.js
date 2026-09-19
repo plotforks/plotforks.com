@@ -73,7 +73,6 @@ const JOURNEY_SITE = {
     }
   }
 };
-const SHORT_STORY_DESC = 'A short Breaking Bad what-if: pick one of three alternatives at a single turning point, then pick again. Nine endings to find.';
 
 /* ---------- load story data exactly as the browser would ---------- */
 const sandbox = { window: {}, console };
@@ -82,7 +81,6 @@ vm.createContext(sandbox);
 const STORY_FILES = [...INDEX_SRC.matchAll(/<script src="(stories\/[^"]+)"/g)].map(m => m[1]);
 STORY_FILES.forEach(f => vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), sandbox, { filename: f }));
 const JOURNEYS = sandbox.window.JOURNEYS || {};
-const MOMENTS = sandbox.window.MOMENTS || [];
 
 /* ---------- helpers ---------- */
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -199,7 +197,7 @@ const playLink = (query, label) => `<a class="playbig" href="/?${query}">${esc(l
 /* ---------- content model ---------- */
 const pages = [];      // {path, title, priority} for the sitemap and stats
 const cards = [];      // social cards to render: {out, kind, title, journeyId}
-const pageCount = { home: 0, journey: 0, chapter: 0, ending: 0, short: 0, meta: 0 };
+const pageCount = { home: 0, journey: 0, chapter: 0, ending: 0, meta: 0 };
 
 function endingList(j){
   const list = [];
@@ -310,31 +308,6 @@ ${playLink('journey=' + encodeURIComponent(j.id), 'Play the journey')}
   });
 }
 
-function buildShortStories(){
-  MOMENTS.forEach(m => {
-    const p = `/short-stories/${m.id}/`;
-    const q = `${m.title} (${m.code}): a Breaking Bad what-if short story`;
-    const choices = m.choices.map(c => `<li><b>${esc(c.label)}</b><span>${esc(c.tag)}</span></li>`).join('\n');
-    const body = `<div class="eyebrow">Short story · ${esc(m.code)} · ${esc(m.episode)}</div>
-<h1>${esc(m.title)}: what if Walt chose differently?</h1>
-<p>${esc(m.setup.text)}</p>
-<h2>${esc(m.question)}</h2>
-<ul class="staticchoices">
-${choices}
-</ul>
-<p>${esc(SHORT_STORY_DESC)}</p>
-<a class="playbig" href="/">Play this short story</a>
-<p><a href="${'/breaking-bad/'}">Or play the whole Breaking Bad journey</a></p>`;
-    const cl = [['Home', '/'], ['Short stories', null], [m.title, p]];
-    write(p.slice(1) + 'index.html', shell({
-      path: p, title: q + ' | ' + SITE_NAME, ogTitle: q, description: `${m.code} ${m.episode}: ${m.question} ${SHORT_STORY_DESC}`,
-      crumbs: [['Home', '/'], ['Short stories', null], [m.title, null]], body, image: '/og/breaking-bad.png', legal: JOURNEY_SITE['breaking-bad'].legal,
-      jsonld: [breadcrumbLd(cl)]
-    }));
-    pages.push({ path: p, priority: '0.5' }); pageCount.short++;
-  });
-}
-
 /* ---------- the app page: wrap the fragment as a full document ---------- */
 function buildHome(){
   let frag = INDEX_SRC;
@@ -346,7 +319,6 @@ function buildHome(){
   <h3>Browse every story</h3>
   <ul class="chaplist">
 ${Object.keys(JOURNEYS).map(id => { const S = JOURNEY_SITE[id]; return `    <li><a href="/${S.slug}/">${esc(S.series)}: ${esc(JOURNEYS[id].title)}</a></li>`; }).join('\n')}
-${MOMENTS.map(m => `    <li><a href="/short-stories/${m.id}/">Short story: ${esc(m.title)} (${esc(m.code)})</a></li>`).join('\n')}
   </ul>
 </section>
 `;
@@ -530,7 +502,6 @@ function buildItchHtml(){
   // rendered cards are cached in tools/.cache so rebuilds are fast (delete it or pass --force to re-render)
   const CACHE = path.join(__dirname, '.cache', 'og');
   Object.keys(JOURNEYS).forEach(id => buildJourney(JOURNEYS[id]));
-  buildShortStories();
   buildHome();
   buildStatics();
   copyDir(path.join(ROOT, 'stories'), path.join(DIST, 'stories'));
@@ -560,7 +531,7 @@ function buildItchHtml(){
   const size = d => fs.readdirSync(d).reduce((n, f) => { const p = path.join(d, f); return n + (fs.statSync(p).isDirectory() ? size(p) : fs.statSync(p).size); }, 0);
   console.log('---- build summary ----');
   console.log('base URL:            ' + BASE_URL);
-  console.log('HTML pages in dist/: ' + htmlCount + ` (home ${pageCount.home}, journey ${pageCount.journey}, chapter ${pageCount.chapter}, ending ${pageCount.ending}, short story ${pageCount.short}, 404 ${pageCount.meta})`);
+  console.log('HTML pages in dist/: ' + htmlCount + ` (home ${pageCount.home}, journey ${pageCount.journey}, chapter ${pageCount.chapter}, ending ${pageCount.ending}, 404 ${pageCount.meta})`);
   console.log('OG images in dist/:  ' + ogCount + ` (rendered ${imgStats.done}, reused ${imgStats.skipped}, failed ${imgStats.failed})`);
   console.log('sitemap URLs:        ' + sitemapCount);
   console.log('dist size:           ' + (size(DIST) / 1024 / 1024).toFixed(2) + ' MB');

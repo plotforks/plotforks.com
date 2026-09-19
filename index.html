@@ -45,10 +45,10 @@ body{
 .eyebrow{font:600 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--crystal)}
 h1{font:700 clamp(36px,6.4vw,60px)/1 var(--display);margin:10px 0 8px;text-wrap:balance;letter-spacing:.01em}
 .lede{max-width:60ch;color:var(--chalk-dim);margin:0}
-.moments{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
-.moment-btn{all:unset;box-sizing:border-box;cursor:pointer;padding:8px 14px;border:2px solid rgba(238,240,230,.28);border-radius:999px;font:600 13px/1.2 var(--mono);color:var(--chalk-dim);transition:border-color .15s,color .15s}
-.moment-btn:hover{border-color:var(--crystal);color:var(--chalk)}
-.moment-btn.active{border-color:var(--amber);color:var(--amber);background:rgba(242,180,90,.08)}
+.chiprow{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.pick-btn{all:unset;box-sizing:border-box;cursor:pointer;padding:8px 14px;border:2px solid rgba(238,240,230,.28);border-radius:999px;font:600 13px/1.2 var(--mono);color:var(--chalk-dim);transition:border-color .15s,color .15s}
+.pick-btn:hover{border-color:var(--crystal);color:var(--chalk)}
+.pick-btn.active{border-color:var(--amber);color:var(--amber);background:rgba(242,180,90,.08)}
 .gallery-chip{padding:6px 12px;border-radius:999px;border:2px solid rgba(238,240,230,.28);font:600 12.5px/1.2 var(--mono);color:var(--chalk-dim)}
 .gallery-chip.found{border-color:var(--crystal);color:var(--chalk);background:rgba(127,211,232,.08)}
 .gallery-chip.badge.earned{border-color:var(--amber);color:var(--amber);background:rgba(242,180,90,.08)}
@@ -70,8 +70,7 @@ h1{font:700 clamp(36px,6.4vw,60px)/1 var(--display);margin:10px 0 8px;text-wrap:
 .choice:hover{border-color:var(--crystal);background:rgba(127,211,232,.08);transform:translateX(3px)}
 .choice b{font:700 21px/1.15 var(--display)}
 .choice span{font-size:14px;color:var(--chalk-dim)}
-.choice.seen b::after{content:" \2713";color:var(--crystal);font:700 15px var(--body)}
-.choice:focus-visible,.btn:focus-visible,.linkish:focus-visible,.moment-btn:focus-visible,.strip-dot:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.choice:focus-visible,.btn:focus-visible,.pick-btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .btn{all:unset;box-sizing:border-box;cursor:pointer;padding:11px 16px;border-radius:6px;background:var(--chalk);color:var(--board-deep);font:700 15px/1 var(--body)}
 .btn:hover{background:var(--crystal)}
@@ -79,36 +78,20 @@ h1{font:700 clamp(36px,6.4vw,60px)/1 var(--display);margin:10px 0 8px;text-wrap:
 .btn[disabled]:hover{background:var(--chalk)}
 .btn.ghost{background:transparent;color:var(--chalk);border:2px solid rgba(238,240,230,.35);padding:9px 14px}
 .btn.ghost:hover{border-color:var(--crystal);color:var(--crystal)}
-.linkish{all:unset;cursor:pointer;color:var(--chalk-dim);text-decoration:underline;text-underline-offset:3px;font-size:14px}
-.linkish:hover{color:var(--chalk)}
 .steps{display:flex;gap:6px}
 .steps i{width:28px;height:4px;border-radius:2px;background:var(--chalk-faint)}
 .steps i.on{background:var(--amber)}
-.checkpoint{border:2px dashed var(--line);border-radius:6px;padding:14px;display:grid;gap:8px}
-.checkpoint h2{font-size:26px}
 .ending{border:2px solid var(--chalk);border-radius:6px;padding:16px;display:grid;gap:12px;background:rgba(238,240,230,.04)}
 .ending h2{font-size:40px}
 .meter{display:grid;gap:6px}
 .meter .lab{display:flex;justify-content:space-between;gap:8px;font:12px/1.2 var(--mono);color:var(--chalk-dim)}
 .bar{position:relative;height:12px;border-radius:6px;background:rgba(238,240,230,.12)}
 .bar .fill{position:absolute;inset:0 auto 0 0;border-radius:6px;background:linear-gradient(90deg,var(--crystal),var(--amber) 70%,var(--rose));transition:width .8s ease}
-.bar .mark{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--chalk)}
-.stat{font:13px/1.4 var(--mono);color:var(--chalk-dim)}
-.stat strong{color:var(--chalk);font-size:15px}
 .toast{font:12px/1.4 var(--mono);color:var(--crystal);min-height:1em}
 .sharebox{width:100%;min-height:70px;background:var(--board-deep);color:var(--chalk);border:1px solid var(--line);border-radius:6px;padding:8px;font:13px/1.4 var(--mono)}
 .mapbox{border-top:2px dashed var(--line);padding-top:16px;display:grid;gap:12px}
 .mapbox h3{margin:0;font:700 24px/1 var(--display)}
 .mapbox p{margin:0;color:var(--chalk-dim);font-size:14px;max-width:70ch}
-#seasonStrip{display:flex;flex-wrap:wrap;gap:6px}
-.strip-dot{all:unset;box-sizing:border-box;cursor:pointer;display:grid;justify-items:center;gap:4px;padding:5px 10px;border-radius:6px}
-.strip-dot:hover:not(.empty){background:rgba(238,240,230,.06)}
-.strip-dot .dot{width:10px;height:10px;border-radius:50%;background:var(--chalk-faint)}
-.strip-dot.active .dot{background:var(--crystal)}
-.strip-dot:hover:not(.empty) .dot{background:var(--amber)}
-.strip-dot .lab{font:600 10px/1 var(--mono);color:var(--chalk-faint)}
-.strip-dot.active .lab{color:var(--crystal)}
-.strip-dot.empty{opacity:.35;cursor:default}
 .mapscroll{overflow-x:auto}
 .mapscroll svg{display:block;width:100%;min-width:820px;height:auto}
 .donate{border-top:2px dashed var(--line);padding-top:16px;display:grid;gap:10px}
@@ -126,8 +109,6 @@ h1{font:700 clamp(36px,6.4vw,60px)/1 var(--display);margin:10px 0 8px;text-wrap:
 footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,240,230,.1);padding-top:12px}
 /* scene + map */
 .branch{fill:none;stroke-width:3;stroke-linecap:round}
-.branch.unknown{stroke:var(--chalk-faint);stroke-dasharray:2 7}
-.branch.visited{stroke:var(--chalk-dim)}
 .branch.aired{stroke:var(--chalk)}
 .branch.active{stroke:var(--crystal);stroke-dasharray:900;stroke-dashoffset:900;animation:draw 1.4s ease forwards}
 @keyframes draw{to{stroke-dashoffset:0}}
@@ -177,12 +158,11 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
 <canvas id="rain" aria-hidden="true"></canvas>
 <div class="wrap">
 <header>
-  <div class="eyebrow" id="eyebrow">Season 2 · Episode 12 · Phoenix</div>
+  <div class="eyebrow" id="eyebrow">Interactive what-if stories</div>
   <h1 id="mainTitle">The Uncertainty Principle</h1>
-  <p class="lede" id="mainLede">Pick a moment, then pick what Walt does differently. Every choice bends the rest of the story.</p>
+  <p class="lede" id="mainLede">Pick a journey, then change what happens at each turning point. Every choice bends the rest of the story.</p>
 </header>
-<nav class="moments" id="modeTabs" aria-label="Choose a mode"></nav>
-<nav class="moments" id="momentPicker" aria-label="Choose a moment"></nav>
+<nav class="chiprow" id="journeyPicker" aria-label="Choose a journey"></nav>
 <div class="row" id="resumeRow" hidden></div>
 <div class="main">
 <figure class="stage">
@@ -193,26 +173,25 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
 </div>
 <section class="mapbox">
   <h3>The timeline</h3>
-  <p>The solid line is the show as it aired. Every choice you try draws its own branch off this moment. The ones you have not tried stay dotted.</p>
-  <div id="seasonStrip" aria-label="Jump to a season"></div>
+  <p>The solid line is the story as it happened. The bright line is the path you are taking through it, one choice at a time.</p>
   <div class="mapscroll">
-  <svg id="map" viewBox="0 0 1040 340" role="img" aria-label="This moment's timeline, showing the branches you have explored"></svg>
+  <svg id="map" viewBox="0 0 1040 340" role="img" aria-label="Your timeline, showing the path you have taken so far"></svg>
   </div>
 </section>
-<section class="mapbox" id="galleryBox" hidden>
+<section class="mapbox">
   <h3 id="galleryHeading">Endings found</h3>
-  <div id="galleryGrid" class="moments"></div>
-  <div id="badgeGrid" class="moments"></div>
+  <div id="galleryGrid" class="chiprow"></div>
+  <div id="badgeGrid" class="chiprow"></div>
 </section>
 <section class="donate">
   <h3>Ideas or feedback?</h3>
-  <p>Tell us what worked, what didn't, or a moment and the choice you'd make instead. The best ideas become new chapters. Add your email in the text if you want a reply.</p>
+  <p>Tell us what worked, what didn't, or a turning point and the choice you'd make instead. The best ideas become new chapters. Add your email in the text if you want a reply.</p>
   <div class="donate-row" id="ideaRow"></div>
   <p class="qr-cap" style="text-align:left">By sending an idea you agree we may adapt it on the site.</p>
 </section>
 <section class="donate">
   <h3>Keep the timelines coming</h3>
-  <p>This is a free fan project. If it made you laugh, you can chip in for the next moment.</p>
+  <p>This is a free fan project. If it made you laugh, you can chip in for the next journey.</p>
   <div class="donate-row" id="donateRow"></div>
 </section>
 <section class="fanlinks">
@@ -232,10 +211,8 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
     <li><a href="https://en.wikipedia.org/wiki/The_Matrix" target="_blank" rel="noopener">The Matrix on Wikipedia</a><br>The film's production, themes and legacy, told without any branches.</li>
   </ul>
 </section>
-<footer>Unofficial what-if stories, made as fan parody. Breaking Bad and The Matrix, and their characters, belong to their respective owners. Not affiliated with Sony Pictures Television, AMC or Warner Bros. All characters are drawn from scratch. The vote percentages on the short stories are demo figures until real votes are counted.</footer>
+<footer>Unofficial what-if stories, made as fan parody. Breaking Bad and The Matrix, and their characters, belong to their respective owners. Not affiliated with Sony Pictures Television, AMC or Warner Bros. All characters are drawn from scratch.</footer>
 </div>
-<script src="stories/phoenix.js"></script>
-<script src="stories/cashpile.js"></script>
 <script src="stories/bb-journey/journey.js"></script>
 <script src="stories/bb-journey/ch01.js"></script>
 <script src="stories/bb-journey/ch02.js"></script>
@@ -1372,7 +1349,6 @@ const SUPPORTED = {
   fx: ['zz','cough','wet','halo','sweat','siren','bubbles','pins','confetti','lily','alarm','blue','bullets','cat','code','crash','emp','flash','gold','gruel','light','mirror','phone','pills','plug','rain','screens','sentinels','shells','steak','sunrise','train','vase','cookies']
 };
 if (typeof module !== 'undefined' && module.exports) { module.exports = SUPPORTED; module.exports.buildScene = buildScene; }
-const MOMENTS = (typeof window !== 'undefined' && window.MOMENTS) || [];
 
 if (typeof document !== 'undefined'){
   const scene = document.getElementById('scene');
@@ -1380,87 +1356,13 @@ if (typeof document !== 'undefined'){
   const panel = document.getElementById('panel');
   const stage = document.querySelector('.stage');
   const eyebrowEl = document.getElementById('eyebrow');
-  const modeTabsEl = document.getElementById('modeTabs');
-  const momentPickerEl = document.getElementById('momentPicker');
+  const journeyPickerEl = document.getElementById('journeyPicker');
   const resumeRowEl = document.getElementById('resumeRow');
-  const seasonStripEl = document.getElementById('seasonStrip');
   const mapSvg = document.getElementById('map');
-  const galleryBoxEl = document.getElementById('galleryBox');
   const galleryHeadingEl = document.getElementById('galleryHeading');
   const galleryGridEl = document.getElementById('galleryGrid');
   const badgeGridEl = document.getElementById('badgeGrid');
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  let seen = new Set();
-  try { seen = new Set(JSON.parse(localStorage.getItem('up-seen') || '[]')); } catch (e) {}
-  const saveSeen = () => { try { localStorage.setItem('up-seen', JSON.stringify([...seen])); } catch (e) {} };
-
-  let MOMENT_ID = null;
-  try { MOMENT_ID = localStorage.getItem('up-moment'); } catch (e) {}
-  if (!MOMENT_ID || !MOMENTS.some(m => m.id === MOMENT_ID)) MOMENT_ID = MOMENTS.length ? MOMENTS[0].id : null;
-
-  let path = [], step = 0;
-
-  function currentMoment(){ return MOMENTS.find(m => m.id === MOMENT_ID) || MOMENTS[0]; }
-
-  function resolveNode(moment, p){
-    if (!p.length) return null;
-    if (p[0] === 'aired') return moment.aired;
-    let choices = moment.choices, node = null;
-    for (const id of p){
-      node = (choices || []).find(c => c.id === id);
-      if (!node) return null;
-      choices = node.next ? node.next.choices : null;
-    }
-    return node;
-  }
-
-  function seenBeneath(key){
-    for (const k of seen) if (k === key || k.indexOf(key + '/') === 0) return true;
-    return false;
-  }
-  function markSeen(moment, p){ seen.add([moment.id, ...p].join('/')); saveSeen(); }
-
-  function choiceBtn(moment, node){
-    const key = [moment.id, ...path, node.id].join('/');
-    return `<button class="choice${seenBeneath(key) ? ' seen' : ''}" data-go="${esc(node.id)}"><b>${esc(node.label)}</b><span>${esc(node.tag)}</span></button>`;
-  }
-
-  function beatsPanel(label, beats, st){
-    const bt = beats[st], last = st === beats.length - 1;
-    return `<div class="kicker">${esc(label)}</div>
-      <div class="steps" role="img" aria-label="Step ${st + 1} of ${beats.length}">${beats.map((_, i) => `<i class="${i <= st ? 'on' : ''}"></i>`).join('')}</div>
-      <p>${esc(bt.text)}</p>
-      <div class="row"><button class="btn" data-next>${last ? 'See how it ends' : 'Next'}</button>
-      <button class="linkish" data-home>Back to the choice</button><button class="linkish" data-restart>Start this moment over</button></div>`;
-  }
-
-  function checkpointPanel(moment, node){
-    return `<div class="checkpoint">
-        <div class="kicker">So far</div>
-        <h2>${esc(node.checkpoint.name)}</h2>
-        <p>${esc(node.checkpoint.summary)}</p>
-      </div>
-      <h2>${esc(node.next.question)}</h2>
-      <div class="choices">${node.next.choices.map(c => choiceBtn(moment, c)).join('')}</div>
-      <div class="row"><button class="linkish" data-home>Back to the choice</button><button class="linkish" data-restart>Start this moment over</button></div>`;
-  }
-
-  function endingPanel(moment, ending, isAired){
-    const airedMeter = moment.aired.ending.meter;
-    return `<div class="ending">
-      <div class="kicker">${isAired ? 'The real timeline' : 'Your timeline'}</div>
-      <h2>${esc(ending.name)}</h2>
-      <p>${esc(ending.summary)}</p>
-      <div class="meter"><div class="lab"><span>Heisenberg meter</span><span>${ending.meter}/100${isAired ? '' : ' · as aired: ' + airedMeter}</span></div>
-      <div class="bar"><div class="fill" style="width:0"></div>${isAired ? '' : `<div class="mark" style="left:${airedMeter}%"></div>`}</div></div>
-      <div class="stat">${ending.pct == null ? 'This is the version that aired.' : `<strong>${ending.pct}%</strong> of visitors chose this (demo figure)`}</div>
-      <div class="row"><button class="btn" data-share>Copy my timeline</button><button class="btn ghost" data-home>Try another choice</button><button class="linkish" data-restart>Start this moment over</button></div>
-      ${shareRow({text: ending.share, url: absUrl('/short-stories/' + moment.id + '/')})}
-      <div class="toast" role="status"></div>
-      <textarea class="sharebox" id="sharebox" readonly hidden aria-label="Your timeline, ready to copy"></textarea>
-    </div>`;
-  }
 
   function animateMeter(meter){
     requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -1474,69 +1376,12 @@ if (typeof document !== 'undefined'){
     if (!reduce && scene.animate) scene.animate([{opacity:.25},{opacity:1}], {duration:320, easing:'ease-out'});
   }
 
-  function renderMomentPicker(moment){
-    momentPickerEl.innerHTML = MOMENTS.map(m =>
-      `<button class="moment-btn${m.id === moment.id ? ' active' : ''}" data-moment="${esc(m.id)}" aria-pressed="${m.id === moment.id}">${esc(m.code)} · ${esc(m.title)}</button>`).join('');
-  }
 
-  function renderSeasonStrip(moment){
-    const bySeason = {}; MOMENTS.forEach(m => { bySeason[m.season] = m; });
-    let html = '';
-    for (let s = 1; s <= 5; s++){
-      const m = bySeason[s];
-      html += m
-        ? `<button class="strip-dot${m.id === moment.id ? ' active' : ''}" data-moment="${esc(m.id)}" title="${esc(m.code)} · ${esc(m.title)}" aria-label="${esc(m.code)} · ${esc(m.title)}"><span class="dot"></span><span class="lab">S${s}</span></button>`
-        : `<span class="strip-dot empty"><span class="dot"></span><span class="lab">S${s}</span></span>`;
-    }
-    seasonStripEl.innerHTML = html;
-  }
 
-  function curve(x0,y0,x1,y1){
-    const mx = x0 + (x1-x0)*0.5;
-    return `M${x0} ${y0} C ${mx} ${y0} ${mx} ${y1} ${x1} ${y1}`;
-  }
   function nodeLabel(x,y,text,color,small){
     return `<circle cx="${x}" cy="${y}" r="${small?4.5:5.5}" fill="${color}"/><text x="${x+12}" y="${y+5}" font-family="Cabin Sketch, cursive" font-size="${small?13:16}" font-weight="700" fill="${color}">${esc(text)}</text>`;
   }
 
-  function drawMap(moment){
-    const n = moment.choices.length;
-    const W = 1040, H = Math.max(260, 70 + n * 90);
-    mapSvg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    const forkX = 70, forkY = 30, l1X = 440, leafX = 820;
-    const top = 60, bandH = (H - top - 20) / n;
-    let out = '';
-    out += `<circle class="pulse" cx="${forkX}" cy="${forkY}" r="6" fill="#7FD3E8"/><circle cx="${forkX}" cy="${forkY}" r="6" fill="#7FD3E8"/>`;
-    out += `<text x="${forkX}" y="${forkY-14}" font-family="Cabin Sketch, cursive" font-size="15" font-weight="700" fill="#F2B45A">${esc(moment.code)} · ${esc(moment.episode)}</text>`;
-    out += `<path class="branch aired" d="M${forkX} ${forkY} H${leafX+80}"/>`;
-    out += nodeLabel(leafX+80, forkY, 'As aired', '#EEF0E6');
-    moment.choices.forEach((c,i) => {
-      const y1 = top + bandH*i + bandH/2;
-      const activeTop = path[0] === c.id;
-      const key1 = [moment.id, c.id].join('/');
-      const seenTop = seenBeneath(key1);
-      const cls1 = activeTop ? 'active' : (seenTop ? 'visited' : 'unknown');
-      out += `<path class="branch ${cls1}" d="${curve(forkX, forkY, l1X, y1)}"/>`;
-      const lab1 = seenTop ? c.checkpoint.name : (activeTop ? '…' : '?');
-      const col1 = activeTop ? '#7FD3E8' : (seenTop ? '#A8B7AD' : '#5E7268');
-      out += nodeLabel(l1X, y1, lab1, col1);
-      const kids = (c.next && c.next.choices) || [];
-      const m = kids.length || 1;
-      const subH = bandH * 0.86;
-      kids.forEach((k,j) => {
-        const y2 = y1 - subH/2 + (m > 1 ? (subH/(m-1))*j : subH/2);
-        const activeLeaf = activeTop && path[1] === k.id;
-        const key2 = [moment.id, c.id, k.id].join('/');
-        const seenLeaf = seen.has(key2);
-        const cls2 = activeLeaf ? 'active' : (seenLeaf ? 'visited' : 'unknown');
-        out += `<path class="branch ${cls2}" d="${curve(l1X, y1, leafX, y2)}"/>`;
-        const lab2 = seenLeaf ? k.ending.name : (activeLeaf ? '…' : '?');
-        const col2 = activeLeaf ? '#7FD3E8' : (seenLeaf ? '#A8B7AD' : '#5E7268');
-        out += nodeLabel(leafX, y2, lab2, col2, true);
-      });
-    });
-    mapSvg.innerHTML = out;
-  }
 
   function renderDonate(){
     const el = document.getElementById('donateRow');
@@ -1715,10 +1560,6 @@ if (typeof document !== 'undefined'){
     (choice.flags || []).forEach(f => st.flags.add(f));
   }
 
-  let MODE = 'journey';
-  try { MODE = localStorage.getItem('up-mode') || 'journey'; } catch (e) {}
-  if (MODE !== 'journey' && MODE !== 'moments') MODE = 'journey';
-
   let JOURNEY_ID = null;
   try { JOURNEY_ID = localStorage.getItem('up-journey-id'); } catch (e) {}
   if (!JOURNEY_ID || !journeyList().some(j => j.id === JOURNEY_ID)) JOURNEY_ID = journeyList().length ? journeyList()[0].id : null;
@@ -1731,20 +1572,11 @@ if (typeof document !== 'undefined'){
     if (!JST || JST.journeyId !== journey.id) JST = loadJourneyState(journey);
   }
 
-  function renderModeTabs(){
-    const tabs = [['journey', 'The journey'], ['moments', 'Short stories']];
-    modeTabsEl.innerHTML = tabs.map(([id, label]) =>
-      `<button class="moment-btn${MODE === id ? ' active' : ''}" data-mode="${id}" aria-pressed="${MODE === id}">${esc(label)}</button>`).join('');
-  }
   function renderSubPicker(){
-    if (MODE === 'journey'){
-      const journeys = journeyList();
-      const journey = currentJourney();
-      momentPickerEl.innerHTML = journeys.map(j =>
-        `<button class="moment-btn${journey && j.id === journey.id ? ' active' : ''}" data-journey="${esc(j.id)}" aria-pressed="${!!(journey && j.id === journey.id)}">${esc(jmeta(j).series ? jmeta(j).series + ': ' + j.title : j.title)}</button>`).join('');
-    } else {
-      renderMomentPicker(currentMoment());
-    }
+    const journeys = journeyList();
+    const journey = currentJourney();
+    journeyPickerEl.innerHTML = journeys.map(j =>
+      `<button class="pick-btn${journey && j.id === journey.id ? ' active' : ''}" data-journey="${esc(j.id)}" aria-pressed="${!!(journey && j.id === journey.id)}">${esc(jmeta(j).series ? jmeta(j).series + ': ' + j.title : j.title)}</button>`).join('');
   }
 
   function journeyChoiceBtn(c){
@@ -1788,13 +1620,8 @@ if (typeof document !== 'undefined'){
     return `<div class="kicker">Share this ending</div><div class="row sharerow">${links.map(l => `<a class="btn ghost" href="${esc(l[1])}" target="_blank" rel="noopener">${l[0]}</a>`).join('')}${native}</div>`;
   }
   function shareInfo(){
-    if (MODE === 'journey'){
-      const journey = currentJourney(), ending = JST.ending;
-      return {text: ending.share.replace('{meter}', ending.meter), url: endingPageUrl(journey, ending), tag: jmeta(journey).tagline, title: ending.name};
-    }
-    const moment = currentMoment();
-    const ending = path[0] === 'aired' ? moment.aired.ending : resolveNode(moment, path).ending;
-    return {text: ending.share, url: absUrl('/short-stories/' + moment.id + '/'), tag: 'The Uncertainty Principle, an unofficial Breaking Bad what-if.', title: ending.name};
+    const journey = currentJourney(), ending = JST.ending;
+    return {text: ending.share.replace('{meter}', ending.meter), url: endingPageUrl(journey, ending), tag: jmeta(journey).tagline, title: ending.name};
   }
 
   function renderJourneyEnding(journey){
@@ -1973,46 +1800,6 @@ if (typeof document !== 'undefined'){
     render(); settle();
   }
 
-  function view(){
-    const moment = currentMoment();
-    if (!moment) return;
-    eyebrowEl.textContent = `Season ${moment.season} · Episode ${moment.ep} · ${moment.episode}`;
-    renderMomentPicker(moment);
-    renderSeasonStrip(moment);
-
-    if (!path.length){
-      drawScene(moment.setup.scene, moment.setup.caption);
-      panel.innerHTML = `<div class="kicker">${esc(moment.setup.kicker)}</div>
-        <p>${esc(moment.setup.text)}</p>
-        <h2>${esc(moment.question)}</h2>
-        <div class="choices">${moment.choices.map(c => choiceBtn(moment, c)).join('')}</div>
-        <div><button class="linkish" data-go="aired">Or see what really happened</button></div>`;
-    } else if (path[0] === 'aired'){
-      const node = moment.aired;
-      if (step < node.beats.length){
-        drawScene(node.beats[step].scene, node.beats[step].caption);
-        panel.innerHTML = beatsPanel('The real timeline', node.beats, step);
-      } else {
-        markSeen(moment, path);
-        panel.innerHTML = endingPanel(moment, node.ending, true);
-        animateMeter(node.ending.meter);
-      }
-    } else {
-      const node = resolveNode(moment, path);
-      if (!node){ path = []; step = 0; return view(); }
-      if (step < node.beats.length){
-        drawScene(node.beats[step].scene, node.beats[step].caption);
-        panel.innerHTML = beatsPanel(node.label, node.beats, step);
-      } else if (node.next){
-        panel.innerHTML = checkpointPanel(moment, node);
-      } else if (node.ending){
-        markSeen(moment, path);
-        panel.innerHTML = endingPanel(moment, node.ending, false);
-        animateMeter(node.ending.meter);
-      }
-    }
-    drawMap(moment);
-  }
 
   function share(){
     const info = shareInfo();
@@ -2038,19 +1825,7 @@ if (typeof document !== 'undefined'){
     if (window.innerWidth < 820) stage.scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block: 'start'});
   }
 
-  function switchMoment(id){
-    if (id === MOMENT_ID) return;
-    MOMENT_ID = id; path = []; step = 0;
-    try { localStorage.setItem('up-moment', MOMENT_ID); } catch (e) {}
-    view(); settle();
-  }
 
-  function switchMode(mode){
-    if (mode === MODE) return;
-    MODE = mode;
-    try { localStorage.setItem('up-mode', MODE); } catch (e) {}
-    render(); settle();
-  }
 
   const rainCv = document.getElementById('rain');
   const titleEl = document.getElementById('mainTitle'), ledeEl = document.getElementById('mainLede');
@@ -2085,34 +1860,21 @@ if (typeof document !== 'undefined'){
   }
   window.addEventListener('resize', () => { if (rainCv && document.documentElement.getAttribute('data-theme') === 'matrix'){ rainCols = null; drawRain(false); } });
   function applyTheme(){
-    const j = MODE === 'journey' ? currentJourney() : null;
+    const j = currentJourney();
     const theme = (j && jmeta(j).theme) || '';
     if (theme) document.documentElement.setAttribute('data-theme', theme); else document.documentElement.removeAttribute('data-theme');
     if (theme === 'matrix') startRain(); else stopRain();
   }
   function renderHeader(){
-    if (MODE === 'journey' && currentJourney()){
-      const j = currentJourney();
-      titleEl.textContent = j.title; ledeEl.textContent = j.subtitle || '';
-    } else {
-      titleEl.textContent = 'The Uncertainty Principle';
-      ledeEl.textContent = 'Pick a moment, then pick what Walt does differently. Every choice bends the rest of the story.';
-    }
+    const j = currentJourney();
+    if (!j) return;
+    titleEl.textContent = j.title; ledeEl.textContent = j.subtitle || '';
   }
 
   function render(){
     applyTheme(); renderHeader();
-    renderModeTabs();
     resumeRowEl.hidden = true; resumeRowEl.innerHTML = '';
-    if (MODE === 'journey'){
-      seasonStripEl.hidden = true;
-      galleryBoxEl.hidden = false;
-      viewJourney();
-    } else {
-      seasonStripEl.hidden = false;
-      galleryBoxEl.hidden = true;
-      view();
-    }
+    viewJourney();
   }
 
   panel.addEventListener('click', ev => {
@@ -2140,18 +1902,7 @@ if (typeof document !== 'undefined'){
       viewJourney(); settle();
       return;
     }
-    if (t.dataset.go){
-      if (t.dataset.go === 'aired'){ path = ['aired']; step = 0; }
-      else { path.push(t.dataset.go); step = 0; }
-      view(); settle();
-    } else if ('next' in t.dataset){ step++; view(); settle(); }
-    else if ('home' in t.dataset){
-      path.pop();
-      if (path.length){ const n = resolveNode(currentMoment(), path); step = n ? n.beats.length : 0; }
-      else step = 0;
-      view(); settle();
-    } else if ('restart' in t.dataset){ path = []; step = 0; view(); settle(); }
-    else if ('share' in t.dataset){ share(); }
+    if ('share' in t.dataset){ share(); }
     else if ('nativeShare' in t.dataset){ nativeShare(); }
   });
   resumeRowEl.addEventListener('click', ev => {
@@ -2161,15 +1912,8 @@ if (typeof document !== 'undefined'){
     JST = freshJourneyState(journey);
     viewJourney(); settle();
   });
-  modeTabsEl.addEventListener('click', ev => {
-    const t = ev.target.closest('button[data-mode]'); if (t) switchMode(t.dataset.mode);
-  });
-  momentPickerEl.addEventListener('click', ev => {
-    const tm = ev.target.closest('button[data-moment]'); if (tm){ switchMoment(tm.dataset.moment); return; }
-    const tj = ev.target.closest('button[data-journey]'); if (tj){ switchJourney(tj.dataset.journey); return; }
-  });
-  seasonStripEl.addEventListener('click', ev => {
-    const t = ev.target.closest('button[data-moment]'); if (t) switchMoment(t.dataset.moment);
+  journeyPickerEl.addEventListener('click', ev => {
+    const t = ev.target.closest('button[data-journey]'); if (t) switchJourney(t.dataset.journey);
   });
 
   /* Deep links from the static pages: /?journey=breaking-bad&chapter=felina starts that journey at that chapter with start scores. */
@@ -2185,8 +1929,8 @@ if (typeof document !== 'undefined'){
     let q; try { q = new URLSearchParams(location.search); } catch (e) { return; }
     const jid = q.get('journey'), journey = jid && JOURNEYS[jid];
     if (!journey) return;
-    MODE = 'journey'; JOURNEY_ID = jid; JST = null;
-    try { localStorage.setItem('up-mode', MODE); localStorage.setItem('up-journey-id', JOURNEY_ID); } catch (e) {}
+    JOURNEY_ID = jid; JST = null;
+    try { localStorage.setItem('up-journey-id', JOURNEY_ID); } catch (e) {}
     const chapter = (journey.chapters || []).find(c => c.id === q.get('chapter'));
     if (chapter){
       clearJourneyState(journey);

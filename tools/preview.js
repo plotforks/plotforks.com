@@ -11,7 +11,6 @@ extract().forEach(c => vm.runInContext(c, sandbox));
 const { buildScene } = sandbox.module.exports;
 const scenes = [];
 const add = (sc, cap) => sc && scenes.push({ sc, cap });
-(sandbox.window.MOMENTS || []).forEach(m => { add(m.setup.scene, m.id); });
 Object.values(sandbox.window.JOURNEYS).forEach(j => j.chapters.forEach(ch => {
   add(ch.setup.scene, ch.id + ' setup'); (ch.setup.variants || []).forEach(v => v.scene && add(v.scene, ch.id + ' var'));
   ch.choices.forEach(c => (c.beats || []).forEach((b, i) => add(b.scene, `${ch.id}/${c.id}/${i}`)));

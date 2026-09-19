@@ -33,10 +33,6 @@ function check(scene, where){
 }
 const beats = (bs, w) => (bs || []).forEach((b, i) => check(b.scene, `${w} beat${i}`));
 const setup = (s, w) => { if (!s) return; check(s.scene, w + ' setup'); (s.variants || []).forEach((v, i) => check(v.scene, `${w} variant${i}`)); };
-(sandbox.window.MOMENTS || []).forEach(m => {
-  setup(m.setup, m.id); beats(m.aired.beats, m.id + ' aired');
-  (function node(n, w){ beats(n.beats, w); (n.next && n.next.choices || []).forEach(c => node(c, w + '/' + c.id)); })({ beats: [], next: { choices: m.choices } }, m.id);
-});
 const J = sandbox.window.JOURNEYS || {};
 Object.keys(J).forEach(id => (J[id].chapters || []).forEach(ch => {
   setup(ch.setup, `${id}/${ch.id}`);
