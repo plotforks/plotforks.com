@@ -1,0 +1,26 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@700&display=swap">
+<style>html,body{margin:0;width:800px;height:800px;overflow:hidden;background:#22332D}</style></head>
+<body>
+<svg width="800" height="800" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="40%" r="70%">
+      <stop offset="0" stop-color="#2E4A40"/><stop offset="1" stop-color="#1A2823"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#g)"/>
+  <!-- the fork: one path splitting into three timelines -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="26">
+    <path d="M400 560 V420" stroke="#EEF0E6"/>
+    <path d="M400 420 C400 350 290 330 270 250" stroke="#7FD3E8"/>
+    <path d="M400 420 V240" stroke="#EEF0E6"/>
+    <path d="M400 420 C400 350 510 330 530 250" stroke="#F2B45A"/>
+  </g>
+  <circle cx="270" cy="228" r="30" fill="#7FD3E8"/>
+  <circle cx="400" cy="218" r="30" fill="#EEF0E6"/>
+  <circle cx="530" cy="228" r="30" fill="#F2B45A"/>
+  <circle cx="400" cy="420" r="22" fill="#1A2823" stroke="#EEF0E6" stroke-width="10"/>
+  <text x="400" y="655" text-anchor="middle" font-family="Cabin Sketch, cursive" font-weight="700" font-size="92" fill="#EEF0E6">plotforks</text>
+</svg>
+</body></html>

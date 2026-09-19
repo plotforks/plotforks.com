@@ -1,0 +1,2237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>plotforks: interactive what-if stories from your favorite series</title>
+<meta name="description" content="Interactive what-if stories from your favorite series. Play the whole of Breaking Bad or The Matrix, change the story at every turning point, and find every ending.">
+<link rel="canonical" href="https://plotforks.com/">
+<meta property="og:site_name" content="plotforks">
+<meta property="og:type" content="website">
+<meta property="og:title" content="plotforks: interactive what-if stories">
+<meta property="og:description" content="Interactive what-if stories from your favorite series. Play the whole of Breaking Bad or The Matrix, change the story at every turning point, and find every ending.">
+<meta property="og:url" content="https://plotforks.com/">
+<meta property="og:image" content="https://plotforks.com/og/plotforks.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="plotforks: interactive what-if stories">
+<meta name="twitter:description" content="Interactive what-if stories from your favorite series. Play the whole of Breaking Bad or The Matrix, change the story at every turning point, and find every ending.">
+<meta name="twitter:image" content="https://plotforks.com/og/plotforks.png">
+<meta name="theme-color" content="#22332D">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Share+Tech+Mono&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --board:#22332D; --board-deep:#1A2823;
+  --chalk:#EEF0E6; --chalk-dim:#A8B7AD; --chalk-faint:#5E7268;
+  --crystal:#7FD3E8; --amber:#F2B45A; --rose:#EE8F8F;
+  --line:rgba(238,240,230,.18);
+  --display:"Cabin Sketch","Chalkboard SE","Comic Sans MS",cursive;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+/* Matrix theme: green on black terminal. Applied with data-theme on the root element. */
+:root[data-theme="matrix"]{
+  --board:#050A06; --board-deep:#020603;
+  --chalk:#B8F5C4; --chalk-dim:#7FBF8E; --chalk-faint:#2F6B3E;
+  --crystal:#3CFF6B; --amber:#E8FF7A; --rose:#FF6B6B;
+  --line:rgba(60,255,107,.24);
+  --display:"Share Tech Mono","JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+:root[data-theme="matrix"] body{background:radial-gradient(1000px 500px at 15% -10%,rgba(60,255,107,.07),transparent 60%),radial-gradient(900px 600px at 110% 50%,rgba(60,255,107,.04),transparent 60%),var(--board)}
+:root[data-theme="matrix"] h1,:root[data-theme="matrix"] .panel h2,:root[data-theme="matrix"] .ending h2,:root[data-theme="matrix"] .mapbox h3,:root[data-theme="matrix"] .donate h3,:root[data-theme="matrix"] .fanlinks h3,:root[data-theme="matrix"] .choice b{font-weight:400}
+:root[data-theme="matrix"] .choice b{font-size:18px}
+:root[data-theme="matrix"] .stage{border-color:rgba(60,255,107,.35);box-shadow:0 0 24px rgba(60,255,107,.08)}
+:root[data-theme="matrix"] .btn{color:#03110A}
+#rain{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;opacity:.2;z-index:0}
+:root:not([data-theme="matrix"]) #rain{display:none}
+.wrap{position:relative;z-index:1}
+.sharerow{gap:8px}
+.sharerow .btn.ghost{padding:8px 12px;font-size:14px}
+[hidden]{display:none!important}
+html{background:var(--board-deep)}
+body{
+  background:
+    radial-gradient(1100px 480px at 18% -8%,rgba(238,240,230,.06),transparent 60%),
+    radial-gradient(900px 600px at 110% 45%,rgba(127,211,232,.05),transparent 60%),
+    var(--board);
+  color:var(--chalk);font:16px/1.55 var(--body);padding-inline:16px;
+}
+.wrap{max-width:1040px;margin:0 auto;padding-block:28px 40px;display:grid;gap:24px}
+.eyebrow{font:600 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--crystal)}
+h1{font:700 clamp(36px,6.4vw,60px)/1 var(--display);margin:10px 0 8px;text-wrap:balance;letter-spacing:.01em}
+.lede{max-width:60ch;color:var(--chalk-dim);margin:0}
+.moments{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.moment-btn{all:unset;box-sizing:border-box;cursor:pointer;padding:8px 14px;border:2px solid rgba(238,240,230,.28);border-radius:999px;font:600 13px/1.2 var(--mono);color:var(--chalk-dim);transition:border-color .15s,color .15s}
+.moment-btn:hover{border-color:var(--crystal);color:var(--chalk)}
+.moment-btn.active{border-color:var(--amber);color:var(--amber);background:rgba(242,180,90,.08)}
+.gallery-chip{padding:6px 12px;border-radius:999px;border:2px solid rgba(238,240,230,.28);font:600 12.5px/1.2 var(--mono);color:var(--chalk-dim)}
+.gallery-chip.found{border-color:var(--crystal);color:var(--chalk);background:rgba(127,211,232,.08)}
+.gallery-chip.badge.earned{border-color:var(--amber);color:var(--amber);background:rgba(242,180,90,.08)}
+.pathlist{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:13.5px;color:var(--chalk-dim)}
+.pathlist b{color:var(--chalk)}
+.scorebars{display:grid;gap:10px}
+.resume-note{border:2px dashed var(--line);border-radius:6px;padding:10px 14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:14px;color:var(--chalk-dim)}
+.main{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:820px){.main{grid-template-columns:1fr}}
+.stage{margin:0;background:var(--board-deep);border:2px solid var(--line);border-radius:6px;overflow:hidden}
+.stage svg{display:block;width:100%;height:auto}
+.caption{padding:10px 14px;font:13px/1.4 var(--mono);color:var(--chalk-dim);border-top:1px dashed var(--line)}
+.panel{display:grid;gap:14px;align-content:start}
+.kicker{font:600 12px/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
+.panel p{margin:0;max-width:62ch}
+.panel h2{font:700 30px/1.1 var(--display);margin:0;text-wrap:balance}
+.choices{display:grid;gap:10px}
+.choice{all:unset;box-sizing:border-box;cursor:pointer;display:grid;gap:2px;padding:12px 14px;border:2px solid rgba(238,240,230,.28);border-radius:6px;background:rgba(238,240,230,.03);transition:border-color .15s,background .15s,transform .15s}
+.choice:hover{border-color:var(--crystal);background:rgba(127,211,232,.08);transform:translateX(3px)}
+.choice b{font:700 21px/1.15 var(--display)}
+.choice span{font-size:14px;color:var(--chalk-dim)}
+.choice.seen b::after{content:" \2713";color:var(--crystal);font:700 15px var(--body)}
+.choice:focus-visible,.btn:focus-visible,.linkish:focus-visible,.moment-btn:focus-visible,.strip-dot:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{all:unset;box-sizing:border-box;cursor:pointer;padding:11px 16px;border-radius:6px;background:var(--chalk);color:var(--board-deep);font:700 15px/1 var(--body)}
+.btn:hover{background:var(--crystal)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn[disabled]:hover{background:var(--chalk)}
+.btn.ghost{background:transparent;color:var(--chalk);border:2px solid rgba(238,240,230,.35);padding:9px 14px}
+.btn.ghost:hover{border-color:var(--crystal);color:var(--crystal)}
+.linkish{all:unset;cursor:pointer;color:var(--chalk-dim);text-decoration:underline;text-underline-offset:3px;font-size:14px}
+.linkish:hover{color:var(--chalk)}
+.steps{display:flex;gap:6px}
+.steps i{width:28px;height:4px;border-radius:2px;background:var(--chalk-faint)}
+.steps i.on{background:var(--amber)}
+.checkpoint{border:2px dashed var(--line);border-radius:6px;padding:14px;display:grid;gap:8px}
+.checkpoint h2{font-size:26px}
+.ending{border:2px solid var(--chalk);border-radius:6px;padding:16px;display:grid;gap:12px;background:rgba(238,240,230,.04)}
+.ending h2{font-size:40px}
+.meter{display:grid;gap:6px}
+.meter .lab{display:flex;justify-content:space-between;gap:8px;font:12px/1.2 var(--mono);color:var(--chalk-dim)}
+.bar{position:relative;height:12px;border-radius:6px;background:rgba(238,240,230,.12)}
+.bar .fill{position:absolute;inset:0 auto 0 0;border-radius:6px;background:linear-gradient(90deg,var(--crystal),var(--amber) 70%,var(--rose));transition:width .8s ease}
+.bar .mark{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--chalk)}
+.stat{font:13px/1.4 var(--mono);color:var(--chalk-dim)}
+.stat strong{color:var(--chalk);font-size:15px}
+.toast{font:12px/1.4 var(--mono);color:var(--crystal);min-height:1em}
+.sharebox{width:100%;min-height:70px;background:var(--board-deep);color:var(--chalk);border:1px solid var(--line);border-radius:6px;padding:8px;font:13px/1.4 var(--mono)}
+.mapbox{border-top:2px dashed var(--line);padding-top:16px;display:grid;gap:12px}
+.mapbox h3{margin:0;font:700 24px/1 var(--display)}
+.mapbox p{margin:0;color:var(--chalk-dim);font-size:14px;max-width:70ch}
+#seasonStrip{display:flex;flex-wrap:wrap;gap:6px}
+.strip-dot{all:unset;box-sizing:border-box;cursor:pointer;display:grid;justify-items:center;gap:4px;padding:5px 10px;border-radius:6px}
+.strip-dot:hover:not(.empty){background:rgba(238,240,230,.06)}
+.strip-dot .dot{width:10px;height:10px;border-radius:50%;background:var(--chalk-faint)}
+.strip-dot.active .dot{background:var(--crystal)}
+.strip-dot:hover:not(.empty) .dot{background:var(--amber)}
+.strip-dot .lab{font:600 10px/1 var(--mono);color:var(--chalk-faint)}
+.strip-dot.active .lab{color:var(--crystal)}
+.strip-dot.empty{opacity:.35;cursor:default}
+.mapscroll{overflow-x:auto}
+.mapscroll svg{display:block;width:100%;min-width:820px;height:auto}
+.donate{border-top:2px dashed var(--line);padding-top:16px;display:grid;gap:10px}
+.donate h3{margin:0;font:700 24px/1 var(--display)}
+.donate p{margin:0;color:var(--chalk-dim);max-width:60ch}
+.donate-row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.donate-row img{width:140px;height:140px;border-radius:6px;background:#fff;padding:6px;display:block}
+.qr-cap{font:12px/1.3 var(--mono);color:var(--chalk-faint);text-align:center;margin:6px 0 0}
+.fanlinks{border-top:1px solid rgba(238,240,230,.1);padding-top:14px;display:grid;gap:10px}
+.fanlinks h3{margin:0;font:700 20px/1 var(--display)}
+.fanlinks ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.fanlinks li{font-size:14px;line-height:1.45;color:var(--chalk-dim)}
+.fanlinks a{color:var(--crystal);text-decoration:underline;text-underline-offset:2px;font-weight:600}
+.fanlinks a:hover{color:var(--chalk)}
+footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,240,230,.1);padding-top:12px}
+/* scene + map */
+.branch{fill:none;stroke-width:3;stroke-linecap:round}
+.branch.unknown{stroke:var(--chalk-faint);stroke-dasharray:2 7}
+.branch.visited{stroke:var(--chalk-dim)}
+.branch.aired{stroke:var(--chalk)}
+.branch.active{stroke:var(--crystal);stroke-dasharray:900;stroke-dashoffset:900;animation:draw 1.4s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.eyes{transform-box:fill-box;transform-origin:center;animation:blink 4.5s infinite}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+.breathe{animation:breathe 3.2s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(1.5px)}}
+.zz{animation:zz 2.6s ease-out infinite}
+.zz.d2{animation-delay:1.3s}
+@keyframes zz{0%{opacity:0;transform:translate(0,0)}30%{opacity:1}100%{opacity:0;transform:translate(10px,-18px)}}
+.siren{animation:siren .9s steps(1) infinite;opacity:.6}
+@keyframes siren{0%,49%{fill:#E0474C}50%,100%{fill:#3D7BE0}}
+.siren-edge{animation:sirenEdge .9s steps(1) infinite;opacity:.55}
+@keyframes sirenEdge{0%,49%{stroke:#E0474C}50%,100%{stroke:#3D7BE0}}
+.plane{animation:fly 9s linear infinite}
+@keyframes fly{from{transform:translateX(-140px)}to{transform:translateX(600px)}}
+.teddy{transform-box:fill-box;transform-origin:center;animation:fall 4s ease-in infinite}
+@keyframes fall{0%{transform:translateY(-50px) rotate(0)}100%{transform:translateY(150px) rotate(200deg)}}
+.drop{animation:drip 1.1s ease-in infinite}
+.drop.d2{animation-delay:.4s}.drop.d3{animation-delay:.75s}
+@keyframes drip{0%{transform:translateY(0);opacity:1}100%{transform:translateY(24px);opacity:0}}
+.shake{animation:shake .25s linear infinite}
+@keyframes shake{0%,100%{transform:translate(0,0)}25%{transform:translate(-1.5px,0)}75%{transform:translate(1.5px,0)}}
+.pulse{transform-box:fill-box;transform-origin:center;animation:pulse 1.8s ease-out infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(3);opacity:0}}
+.bubble{transform-box:fill-box;transform-origin:center;animation:bubble 3.4s ease-in infinite;opacity:0}
+.bubble.d1{animation-delay:.6s}.bubble.d2{animation-delay:1.3s}.bubble.d3{animation-delay:2s}
+@keyframes bubble{0%{transform:translateY(0);opacity:0}15%{opacity:.8}100%{transform:translateY(-70px);opacity:0}}
+.pin{transform-box:fill-box;transform-origin:center;animation:pinpop .5s ease-out both}
+.pin.d1{animation-delay:.15s}.pin.d2{animation-delay:.3s}.pin.d3{animation-delay:.45s}.pin.d4{animation-delay:.6s}
+@keyframes pinpop{0%{transform:scale(0)}70%{transform:scale(1.3)}100%{transform:scale(1)}}
+.confetti{transform-box:fill-box;transform-origin:center;animation:confetti 2.6s linear infinite}
+.confetti.d1{animation-delay:.6s}.confetti.d2{animation-delay:1.2s}
+@keyframes confetti{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(320px) rotate(360deg)}}
+.alarm{animation:alarm .8s steps(1) infinite}
+@keyframes alarm{0%,49%{opacity:.9}50%,100%{opacity:.1}}
+.codefall{animation:codefall 5s linear infinite}
+.codefall.d2{animation-duration:7s}
+@keyframes codefall{from{transform:translateY(-60px);opacity:.2}50%{opacity:1}to{transform:translateY(90px);opacity:.2}}
+.rainfall{animation:rainfall .7s linear infinite}
+@keyframes rainfall{from{transform:translate(0,0)}to{transform:translate(-6px,22px)}}
+.flashwin{animation:flashwin 1.6s ease-out infinite}
+@keyframes flashwin{0%{opacity:.95}70%,100%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.branch.active{stroke-dashoffset:0}}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"plotforks","url":"https://plotforks.com/","description":"Interactive what-if stories from your favorite series. Play the whole of Breaking Bad or The Matrix, change the story at every turning point, and find every ending.","inLanguage":"en"}</script>
+
+</head>
+<body>
+<canvas id="rain" aria-hidden="true"></canvas>
+<div class="wrap">
+<header>
+  <div class="eyebrow" id="eyebrow">Season 2 · Episode 12 · Phoenix</div>
+  <h1 id="mainTitle">The Uncertainty Principle</h1>
+  <p class="lede" id="mainLede">Pick a moment, then pick what Walt does differently. Every choice bends the rest of the story.</p>
+</header>
+<nav class="moments" id="modeTabs" aria-label="Choose a mode"></nav>
+<nav class="moments" id="momentPicker" aria-label="Choose a moment"></nav>
+<div class="row" id="resumeRow" hidden></div>
+<div class="main">
+<figure class="stage">
+<svg id="scene" viewBox="0 0 480 300" role="img" aria-labelledby="sceneCap"></svg>
+<figcaption class="caption" id="sceneCap">Loading the scene.</figcaption>
+</figure>
+<section class="panel" id="panel" aria-live="polite"></section>
+</div>
+<section class="mapbox">
+  <h3>The timeline</h3>
+  <p>The solid line is the show as it aired. Every choice you try draws its own branch off this moment. The ones you have not tried stay dotted.</p>
+  <div id="seasonStrip" aria-label="Jump to a season"></div>
+  <div class="mapscroll">
+  <svg id="map" viewBox="0 0 1040 340" role="img" aria-label="This moment's timeline, showing the branches you have explored"></svg>
+  </div>
+</section>
+<section class="mapbox" id="galleryBox" hidden>
+  <h3 id="galleryHeading">Endings found</h3>
+  <div id="galleryGrid" class="moments"></div>
+  <div id="badgeGrid" class="moments"></div>
+</section>
+<section class="donate">
+  <h3>Ideas or feedback?</h3>
+  <p>Tell us what worked, what didn't, or a moment and the choice you'd make instead. The best ideas become new chapters. Add your email in the text if you want a reply.</p>
+  <div class="donate-row" id="ideaRow"></div>
+  <p class="qr-cap" style="text-align:left">By sending an idea you agree we may adapt it on the site.</p>
+</section>
+<section class="donate">
+  <h3>Keep the timelines coming</h3>
+  <p>This is a free fan project. If it made you laugh, you can chip in for the next moment.</p>
+  <div class="donate-row" id="donateRow"></div>
+</section>
+<section class="fanlinks">
+  <h3>More for fans</h3>
+  <ul>
+    <li><a href="https://breakingbad.fandom.com/wiki/Breaking_Bad_Wiki" target="_blank" rel="noopener">Breaking Bad Wiki</a><br>The episode-by-episode reference for the real show, if you need to check our work.</li>
+    <li><a href="https://www.reddit.com/r/breakingbad/" target="_blank" rel="noopener">r/breakingbad</a><br>Where fans argue about which of these choices Walt would actually make.</li>
+    <li><a href="https://www.visitalbuquerque.org/about-abq/film-tourism/breaking-bad/" target="_blank" rel="noopener">Breaking Bad filming locations in Albuquerque</a><br>The real city behind every set on this page, from the official tourism board.</li>
+    <li><a href="https://www.netflix.com/title/81078819" target="_blank" rel="noopener">El Camino: A Breaking Bad Movie</a><br>Jesse's story after the finale, told straight, with no branches to pick.</li>
+    <li><a href="https://www.netflix.com/title/80021955" target="_blank" rel="noopener">Better Call Saul</a><br>Saul's own show, for when three choices are not enough backstory.</li>
+  </ul>
+</section>
+<section class="staticnav">
+  <h3>Browse every story</h3>
+  <ul class="chaplist">
+    <li><a href="/breaking-bad/">Breaking Bad: The Uncertainty Principle</a></li>
+    <li><a href="/the-matrix/">The Matrix: There Is No Spoiler</a></li>
+    <li><a href="/short-stories/phoenix/">Short story: Jane&#39;s bedside (S2E12)</a></li>
+    <li><a href="/short-stories/cashpile/">Short story: The cash pile (S5E8)</a></li>
+  </ul>
+</section>
+<footer>An unofficial Breaking Bad what-if, made as a fan parody. Not affiliated with Sony Pictures Television or AMC. All characters are drawn from scratch. The vote percentages are demo figures until real votes are counted.</footer>
+</div>
+<script src="stories/phoenix.js"></script>
+<script src="stories/cashpile.js"></script>
+<script src="stories/bb-journey/journey.js"></script>
+<script src="stories/bb-journey/ch01.js"></script>
+<script src="stories/bb-journey/ch02.js"></script>
+<script src="stories/bb-journey/ch03.js"></script>
+<script src="stories/bb-journey/ch04.js"></script>
+<script src="stories/bb-journey/ch05.js"></script>
+<script src="stories/bb-journey/ch06.js"></script>
+<script src="stories/bb-journey/ch07.js"></script>
+<script src="stories/bb-journey/ch08.js"></script>
+<script src="stories/bb-journey/ch09.js"></script>
+<script src="stories/bb-journey/ch10.js"></script>
+<script src="stories/bb-journey/ch11a.js"></script>
+<script src="stories/bb-journey/ch11b.js"></script>
+<script src="stories/bb-journey/endings.js"></script>
+<script src="stories/matrix-journey/journey.js"></script>
+<script src="stories/matrix-journey/ch01.js"></script>
+<script src="stories/matrix-journey/ch02.js"></script>
+<script src="stories/matrix-journey/ch03.js"></script>
+<script src="stories/matrix-journey/ch04.js"></script>
+<script src="stories/matrix-journey/ch05.js"></script>
+<script src="stories/matrix-journey/ch06.js"></script>
+<script src="stories/matrix-journey/ch07.js"></script>
+<script src="stories/matrix-journey/ch08.js"></script>
+<script src="stories/matrix-journey/ch09.js"></script>
+<script src="stories/matrix-journey/endings.js"></script>
+<script>
+(function(){
+const SITE = { paypalUrl: "https://paypal.me/plotforks", ideaFormUrl: "https://tally.so/r/rjXG1p", baseUrl: "https://plotforks.com", cfAnalyticsToken: "" };
+/* Cloudflare Web Analytics (cookieless, no consent banner needed). Only injected when a token is set. */
+if (SITE.cfAnalyticsToken && typeof document !== 'undefined' && !document.querySelector('script[data-cf-beacon]')){
+  const cf = document.createElement('script'); cf.defer = true;
+  cf.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+  cf.setAttribute('data-cf-beacon', JSON.stringify({token: SITE.cfAnalyticsToken}));
+  document.head.appendChild(cf);
+}
+/* Per-journey site metadata: URL slug, series name, share tagline, page theme. */
+const JOURNEY_META = {
+  'breaking-bad': {slug: 'breaking-bad', series: 'Breaking Bad', tagline: 'The Uncertainty Principle, an unofficial Breaking Bad what-if.'},
+  'matrix': {slug: 'the-matrix', series: 'The Matrix', tagline: 'There Is No Spoiler, an unofficial Matrix what-if.', theme: 'matrix'}
+};
+function jmeta(j){ return JOURNEY_META[j.id] || {slug: j.id, series: '', tagline: j.title + ', an unofficial fan what-if.'}; }
+function absUrl(p){ return SITE.baseUrl.replace(/\/$/, '') + p; }
+function endingPageUrl(journey, ending){ return absUrl('/' + jmeta(journey).slug + '/ending/' + ending.id + '/'); }
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+/* ---------- shared body primitives ---------- */
+const LEGS_STAND = c => `<rect x="-15" y="-62" width="12" height="60" fill="${c}"/><rect x="3" y="-62" width="12" height="60" fill="${c}"/><ellipse cx="-10" cy="-1" rx="10" ry="4" fill="#2B2723"/><ellipse cx="10" cy="-1" rx="10" ry="4" fill="#2B2723"/>`;
+const LEGS_KNEEL = c => `<rect x="-15" y="-62" width="30" height="34" rx="4" fill="${c}"/><rect x="-15" y="-32" width="46" height="14" rx="5" fill="${c}"/><ellipse cx="34" cy="-21" rx="7" ry="5" fill="#2B2723"/>`;
+
+/* ---------- Walt ---------- */
+const WALT_POSE = {
+  near:    {x:330, legs:'stand', armL:'down',  armR:'down'},
+  far:     {x:395, legs:'stand', armL:'down',  armR:'down'},
+  reach:   {x:330, legs:'stand', armL:'reach', armR:'down'},
+  kneel:   {x:185, legs:'kneel', armL:'reach', armR:'down'},
+  phone:   {x:395, legs:'stand', armL:'down',  armR:'phone'},
+  splash:  {x:165, legs:'stand', armL:'glass', armR:'down'},
+  stand:   {x:330, legs:'stand', armL:'down',  armR:'down'},
+  point:   {x:330, legs:'stand', armL:'down',  armR:'point'},
+  suit:    {x:330, legs:'stand', armL:'down',  armR:'down', suit:true},
+  dig:     {x:330, legs:'stand', armL:'dig',   armR:'dig'},
+  lecture: {x:330, legs:'stand', armL:'down',  armR:'lecture'},
+  keys:    {x:330, legs:'stand', armL:'down',  armR:'keys'},
+  floor:   {x:330, legs:'stand', armL:'down',  armR:'down'}
+};
+const ARML = {
+  down:  () => `<path d="M-27 -122 Q-36 -100 -33 -74" stroke="#C9B78F" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="-33" cy="-70" r="5.5" fill="#EBC7A2"/>`,
+  reach: () => `<path d="M-26 -122 Q-50 -110 -70 -100" stroke="#C9B78F" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="-75" cy="-98" r="5.5" fill="#EBC7A2"/>`,
+  glass: () => `<path d="M-26 -122 Q-50 -134 -66 -150" stroke="#C9B78F" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="-70" cy="-153" r="5.5" fill="#EBC7A2"/><path d="M-88 -162 L-73 -167 L-70 -151 L-83 -147 Z" fill="#7FD3E8" fill-opacity=".35" stroke="#EEF0E6" stroke-width="1.5"/>`,
+  dig:   () => `<path d="M-26 -122 Q-44 -104 -46 -82" stroke="#C9B78F" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="-46" cy="-78" r="5.5" fill="#EBC7A2"/>`
+};
+const ARMR = {
+  down:    () => `<path d="M27 -122 Q36 -100 33 -74" stroke="#C9B78F" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="33" cy="-70" r="5.5" fill="#EBC7A2"/>`,
+  phone:   () => `<path d="M27 -122 Q46 -118 23 -148" stroke="#C9B78F" stroke-width="11" stroke-linecap="round" fill="none"/><rect x="15" y="-167" width="7" height="16" rx="1.5" fill="#222"/><circle cx="21" cy="-151" r="5.5" fill="#EBC7A2"/>`,
+  point:   () => `<path d="M27 -122 Q50 -132 66 -142" stroke="#C9B78F" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="70" cy="-144" r="5.5" fill="#EBC7A2"/>`,
+  lecture: () => `<path d="M27 -122 Q42 -148 21 -170" stroke="#C9B78F" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="19" cy="-172" r="5.5" fill="#EBC7A2"/>`,
+  dig:     () => `<path d="M27 -122 Q44 -104 46 -82" stroke="#C9B78F" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="46" cy="-78" r="5.5" fill="#EBC7A2"/>`,
+  keys:    () => `<path d="M27 -122 Q46 -112 40 -92" stroke="#C9B78F" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="40" cy="-88" r="5.5" fill="#EBC7A2"/><rect x="34" y="-84" width="12" height="16" rx="3" fill="#2B2723" stroke="#7FD3E8" stroke-width="1.2"/><circle cx="40" cy="-78" r="2.4" fill="#EE8F8F"/>`
+};
+const SHOVEL = `<path d="M-46 -78 L46 -78" stroke="#8F7F5E" stroke-width="4"/><rect x="36" y="-92" width="18" height="22" rx="2" fill="#7FD3E8" fill-opacity=".55" stroke="#3D5249" stroke-width="1.5"/>`;
+
+function waltFloorFigure(){
+  return `<g class="breathe">
+    <path d="M-70 -14 L40 -14 L48 -3 L-70 -3 Z" fill="#6E6453"/>
+    <ellipse cx="52" cy="-6" rx="10" ry="5" fill="#2B2723"/>
+    <path d="M-72 -34 Q-40 -46 0 -40 L40 -30 L36 -12 L-72 -14 Z" fill="#C9B78F" stroke="#8F7F5E" stroke-width="1.5"/>
+    <path d="M-74 -36 Q-96 -30 -100 -20" stroke="#C9B78F" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="-102" cy="-18" r="5.5" fill="#EBC7A2"/>
+    <ellipse cx="-72" cy="-26" rx="16" ry="14" fill="#EBC7A2"/>
+    <path d="M-84 -28 Q-84 -38 -72 -38" stroke="#9C8F7E" stroke-width="3" fill="none"/>
+    <g fill="#C8E6F0" fill-opacity=".2" stroke="#1C1C1C" stroke-width="1.6"><rect x="-82" y="-31" width="9" height="7" rx="2"/><rect x="-70" y="-31" width="9" height="7" rx="2"/></g>
+    <path d="M-66 -12 Q-58 -6 -46 -10" stroke="#8E7F6A" stroke-width="4" fill="none"/>
+  </g>`;
+}
+function waltFigure(pose, fx){
+  fx = fx || [];
+  if (pose === 'floor') return waltFloorFigure();
+  const p = WALT_POSE[pose] || WALT_POSE.stand;
+  const jacketFill = p.suit ? '#232A3D' : '#C9B78F';
+  const jacketStroke = p.suit ? '#141826' : '#8F7F5E';
+  const legFill = p.suit ? '#1B2030' : '#6E6453';
+  const legs = p.legs === 'kneel' ? LEGS_KNEEL(legFill) : LEGS_STAND(legFill);
+  const armL = (ARML[p.armL] || ARML.down)();
+  const armR = (ARMR[p.armR] || ARMR.down)();
+  const tie = p.suit ? `<path d="M-4 -132 L4 -132 L2 -108 L0 -102 L-2 -108 Z" fill="#8E2A2A"/>` : '';
+  const shovel = pose === 'dig' ? SHOVEL : '';
+  const halo = fx.includes('halo') ? '<ellipse cx="0" cy="-187" rx="16" ry="4.5" fill="none" stroke="#F2B45A" stroke-width="2.5"/>' : '';
+  const sweat = fx.includes('sweat') ? '<g><path d="M-22 -178 q4 7 0 10 q-4 -3 0 -10z" fill="#7FD3E8"/><path d="M24 -170 q3 6 0 8 q-3 -2 0 -8z" fill="#7FD3E8"/></g>' : '';
+  return `<g class="breathe">
+    ${legs}
+    <path d="M-27 -58 L-31 -118 Q-31 -130 -18 -132 L18 -132 Q31 -130 31 -118 L27 -58 Z" fill="${jacketFill}" stroke="${jacketStroke}" stroke-width="1.5"/>
+    <path d="M-9 -132 L0 -112 L9 -132 Z" fill="#7F9A6E"/>
+    ${tie}
+    <path d="M0 -112 V-60" stroke="${jacketStroke}" stroke-width="1.5"/>
+    <rect x="-6" y="-141" width="12" height="11" fill="#E6C29D"/>
+    <ellipse cx="0" cy="-157" rx="17" ry="20" fill="#EBC7A2"/>
+    <ellipse cx="-17" cy="-155" rx="3.5" ry="5" fill="#E2BB93"/><ellipse cx="17" cy="-155" rx="3.5" ry="5" fill="#E2BB93"/>
+    <path d="M-16 -164 Q-16 -151 -13 -146 M16 -164 Q16 -151 13 -146" stroke="#9C8F7E" stroke-width="3" fill="none"/>
+    <path d="M-14 -168 L-4 -166 M4 -166 L14 -168" stroke="#5A4E40" stroke-width="2" stroke-linecap="round"/>
+    <g fill="#C8E6F0" fill-opacity=".2" stroke="#1C1C1C" stroke-width="1.8"><rect x="-15" y="-163" width="12" height="8" rx="2"/><rect x="3" y="-163" width="12" height="8" rx="2"/></g>
+    <path d="M-3 -160 H3" stroke="#1C1C1C" stroke-width="1.6"/>
+    <g class="eyes"><circle cx="-9" cy="-159" r="1.5" fill="#1C1C1C"/><circle cx="9" cy="-159" r="1.5" fill="#1C1C1C"/></g>
+    <path d="M0 -155 q2 5 -1 6" stroke="#C99F7A" stroke-width="1.5" fill="none"/>
+    <path d="M-9 -146 Q0 -150 9 -146 L7 -143 Q0 -145 -7 -143 Z" fill="#8E7F6A"/>
+    <path d="M-6 -142 Q0 -139 6 -142 L5 -137 Q0 -130 -5 -137 Z" fill="#8E7F6A"/>
+    ${armL}${armR}${shovel}
+    ${halo}${sweat}
+  </g>`;
+}
+/* ---------- Jesse / Jane: bedroom-specific art (absolute coords, ported from v1) ---------- */
+const JESSE_LIE = `<circle cx="68" cy="184" r="13" fill="#EDC6A0"/><path d="M55 181 Q56 166 68 165 Q80 166 81 181 Z" fill="#7C3434"/><path d="M55 181 H81" stroke="#5E2626" stroke-width="3"/><path d="M61 188 q3 2 6 0 M70 188 q3 2 6 0" stroke="#2A221C" stroke-width="1.6" fill="none"/>`;
+const JANE_BACK = `<circle cx="118" cy="188" r="12" fill="#F0D2B8"/><path d="M105 190 Q103 173 118 173 Q133 173 131 190 L128 183 Q118 177 108 183 Z" fill="#151515"/><path d="M112 190 h5 M121 190 h5" stroke="#2A221C" stroke-width="1.6"/>`;
+const JANE_SIDE = `<circle cx="118" cy="189" r="12" fill="#F0D2B8"/><path d="M108 180 Q118 172 130 180 L133 200 Q124 197 126 186 Q118 180 110 186 Z" fill="#151515"/><path d="M109 191 q3 2 6 0" stroke="#2A221C" stroke-width="1.6" fill="none"/>`;
+const BED_BLANKET = `<path d="M96 204 Q150 192 200 200 Q250 196 282 206 L282 222 Q190 228 94 222 Z" fill="#6C7FA0"/><path d="M100 211 Q180 204 278 213" stroke="#586A89" stroke-width="2" fill="none"/>`;
+const JESSE_SIT = `<rect x="50" y="150" width="38" height="58" rx="12" fill="#D6A536"/><path d="M60 151 Q69 161 78 151" stroke="#B8891F" stroke-width="3" fill="none"/><circle cx="69" cy="134" r="14" fill="#EDC6A0"/><path d="M55 131 Q56 114 69 113 Q82 114 83 131 Z" fill="#7C3434"/><path d="M55 131 H83" stroke="#5E2626" stroke-width="3"/><g class="eyes"><circle cx="64" cy="136" r="2" fill="#2A221C"/><circle cx="74" cy="136" r="2" fill="#2A221C"/></g><ellipse cx="69" cy="143" rx="3.5" ry="2.5" fill="#5A2A22"/>`;
+const JANE_SIT_BODY = `<path d="M104 152 Q101 118 120 116 Q139 118 136 152 Z" fill="#151515"/><rect x="105" y="152" width="30" height="56" rx="11" fill="#3A3A48"/><circle cx="120" cy="134" r="13" fill="#F0D2B8"/><path d="M107 132 Q107 118 120 118 Q133 118 133 132 L129 127 Q120 122 111 127 Z" fill="#151515"/>`;
+const JANE_FACE_SCREAM = `<circle cx="115" cy="134" r="2.6" fill="#fff"/><circle cx="115" cy="134" r="1.2" fill="#2A221C"/><circle cx="125" cy="134" r="2.6" fill="#fff"/><circle cx="125" cy="134" r="1.2" fill="#2A221C"/><ellipse cx="120" cy="142" rx="3.5" ry="4.5" fill="#5A2A22"/><path class="shake" d="M140 118 l10 -8 M143 128 l13 -2 M141 138 l11 5" stroke="#F2B45A" stroke-width="2.5" stroke-linecap="round"/>`;
+const JANE_FACE_GLARE = `<path d="M111 134 h7 M122 134 h7" stroke="#2A221C" stroke-width="2.2" stroke-linecap="round"/><path d="M111 129 l7 2.5 M129 129 l-7 2.5" stroke="#2A221C" stroke-width="1.8"/><path d="M116 142 h8" stroke="#5A2A22" stroke-width="2"/>`;
+
+function bedroomCastSVG(cast){
+  let out = '';
+  if (cast.jesse === 'lie') out += JESSE_LIE;
+  if (cast.jane === 'back') out += JANE_BACK;
+  if (cast.jane === 'side') out += JANE_SIDE;
+  out += BED_BLANKET;
+  if (cast.jesse === 'sit') out += JESSE_SIT;
+  if (cast.jane === 'sit-scream') out += JANE_SIT_BODY + JANE_FACE_SCREAM;
+  if (cast.jane === 'sit-glare') out += JANE_SIT_BODY + JANE_FACE_GLARE;
+  return out;
+}
+
+/* ---------- generic standing figures (non-bedroom sets) ---------- */
+function jesseStandFigure(){
+  return `<g class="breathe">
+    ${LEGS_STAND('#4A4A52')}
+    <rect x="-19" y="-118" width="38" height="60" rx="6" fill="#D6A536" stroke="#B8891F" stroke-width="1.5"/>
+    <circle cx="0" cy="-131" r="14" fill="#EDC6A0"/>
+    <path d="M-14 -134 Q-13 -151 0 -152 Q13 -151 14 -134 Z" fill="#7C3434"/>
+    <path d="M-14 -134 H14" stroke="#5E2626" stroke-width="3"/>
+    <g class="eyes"><circle cx="-5" cy="-129" r="2" fill="#2A221C"/><circle cx="5" cy="-129" r="2" fill="#2A221C"/></g>
+    <ellipse cx="0" cy="-122" rx="3.5" ry="2.5" fill="#5A2A22"/>
+    <path d="M-19 -108 Q-30 -90 -28 -64" stroke="#D6A536" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="-28" cy="-60" r="5.5" fill="#EDC6A0"/>
+    <path d="M19 -108 Q30 -90 28 -64" stroke="#D6A536" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="28" cy="-60" r="5.5" fill="#EDC6A0"/>
+  </g>`;
+}
+function jesseRunFigure(){
+  return `<g class="breathe">
+    <path d="M-14 -60 L-30 -10" stroke="#4A4A52" stroke-width="12" stroke-linecap="round"/>
+    <path d="M10 -60 L26 -108" stroke="#4A4A52" stroke-width="12" stroke-linecap="round"/>
+    <ellipse cx="-32" cy="-4" rx="9" ry="4" fill="#2B2723"/><ellipse cx="28" cy="-112" rx="9" ry="4" fill="#2B2723"/>
+    <rect x="-19" y="-118" width="38" height="60" rx="6" fill="#D6A536" stroke="#B8891F" stroke-width="1.5"/>
+    <circle cx="0" cy="-131" r="14" fill="#EDC6A0"/>
+    <path d="M-14 -134 Q-13 -151 0 -152 Q13 -151 14 -134 Z" fill="#7C3434"/>
+    <path d="M-14 -134 H14" stroke="#5E2626" stroke-width="3"/>
+    <g class="eyes"><circle cx="-5" cy="-129" r="2" fill="#2A221C"/><circle cx="5" cy="-129" r="2" fill="#2A221C"/></g>
+    <ellipse cx="0" cy="-122" rx="3.5" ry="2.5" fill="#5A2A22"/>
+    <path d="M-19 -108 Q-38 -102 -44 -84" stroke="#D6A536" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="-44" cy="-80" r="5.5" fill="#EDC6A0"/>
+    <path d="M19 -108 Q36 -118 32 -140" stroke="#D6A536" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="32" cy="-144" r="5.5" fill="#EDC6A0"/>
+  </g>`;
+}
+function jesseChainedFigure(){
+  return `<g class="breathe">
+    ${LEGS_STAND('#8A8F9C')}
+    <rect x="-19" y="-118" width="38" height="60" rx="6" fill="#8A8F9C" stroke="#5E626E" stroke-width="1.5"/>
+    <rect x="-19" y="-100" width="38" height="4" fill="#5E626E"/>
+    <circle cx="0" cy="-131" r="14" fill="#EDC6A0"/>
+    <path d="M-14 -134 Q-13 -151 0 -152 Q13 -151 14 -134 Z" fill="#7C3434"/>
+    <path d="M-14 -134 H14" stroke="#5E2626" stroke-width="3"/>
+    <path d="M-10 -122 Q0 -114 10 -122 L9 -117 Q0 -110 -9 -117 Z" fill="#6B4A3A"/>
+    <g class="eyes"><circle cx="-5" cy="-131" r="2" fill="#2A221C"/><circle cx="5" cy="-131" r="2" fill="#2A221C"/></g>
+    <path d="M-19 -108 Q-26 -92 -14 -74" stroke="#8A8F9C" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="-12" cy="-72" r="5.5" fill="#EDC6A0"/>
+    <path d="M19 -108 Q26 -92 14 -74" stroke="#8A8F9C" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="12" cy="-72" r="5.5" fill="#EDC6A0"/>
+    <path d="M-12 -70 Q0 -62 12 -70" stroke="#EEF0E6" stroke-width="2.5" stroke-dasharray="4 3" fill="none"/>
+  </g>`;
+}
+function jesseDriveFigure(){
+  return `<g class="breathe">
+    <rect x="-30" y="-40" width="60" height="40" rx="8" fill="#4A4A52"/>
+    <rect x="-24" y="-92" width="30" height="56" rx="8" fill="#D6A536" stroke="#B8891F" stroke-width="1.5"/>
+    <circle cx="-6" cy="-105" r="13" fill="#EDC6A0"/>
+    <path d="M-19 -108 Q-18 -123 -6 -124 Q6 -123 7 -108 Z" fill="#7C3434"/>
+    <path d="M-19 -108 H7" stroke="#5E2626" stroke-width="3"/>
+    <g class="eyes"><circle cx="-1" cy="-104" r="2" fill="#2A221C"/><circle cx="7" cy="-104" r="2" fill="#2A221C"/></g>
+    <path d="M-10 -78 Q10 -72 26 -84" stroke="#D6A536" stroke-width="10" stroke-linecap="round" fill="none"/>
+    <circle cx="32" cy="-84" r="18" fill="none" stroke="#1C1C1C" stroke-width="4"/>
+    <circle cx="32" cy="-84" r="3" fill="#1C1C1C"/>
+  </g>`;
+}
+function jesseFigure(pose){
+  if (pose === 'run') return jesseRunFigure();
+  if (pose === 'chained') return jesseChainedFigure();
+  if (pose === 'drive') return jesseDriveFigure();
+  return jesseStandFigure();
+}
+/* ---------- Mike: bald, grey stubble, tan jacket, stern ---------- */
+function mikeFigure(){
+  return `<g class="breathe">
+    ${LEGS_STAND('#3A362E')}
+    <path d="M-18 -108 Q0 -116 18 -108 L20 -56 L-20 -56 Z" fill="#B79A6E"/>
+    <circle cx="0" cy="-126" r="13" fill="#D9A97C"/>
+    <path d="M-12 -118 Q0 -112 12 -118 L11 -122 Q0 -117 -11 -122 Z" fill="#9C948A" fill-opacity=".8"/>
+    <g class="eyes"><circle cx="-5" cy="-127" r="1.6" fill="#2A221C"/><circle cx="5" cy="-127" r="1.6" fill="#2A221C"/></g>
+    <path d="M-9 -137 h6 M3 -137 h6" stroke="#2A221C" stroke-width="2"/>
+    <path d="M-4 -117 h8" stroke="#5A2A22" stroke-width="1.6"/>
+    <path d="M-18 -104 Q-27 -90 -25 -66" stroke="#B79A6E" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="-25" cy="-62" r="5" fill="#D9A97C"/>
+    <path d="M18 -104 Q27 -90 25 -66" stroke="#B79A6E" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="25" cy="-62" r="5" fill="#D9A97C"/>
+  </g>`;
+}
+/* ---------- Gale: glasses, short beard, sweater vest ---------- */
+function galeFigure(){
+  return `<g class="breathe">
+    ${LEGS_STAND('#4A4238')}
+    <path d="M-16 -106 Q0 -114 16 -106 L18 -56 L-18 -56 Z" fill="#8F7A5E"/>
+    <path d="M-13 -106 Q0 -110 13 -106 L11 -78 Q0 -74 -11 -78 Z" fill="#EEF0E6"/>
+    <circle cx="0" cy="-124" r="12.5" fill="#E6C29D"/>
+    <path d="M-12 -128 Q-13 -140 0 -141 Q13 -140 12 -128 Q12 -120 8 -116 Q10 -130 0 -132 Q-10 -130 -8 -116 Q-12 -120 -12 -128 Z" fill="#6B5540"/>
+    <path d="M-11 -119 Q0 -113 11 -119 L10 -113 Q0 -109 -10 -113 Z" fill="#6B5540"/>
+    <g stroke="#2A221C" stroke-width="1.6" fill="none"><circle cx="-5" cy="-124" r="4.5"/><circle cx="5" cy="-124" r="4.5"/><line x1="-0.5" y1="-124" x2="0.5" y2="-124"/></g>
+    <g class="eyes"><circle cx="-5" cy="-124" r="1.4" fill="#2A221C"/><circle cx="5" cy="-124" r="1.4" fill="#2A221C"/></g>
+    <path d="M-16 -102 Q-25 -88 -23 -64" stroke="#8F7A5E" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="-23" cy="-60" r="5" fill="#E6C29D"/>
+    <path d="M16 -102 Q25 -88 23 -64" stroke="#8F7A5E" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="23" cy="-60" r="5" fill="#E6C29D"/>
+  </g>`;
+}
+/* ---------- Krazy-8: short dark hair, goatee, tank top ---------- */
+function krazy8Figure(pose){
+  if (pose === 'chained'){
+    return `<g class="breathe">
+      <rect x="-22" y="-58" width="44" height="30" rx="6" fill="#4A4A52"/>
+      <rect x="-16" y="-90" width="32" height="36" rx="8" fill="#D9D2C3"/>
+      <circle cx="0" cy="-104" r="13" fill="#C99163"/>
+      <path d="M-13 -110 Q-14 -122 0 -123 Q14 -122 13 -110 Q13 -104 9 -100 Q11 -114 0 -116 Q-11 -114 -9 -100 Q-13 -104 -13 -110 Z" fill="#221E1A"/>
+      <path d="M-8 -95 Q0 -90 8 -95 L7 -90 Q0 -87 -7 -90 Z" fill="#221E1A"/>
+      <g class="eyes"><circle cx="-5" cy="-104" r="1.6" fill="#2A221C"/><circle cx="5" cy="-104" r="1.6" fill="#2A221C"/></g>
+      <path d="M-4 -95 h8" stroke="#5A2A22" stroke-width="1.6"/>
+      <path d="M-16 -80 Q-30 -74 -34 -64" stroke="#8A8378" stroke-width="4" stroke-linecap="round" fill="none"/>
+      <path d="M-16 -84 Q-8 -70 -20 -60" stroke="#6E6A62" stroke-width="3" stroke-linecap="round" fill="none"/>
+    </g>`;
+  }
+  return `<g class="breathe">
+    ${LEGS_STAND('#4A4A52')}
+    <rect x="-16" y="-110" width="32" height="52" rx="5" fill="#D9D2C3"/>
+    <circle cx="0" cy="-124" r="13" fill="#C99163"/>
+    <path d="M-13 -130 Q-14 -142 0 -143 Q14 -142 13 -130 Q13 -124 9 -120 Q11 -134 0 -136 Q-11 -134 -9 -120 Q-13 -124 -13 -130 Z" fill="#221E1A"/>
+    <path d="M-8 -115 Q0 -110 8 -115 L7 -110 Q0 -107 -7 -110 Z" fill="#221E1A"/>
+    <g class="eyes"><circle cx="-5" cy="-124" r="1.6" fill="#2A221C"/><circle cx="5" cy="-124" r="1.6" fill="#2A221C"/></g>
+    <path d="M-4 -115 h8" stroke="#5A2A22" stroke-width="1.6"/>
+    <path d="M-16 -108 Q-24 -90 -22 -64" stroke="#C99163" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="-22" cy="-60" r="5" fill="#C99163"/>
+    <path d="M16 -108 Q24 -90 22 -64" stroke="#C99163" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="22" cy="-60" r="5" fill="#C99163"/>
+  </g>`;
+}
+/* ---------- Badger: beanie, scruffy beard, slouch ---------- */
+function badgerFigure(){
+  return `<g class="breathe" transform="translate(0,3)">
+    ${LEGS_STAND('#5A5248')}
+    <path d="M-17 -100 Q0 -106 17 -100 L19 -54 L-19 -54 Z" fill="#6E7A5E"/>
+    <circle cx="0" cy="-116" r="13" fill="#D9A97C"/>
+    <path d="M-14 -120 Q-15 -134 0 -136 Q15 -134 14 -120 Q14 -126 0 -128 Q-14 -126 -14 -120 Z" fill="#4A4A52"/>
+    <path d="M-8 -108 Q0 -103 8 -108 L7 -102 Q0 -99 -7 -102 Z" fill="#8F7A5E"/>
+    <g class="eyes"><circle cx="-5" cy="-116" r="1.6" fill="#2A221C"/><circle cx="5" cy="-116" r="1.6" fill="#2A221C"/></g>
+    <path d="M-17 -96 Q-26 -82 -24 -60" stroke="#6E7A5E" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="-24" cy="-56" r="5" fill="#D9A97C"/>
+    <path d="M17 -96 Q26 -82 24 -60" stroke="#6E7A5E" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="24" cy="-56" r="5" fill="#D9A97C"/>
+  </g>`;
+}
+/* ---------- Declan: cap, puffer vest ---------- */
+function declanFigure(){
+  return `<g class="breathe">
+    ${LEGS_STAND('#3E362E')}
+    <path d="M-18 -106 Q0 -114 18 -106 L20 -56 L-20 -56 Z" fill="#8F7F5E"/>
+    <g fill="#6E6453"><rect x="-16" y="-104" width="32" height="10" rx="3"/><rect x="-16" y="-90" width="32" height="10" rx="3"/><rect x="-16" y="-76" width="32" height="10" rx="3"/></g>
+    <circle cx="0" cy="-122" r="13" fill="#E6C29D"/>
+    <path d="M-15 -128 Q0 -138 15 -128 L15 -120 Q0 -126 -15 -120 Z" fill="#2A2A2A"/>
+    <path d="M-15 -122 Q0 -119 15 -122" stroke="#2A2A2A" stroke-width="3" fill="none"/>
+    <g class="eyes"><circle cx="-5" cy="-121" r="1.6" fill="#2A221C"/><circle cx="5" cy="-121" r="1.6" fill="#2A221C"/></g>
+    <path d="M-4 -112 h8" stroke="#5A2A22" stroke-width="1.6"/>
+    <path d="M-18 -102 Q-27 -88 -25 -64" stroke="#8F7F5E" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="-25" cy="-60" r="5" fill="#E6C29D"/>
+    <path d="M18 -102 Q27 -88 25 -64" stroke="#8F7F5E" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="25" cy="-60" r="5" fill="#E6C29D"/>
+  </g>`;
+}
+/* ---------- Jack: buzz cut, goatee, denim, tattoos suggested by a few lines ---------- */
+function jackFigure(){
+  return `<g class="breathe">
+    ${LEGS_STAND('#3E5878')}
+    <path d="M-18 -108 Q0 -116 18 -108 L20 -56 L-20 -56 Z" fill="#3E5878"/>
+    <circle cx="0" cy="-126" r="13" fill="#E0AD82"/>
+    <path d="M-12 -136 Q0 -140 12 -136 Q12 -130 8 -127 Q10 -134 0 -135 Q-10 -134 -8 -127 Q-12 -130 -12 -136 Z" fill="#8F8578"/>
+    <path d="M-8 -117 Q0 -113 8 -117 L7 -113 Q0 -110 -7 -113 Z" fill="#4A4238"/>
+    <g class="eyes"><circle cx="-5" cy="-127" r="1.6" fill="#2A221C"/><circle cx="5" cy="-127" r="1.6" fill="#2A221C"/></g>
+    <path d="M-4 -118 h8" stroke="#5A2A22" stroke-width="1.6"/>
+    <path d="M-18 -104 Q-27 -90 -25 -66" stroke="#3E5878" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="-25" cy="-62" r="5" fill="#E0AD82"/>
+    <path d="M18 -104 Q27 -90 25 -66" stroke="#3E5878" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="25" cy="-62" r="5" fill="#E0AD82"/>
+    <path d="M-25 -78 l6 8 M-27 -70 l6 8" stroke="#1C1C1C" stroke-width="1.2" opacity=".6"/>
+  </g>`;
+}
+function janeStandFigure(){
+  return `<g class="breathe">
+    ${LEGS_STAND('#3A3A48')}
+    <path d="M-17 -108 Q0 -116 17 -108 L20 -56 L-20 -56 Z" fill="#5B5B72"/>
+    <circle cx="0" cy="-124" r="13" fill="#F0D2B8"/>
+    <path d="M-13 -126 Q-13 -144 0 -145 Q13 -144 13 -126 L9 -132 Q0 -136 -9 -132 Z" fill="#151515"/>
+    <path d="M-13 -122 Q-14 -100 -8 -92 M13 -122 Q14 -100 8 -92" fill="#151515"/>
+    <g class="eyes"><circle cx="-5" cy="-122" r="1.6" fill="#2A221C"/><circle cx="5" cy="-122" r="1.6" fill="#2A221C"/></g>
+    <path d="M-2 -113 h4" stroke="#5A2A22" stroke-width="1.6"/>
+    <path d="M-17 -104 Q-26 -88 -24 -64" stroke="#3A3A48" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="-24" cy="-60" r="5" fill="#F0D2B8"/>
+    <path d="M17 -104 Q26 -88 24 -64" stroke="#3A3A48" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="24" cy="-60" r="5" fill="#F0D2B8"/>
+  </g>`;
+}
+/* ---------- Skyler: auburn wavy hair, blouse / blazer ---------- */
+function skylerSitFigure(){
+  return `<g class="breathe">
+    <rect x="-22" y="-32" width="44" height="32" rx="6" fill="#463A4A"/>
+    <path d="M-16 -70 Q0 -80 16 -70 L18 -32 L-18 -32 Z" fill="#B8637A"/>
+    <circle cx="0" cy="-88" r="13" fill="#F0D2B8"/>
+    <path d="M-14 -90 Q-16 -110 0 -112 Q16 -110 14 -90 Q14 -72 9 -62 Q13 -84 4 -98 Q-4 -84 -9 -62 Q-14 -72 -14 -90 Z" fill="#8A3F26"/>
+    <g class="eyes"><circle cx="-5" cy="-86" r="1.6" fill="#2A221C"/><circle cx="5" cy="-86" r="1.6" fill="#2A221C"/></g>
+    <path d="M-3 -76 h6" stroke="#5A2A22" stroke-width="1.6"/>
+    <path d="M-16 -66 Q-4 -50 8 -52" stroke="#B8637A" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <path d="M16 -66 Q4 -50 -6 -52" stroke="#B8637A" stroke-width="9" stroke-linecap="round" fill="none"/>
+    <circle cx="0" cy="-51" r="4.5" fill="#F0D2B8"/>
+  </g>`;
+}
+function skylerFigure(pose){
+  if (pose === 'sit') return skylerSitFigure();
+  const blazer = pose === 'ceo';
+  const torsoFill = blazer ? '#5C4A63' : '#B8637A';
+  const laptop = pose === 'spreadsheet' ? `<g transform="translate(20 -76)"><rect x="-4" y="-4" width="30" height="20" rx="2" fill="#3D5249" stroke="#EEF0E6" stroke-width="1.2"/><rect x="-2" y="14" width="26" height="4" rx="1" fill="#8F7F5E"/></g>` : '';
+  return `<g class="breathe">
+    ${LEGS_STAND(blazer ? '#3A2F3F' : '#463A4A')}
+    <path d="M-17 -108 Q0 -118 17 -108 L20 -56 L-20 -56 Z" fill="${torsoFill}"/>
+    <circle cx="0" cy="-126" r="13" fill="#F0D2B8"/>
+    <path d="M-14 -128 Q-16 -148 0 -150 Q16 -148 14 -128 Q14 -110 9 -100 Q13 -122 4 -136 Q-4 -122 -9 -100 Q-14 -110 -14 -128 Z" fill="#8A3F26"/>
+    <g class="eyes"><circle cx="-5" cy="-124" r="1.6" fill="#2A221C"/><circle cx="5" cy="-124" r="1.6" fill="#2A221C"/></g>
+    <path d="M-3 -114 h6" stroke="#5A2A22" stroke-width="1.6"/>
+    <path d="M-17 -104 Q-27 -90 -25 -66" stroke="${torsoFill}" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="-25" cy="-62" r="5" fill="#F0D2B8"/>
+    <path d="M17 -104 Q27 -90 25 -66" stroke="${torsoFill}" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="25" cy="-62" r="5" fill="#F0D2B8"/>
+    ${laptop}
+  </g>`;
+}
+
+/* ---------- Hank: bald, goatee, broad, polo ---------- */
+function hankFigure(pose){
+  if (pose === 'read'){
+    return `<g class="breathe">
+      <rect x="-16" y="-40" width="32" height="40" rx="3" fill="#3E5249"/>
+      <path d="M-18 -80 Q0 -88 18 -80 L20 -40 L-20 -40 Z" fill="#4A6A4E"/>
+      <circle cx="0" cy="-96" r="14" fill="#E2B48C"/>
+      <path d="M-14 -84 Q-16 -80 -10 -76 Q0 -72 10 -76 Q16 -80 14 -84 Z" fill="#C99A73"/>
+      <g class="eyes"><circle cx="-5" cy="-97" r="1.7" fill="#2A221C"/><circle cx="5" cy="-97" r="1.7" fill="#2A221C"/></g>
+      <path d="M-18 -64 Q-8 -50 8 -56" stroke="#4A6A4E" stroke-width="10" stroke-linecap="round" fill="none"/>
+      <path d="M18 -64 Q8 -50 -8 -56" stroke="#4A6A4E" stroke-width="10" stroke-linecap="round" fill="none"/>
+      <rect x="-14" y="-56" width="28" height="18" rx="1" fill="#EEF0E6" stroke="#5E7268" stroke-width="1"/>
+      <path d="M0 -56 V-38" stroke="#5E7268" stroke-width="1"/>
+    </g>`;
+  }
+  const armsPose = pose === 'laugh'
+    ? `<path d="M-20 -100 Q-32 -90 -30 -78" stroke="#4A6A4E" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="-30" cy="-74" r="5.5" fill="#E2B48C"/>
+       <path d="M20 -100 Q32 -90 30 -78" stroke="#4A6A4E" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="30" cy="-74" r="5.5" fill="#E2B48C"/>`
+    : `<path d="M-20 -98 Q-6 -88 4 -96" stroke="#4A6A4E" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="5" cy="-97" r="5.5" fill="#E2B48C"/>
+       <path d="M20 -98 Q6 -88 -4 -96" stroke="#4A6A4E" stroke-width="11" stroke-linecap="round" fill="none"/><circle cx="-5" cy="-97" r="5.5" fill="#E2B48C"/>`;
+  const mouth = pose === 'laugh' ? `<path d="M-6 -118 Q0 -110 6 -118" stroke="#5A2A22" stroke-width="2" fill="none"/>` : `<path d="M-5 -119 h10" stroke="#5A2A22" stroke-width="2"/>`;
+  const brow = pose === 'suspicious' ? `<path d="M-11 -140 l8 3 M11 -140 l-8 3" stroke="#2A221C" stroke-width="2"/>` : '';
+  return `<g class="breathe">
+    ${LEGS_STAND('#33422F')}
+    <path d="M-20 -112 Q0 -120 20 -112 L22 -54 L-22 -54 Z" fill="#4A6A4E"/>
+    <circle cx="0" cy="-130" r="14" fill="#E2B48C"/>
+    <path d="M-14 -118 Q-16 -108 -10 -104 Q0 -100 10 -104 Q16 -108 14 -118 Z" fill="#C99A73"/>
+    <g class="eyes"><circle cx="-5" cy="-131" r="1.7" fill="#2A221C"/><circle cx="5" cy="-131" r="1.7" fill="#2A221C"/></g>
+    ${brow}${mouth}
+    ${armsPose}
+  </g>`;
+}
+
+/* ---------- Saul: comb-over, loud patterned suit, bright tie ---------- */
+function saulFigure(pose){
+  const armsPose = pose === 'pitch'
+    ? `<path d="M-18 -106 Q-34 -100 -40 -88" stroke="#5A3A6B" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="-41" cy="-84" r="5" fill="#E6C29D"/>
+       <path d="M18 -106 Q34 -100 40 -88" stroke="#5A3A6B" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="41" cy="-84" r="5" fill="#E6C29D"/>`
+    : `<path d="M-18 -104 Q-26 -86 -24 -64" stroke="#5A3A6B" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="-24" cy="-60" r="5" fill="#E6C29D"/>
+       <path d="M18 -104 Q26 -86 24 -64" stroke="#5A3A6B" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="24" cy="-60" r="5" fill="#E6C29D"/>`;
+  return `<g class="breathe">
+    ${LEGS_STAND('#3E2A4A')}
+    <path d="M-18 -110 Q0 -118 18 -110 L20 -56 L-20 -56 Z" fill="#6B4A80"/>
+    <path d="M-4 -110 L4 -110 L2 -80 L0 -74 L-2 -80 Z" fill="#F2B45A"/>
+    <circle cx="0" cy="-124" r="12.5" fill="#E6C29D"/>
+    <path d="M-12 -132 Q0 -138 12 -132 Q6 -136 0 -135 Q-6 -136 -12 -132 Z" fill="#6B5A45"/>
+    <g class="eyes"><circle cx="-5" cy="-124" r="1.6" fill="#2A221C"/><circle cx="5" cy="-124" r="1.6" fill="#2A221C"/></g>
+    <path d="M-4 -115 h8" stroke="#5A2A22" stroke-width="1.6"/>
+    ${armsPose}
+  </g>`;
+}
+
+/* ---------- Lydia: blonde tight bun, grey business suit ---------- */
+function lydiaFigure(pose){
+  const shake = pose === 'panic' ? ' shake' : '';
+  return `<g class="breathe${shake}">
+    ${LEGS_STAND('#4A4E58')}
+    <path d="M-15 -108 Q0 -116 15 -108 L17 -56 L-17 -56 Z" fill="#8A8F9C"/>
+    <circle cx="0" cy="-124" r="12" fill="#EFCBA8"/>
+    <circle cx="0" cy="-142" r="6" fill="#D8B75E"/>
+    <path d="M-12 -128 Q-13 -138 0 -140 Q13 -138 12 -128 Q12 -120 8 -114" fill="#D8B75E"/>
+    <g class="eyes"><circle cx="-5" cy="-124" r="1.5" fill="#2A221C"/><circle cx="5" cy="-124" r="1.5" fill="#2A221C"/></g>
+    <path d="M-3 -115 h6" stroke="#5A2A22" stroke-width="1.6"/>
+    <path d="M-15 -104 Q-24 -90 -22 -66" stroke="#8A8F9C" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="-22" cy="-62" r="4.5" fill="#EFCBA8"/>
+    <path d="M15 -104 Q24 -90 22 -66" stroke="#8A8F9C" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="22" cy="-62" r="4.5" fill="#EFCBA8"/>
+  </g>`;
+}
+
+/* ---------- Elliott: short beard, sweater ---------- */
+function elliottFigure(pose){
+  const arms = pose === 'shock'
+    ? `<path d="M-17 -104 Q-28 -118 -24 -136" stroke="#4A6A78" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="-24" cy="-140" r="5" fill="#E6C29D"/>
+       <path d="M17 -104 Q28 -118 24 -136" stroke="#4A6A78" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="24" cy="-140" r="5" fill="#E6C29D"/>`
+    : `<path d="M-17 -102 Q-26 -86 -24 -64" stroke="#4A6A78" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="-24" cy="-60" r="5" fill="#E6C29D"/>
+       <path d="M17 -102 Q26 -86 24 -64" stroke="#4A6A78" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="24" cy="-60" r="5" fill="#E6C29D"/>`;
+  return `<g class="breathe">
+    ${LEGS_STAND('#4A4238')}
+    <path d="M-16 -106 Q0 -114 16 -106 L18 -56 L-18 -56 Z" fill="#4A6A78"/>
+    <circle cx="0" cy="-122" r="12.5" fill="#E6C29D"/>
+    <path d="M-12 -114 Q0 -108 12 -114 L11 -119 Q0 -113 -11 -119 Z" fill="#6B5540"/>
+    <path d="M-12 -128 Q-13 -138 0 -139 Q13 -138 12 -128" fill="#6B5540"/>
+    <g class="eyes"><circle cx="-5" cy="-124" r="1.5" fill="#2A221C"/><circle cx="5" cy="-124" r="1.5" fill="#2A221C"/></g>
+    ${arms}
+  </g>`;
+}
+
+/* ---------- shared humanoid builder for the newer cast (judge, todd, Matrix) ---------- */
+const SEAT_LEGS = c => `<rect x="-26" y="-22" width="46" height="8" rx="2" fill="#4A3F33"/><rect x="-18" y="-36" width="46" height="14" rx="6" fill="${c}"/><rect x="16" y="-36" width="12" height="36" rx="4" fill="${c}"/><ellipse cx="26" cy="-1" rx="10" ry="4" fill="#2B2723"/>`;
+const ARM_SHAPES = {
+  down:  [17,-104, 26,-88, 24,-64],
+  stiff: [18,-104, 19,-84, 20,-64],
+  reach: [17,-104, 40,-100, 58,-96],
+  up:    [17,-104, 34,-120, 28,-142],
+  guard: [17,-104, 36,-96, 24,-122],
+  wide:  [17,-104, 40,-96, 54,-80],
+  lap:   [17,-104, 26,-84, 10,-66]
+};
+function arm(side, kind, col, hand, w){
+  const s = side === 'L' ? -1 : 1, a = ARM_SHAPES[kind] || ARM_SHAPES.down;
+  return `<path d="M${s*a[0]} ${a[1]} Q${s*a[2]} ${a[3]} ${s*a[4]} ${a[5]}" stroke="${col}" stroke-width="${w || 10}" stroke-linecap="round" fill="none"/><circle cx="${s*a[4]}" cy="${a[5]+3}" r="5" fill="${hand}"/>`;
+}
+const armsBoth = (kind, col, hand, w) => arm('L', kind, col, hand, w) + arm('R', kind, col, hand, w);
+const coatT = (f, s, bot) => { bot = bot === undefined ? -14 : bot; const hw = bot === -14 ? 27 : 21;
+  return `<path d="M-19 -108 Q0 -116 19 -108 L${hw} ${bot} L${-hw} ${bot} Z" fill="${f}" stroke="${s}" stroke-width="1.5"/><path d="M0 -110 V${bot}" stroke="${s}" stroke-width="1.5"/>`; };
+const suitT = (f, shirt, tie) => `<path d="M-18 -108 Q0 -116 18 -108 L20 -56 L-20 -56 Z" fill="${f}"/><path d="M-8 -110 L0 -90 L8 -110 Z" fill="${shirt}"/>${tie ? `<path d="M-2 -108 L2 -108 L1.5 -82 L0 -78 L-1.5 -82 Z" fill="${tie}"/>` : ''}`;
+const shirtT = f => `<path d="M-17 -108 Q0 -116 17 -108 L20 -56 L-20 -56 Z" fill="${f}"/>`;
+const SUNG = '<g fill="#0A0A0A"><rect x="-11" y="-128" width="10" height="6" rx="2.5"/><rect x="1" y="-128" width="10" height="6" rx="2.5"/></g><path d="M-1 -126 h2" stroke="#0A0A0A" stroke-width="1.5"/>';
+const PINCE = '<g fill="#0A0A0A" fill-opacity=".85" stroke="#C9B78F" stroke-width="1"><circle cx="-5" cy="-124" r="4.6"/><circle cx="5" cy="-124" r="4.6"/></g><path d="M-1 -124 h2" stroke="#C9B78F" stroke-width="1"/>';
+const CLEARGL = '<g fill="#C8E6F0" fill-opacity=".25" stroke="#2A221C" stroke-width="1.4"><circle cx="-5" cy="-124" r="4.6"/><circle cx="5" cy="-124" r="4.6"/></g><path d="M-0.5 -124 h1" stroke="#2A221C" stroke-width="1.2"/>';
+const HAIR_SHORT = c => `<path d="M-13 -128 Q-14 -142 0 -142 Q14 -142 13 -128 Q8 -134 0 -134 Q-8 -134 -13 -128 Z" fill="${c}"/>`;
+const SMILE = '<path d="M-6 -117 Q0 -108 6 -117" stroke="#5A2A22" stroke-width="2" fill="none"/>';
+function person(c){
+  const eyes = (c.glasses && !c.keepEyes) ? '' : `<g class="eyes"><circle cx="-5" cy="-124" r="1.6" fill="#2A221C"/><circle cx="5" cy="-124" r="1.6" fill="#2A221C"/></g>`;
+  const upper = `${c.torso}<circle cx="0" cy="-124" r="${c.hr || 13}" fill="${c.skin}"/>${c.hair || ''}${eyes}${c.glasses || ''}${c.mouth || '<path d="M-3 -115 h6" stroke="#5A2A22" stroke-width="1.6"/>'}${c.armL || ''}${c.armR || ''}${c.extra || ''}`;
+  if (c.sit) return `<g class="breathe">${SEAT_LEGS(c.legCol || '#2B3138')}${c.pre || ''}<g transform="translate(0 24)">${upper}</g>${c.post || ''}</g>`;
+  return `<g class="breathe${c.shake ? ' shake' : ''}">${LEGS_STAND(c.legCol || '#2B3138')}${c.pre || ''}${upper}</g>`;
+}
+const lying = (inner, dx, dy) => `<g transform="translate(${dx} ${dy}) rotate(-90)">${inner}</g>`;
+
+/* ---------- BB additions: judge, Todd ---------- */
+function judgeFigure(){
+  return person({sit:true, skin:'#E6C29D', torso:shirtT('#1E1E24'), legCol:'#1E1E24',
+    hair:`<path d="M-13 -128 Q-14 -141 0 -142 Q14 -141 13 -128 Q9 -133 0 -134 Q-9 -133 -13 -128 Z" fill="#B8B8B0"/>`,
+    glasses:CLEARGL, keepEyes:true,
+    extra:`<path d="M-8 -108 L0 -94 L8 -108" stroke="#EEF0E6" stroke-width="2" fill="none"/>`,
+    armL:arm('L','lap','#1E1E24','#E6C29D'),
+    armR:arm('R','reach','#1E1E24','#E6C29D') + `<rect x="60" y="-100" width="5" height="16" rx="1" fill="#8F7F5E"/><rect x="54" y="-104" width="17" height="8" rx="2" fill="#6E5236"/>`});
+}
+function toddFigure(){
+  return person({skin:'#EFCBA8', torso:shirtT('#4F6B5A'), legCol:'#9A8A6A', hair:HAIR_SHORT('#C9A86A'),
+    mouth:'<path d="M-4 -115 Q0 -111 4 -115" stroke="#5A2A22" stroke-width="1.6" fill="none"/>',
+    armL:arm('L','down','#4F6B5A','#EFCBA8'), armR:arm('R','down','#4F6B5A','#EFCBA8')});
+}
+
+/* ---------- Matrix cast: flat caricatures drawn from scratch ---------- */
+const N_SKIN = '#E6BE98', N_HAIR = '#1E1A1A', BLK = '#14181A', BLKS = '#2F6B3E';
+function neoFigure(pose){
+  const shirt = '#3A4A48', base = {skin:N_SKIN, hair:HAIR_SHORT(N_HAIR)};
+  const coatArms = k => armsBoth(k, BLK, N_SKIN);
+  switch (pose){
+    case 'sit':   return person({...base, sit:true, torso:shirtT(shirt), armL:arm('L','lap',shirt,N_SKIN), armR:arm('R','lap',shirt,N_SKIN)});
+    case 'coat':  return person({...base, torso:coatT(BLK,BLKS), glasses:SUNG, legCol:'#0E1112', armL:coatArms('down')});
+    case 'fight': return person({...base, torso:coatT(BLK,BLKS), glasses:SUNG, legCol:'#0E1112', armL:coatArms('guard'),
+                    extra:'<path d="M-40 -100 l-14 -4 M-42 -90 l-16 2 M40 -60 l14 4" stroke="#B8F5C4" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>'});
+    case 'rain':  return person({...base, torso:coatT('#1B2022',BLKS) + '<path d="M-27 -14 l6 -8 l5 8 l7 -9 l6 9 l7 -8 l6 8 l7 -9 l6 9 l5 -8" stroke="#0A0D0E" stroke-width="2" fill="none"/>',
+                    hair:`${HAIR_SHORT(N_HAIR)}<path d="M-10 -128 l-2 10 M0 -128 l0 8 M10 -128 l2 10" stroke="${N_HAIR}" stroke-width="3" stroke-linecap="round"/>`,
+                    legCol:'#0E1112', mouth:'<path d="M-4 -114 Q0 -117 4 -114" stroke="#5A2A22" stroke-width="1.6" fill="none"/>', armL:coatArms('down')});
+    case 'blind': return person({...base, torso:coatT(BLK,BLKS), legCol:'#0E1112', armL:coatArms('down'),
+                    glasses:'<rect x="-14" y="-129" width="28" height="9" rx="3" fill="#D9D2C3" stroke="#A8A08C" stroke-width="1"/>'});
+    case 'bench': return person({...base, sit:true, torso:coatT(BLK,BLKS,-56), legCol:'#0E1112', armL:coatArms('lap'),
+                    glasses:'<rect x="-14" y="-129" width="28" height="9" rx="3" fill="#D9D2C3" stroke="#A8A08C" stroke-width="1"/>'});
+    case 'down':  return lying(person({...base, torso:coatT(BLK,BLKS), glasses:SUNG, legCol:'#0E1112', armL:coatArms('down')}), 70, -27);
+    case 'pod':   return `<g><ellipse cx="0" cy="-30" rx="120" ry="34" fill="#E8A0B0" fill-opacity=".35" stroke="#F5C2D4" stroke-width="2"/>
+                    ${lying(person({...base, torso:shirtT(shirt), armL:armsBoth('down',shirt,N_SKIN)}), 62, -30)}
+                    <path d="M-40 -40 Q-90 -60 -110 -110 M-30 -30 Q-80 -20 -100 -60 M20 -20 Q60 -10 90 -50" stroke="#7FD3E8" stroke-width="2.5" fill="none" opacity=".8"/>
+                    <ellipse cx="0" cy="-30" rx="120" ry="34" fill="none" stroke="#EEF0E6" stroke-opacity=".5" stroke-width="2"/></g>`;
+    case 'fly':   return `<g transform="translate(-30 -84) rotate(62)">${person({...base, torso:coatT(BLK,BLKS), glasses:SUNG, legCol:'#0E1112', armL:arm('L','up',BLK,N_SKIN) + arm('R','down',BLK,N_SKIN)})}</g>
+                    <path d="M-80 -40 h-40 M-70 -60 h-50 M-90 -80 h-30" stroke="#B8F5C4" stroke-width="2" stroke-linecap="round" opacity=".6"/>`;
+    default:      return person({...base, torso:shirtT(shirt), armL:armsBoth('down',shirt,N_SKIN)});
+  }
+}
+function trinityFigure(pose){
+  const skin = '#EAC7A8';
+  const hair = `<path d="M-13 -126 Q-15 -143 0 -144 Q15 -143 13 -126 Q9 -136 0 -137 Q-9 -136 -13 -126 Z" fill="#0E0E10"/><path d="M13 -130 Q22 -118 14 -104" stroke="#0E0E10" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+  const base = {skin, hair, legCol:'#0E1112'};
+  switch (pose){
+    case 'coat': return person({...base, torso:coatT(BLK,BLKS), glasses:SUNG, armL:armsBoth('down',BLK,skin)});
+    case 'fall': return `<g transform="translate(-10 -96) rotate(38)">${person({...base, torso:coatT(BLK,BLKS), armL:armsBoth('wide',BLK,skin)})}</g>
+                    <path d="M40 -230 v-30 M52 -226 v-40 M64 -232 v-26" stroke="#B8F5C4" stroke-width="1.8" stroke-linecap="round" opacity=".6"/>`;
+    case 'cafe': return person({skin, sit:true, legCol:'#4A3F4F', torso:shirtT('#8A6F82'),
+                    hair:`<path d="M-13 -126 Q-15 -143 0 -144 Q15 -143 13 -126 Q9 -136 0 -137 Q-9 -136 -13 -126 Z" fill="#4A4448"/><path d="M-9 -139 l6 -2 M4 -140 l6 2" stroke="#C9C4B8" stroke-width="2.5"/>`,
+                    mouth:'<path d="M-4 -115 Q0 -111 4 -115" stroke="#5A2A22" stroke-width="1.6" fill="none"/>',
+                    armL:arm('L','lap','#8A6F82',skin), armR:arm('R','lap','#8A6F82',skin),
+                    extra:'<rect x="4" y="-58" width="11" height="10" rx="2" fill="#EEF0E6" stroke="#A8A08C"/><path d="M8 -62 q-2 -4 0 -7 M12 -62 q-2 -4 0 -7" stroke="#EEF0E6" stroke-width="1.2" fill="none" opacity=".7"/>'});
+    default:     return person({...base, torso:coatT(BLK,BLKS), armL:armsBoth('down',BLK,skin)});
+  }
+}
+function morpheusFigure(pose){
+  const skin = '#8A5A3C', coat = '#1B2521', cs = '#3E5249';
+  const base = {skin, glasses:PINCE, legCol:'#121816',
+    hair:'<path d="M-9 -134 Q0 -140 9 -134" stroke="#B98862" stroke-width="2" fill="none"/>'};
+  if (pose === 'sit') return person({...base, sit:true, torso:coatT(coat,cs,-56), armL:armsBoth('lap',coat,skin)});
+  if (pose === 'chair') return person({...base, sit:true, torso:coatT(coat,cs,-56), armL:armsBoth('lap',coat,skin),
+    pre:'<rect x="-34" y="-124" width="12" height="100" rx="4" fill="#4A4A52"/>',
+    extra:'<path d="M-19 -84 L19 -62 M-19 -66 L19 -86" stroke="#8F7F5E" stroke-width="4"/><path d="M0 -138 Q-26 -166 -48 -150 M6 -136 Q34 -170 58 -152" stroke="#7FD3E8" stroke-width="2" fill="none"/>'});
+  return person({...base, torso:coatT(coat,cs), armL:armsBoth('down',coat,skin)});
+}
+function smithFigure(pose){
+  const skin = '#E8CDB0', suit = '#0F1112';
+  const ear = '<path d="M13 -125 q6 2 5 8 q-1 4 -4 4" stroke="#EEF0E6" stroke-width="1.2" fill="none"/><circle cx="13" cy="-124" r="1.6" fill="#EEF0E6"/>';
+  const base = {skin, glasses:SUNG, hair:HAIR_SHORT('#4A4238'), mouth:'<path d="M-4 -115 h8" stroke="#5A2A22" stroke-width="1.6"/>', legCol:'#0A0C0D'};
+  if (pose === 'many'){
+    let out = '';
+    [[-124,-46,.5],[-62,-46,.5],[0,-46,.5],[62,-46,.5],[124,-46,.5],[-96,0,.64],[-32,0,.64],[32,0,.64],[96,0,.64]].forEach(p => {
+      out += `<g transform="translate(${p[0]} ${p[1]}) scale(${p[2]})">${smithFigure('stand')}</g>`;
+    });
+    return out;
+  }
+  if (pose === 'oracle') return person({...base, torso:coatT('#B5785A','#8A5238'), extra:ear, armL:armsBoth('stiff','#B5785A',skin)});
+  if (pose === 'fight') return person({...base, torso:suitT(suit,'#EEF0E6','#1F3A2A'), extra:ear, armL:armsBoth('guard',suit,skin)});
+  return person({...base, torso:suitT(suit,'#EEF0E6','#1F3A2A'), extra:ear, armL:armsBoth('stiff',suit,skin)});
+}
+function cypherFigure(pose){
+  const skin = '#DDB08A', jacket = '#5A3A32';
+  const base = {skin, legCol:'#3A2F2A', torso:shirtT(jacket),
+    hair:`<path d="M-13 -126 Q-13 -138 0 -138 Q13 -138 13 -126 Q8 -131 0 -130 Q-8 -131 -13 -126 Z" fill="#5A4A3A"/>`,
+    extra:`<path d="M-6 -113 Q0 -104 6 -113 L4 -110 Q0 -106 -4 -110 Z" fill="#3A2F26"/>`};
+  if (pose === 'drink') return person({...base, armL:arm('L','down',jacket,skin),
+    armR:arm('R','up',jacket,skin) + `<path d="M22 -156 L34 -156 L32 -140 L24 -140 Z" fill="#F2B45A" fill-opacity=".6" stroke="#EEF0E6" stroke-width="1.2"/>`});
+  return person({...base, armL:armsBoth('down',jacket,skin)});
+}
+function oracleFigure(pose){
+  const skin = '#B98060', green = '#5C8A62';
+  const curls = '<g fill="#C9C4B8"><circle cx="-11" cy="-134" r="6"/><circle cx="0" cy="-139" r="7"/><circle cx="11" cy="-134" r="6"/><circle cx="-14" cy="-125" r="4.5"/><circle cx="14" cy="-125" r="4.5"/></g>';
+  const smile = '<path d="M-5 -116 Q0 -111 5 -116" stroke="#5A2A22" stroke-width="1.8" fill="none"/>';
+  const apron = '<path d="M-11 -100 L11 -100 L14 -36 L-14 -36 Z" fill="#EEE6D2" stroke="#C9BFA6" stroke-width="1"/>';
+  if (pose === 'sit') return person({skin, sit:true, hair:curls, mouth:smile, legCol:'#3E6244', torso:coatT(green,'#3E6244',-56) + '<path d="M-11 -100 L11 -100 L14 -56 L-14 -56 Z" fill="#EEE6D2"/>',
+    armL:armsBoth('lap',green,skin)});
+  const base = {skin, hair:curls, mouth:smile, legCol:'#3E6244', torso:coatT(green,'#3E6244',-30) + apron};
+  if (pose === 'cookie') return person({...base, armL:arm('L','down',green,skin),
+    armR:arm('R','reach',green,skin) + `<rect x="34" y="-98" width="54" height="5" rx="2" fill="#B98A54"/><g fill="#8A5A2E"><circle cx="44" cy="-103" r="5"/><circle cx="58" cy="-103" r="5"/><circle cx="72" cy="-103" r="5"/></g>`});
+  return person({...base, armL:armsBoth('down',green,skin)});
+}
+function architectFigure(pose){
+  const skin = '#E6C29D', W = '#EEF0E6', WS = '#9AA5A0';
+  const hair = `<path d="M-14 -126 Q-16 -144 0 -145 Q16 -144 14 -126 Q11 -136 0 -138 Q-11 -136 -14 -126 Z" fill="${W}" stroke="#C9CCC2" stroke-width=".8"/>`;
+  const beard = `<path d="M-12 -118 Q0 -98 12 -118 Q12 -108 6 -100 Q0 -96 -6 -100 Q-12 -108 -12 -118 Z" fill="${W}" stroke="#C9CCC2" stroke-width=".8"/>`;
+  if (pose === 'sit') return person({skin, sit:true, hair, legCol:'#DADDD2', mouth:beard,
+    torso:`<path d="M-18 -108 Q0 -116 18 -108 L20 -56 L-20 -56 Z" fill="${W}" stroke="${WS}" stroke-width="1.2"/><path d="M-2 -108 L2 -108 L1.5 -84 L0 -80 L-1.5 -84 Z" fill="#7FA9C9"/>`,
+    armL:arm('L','lap',W,skin), armR:arm('R','lap',W,skin), extra:'<path d="M8 -50 L22 -66" stroke="#1C1C1C" stroke-width="2.4" stroke-linecap="round"/>'});
+  return person({skin, hair, legCol:'#DADDD2', mouth:beard,
+    torso:`<path d="M-18 -108 Q0 -116 18 -108 L20 -56 L-20 -56 Z" fill="${W}" stroke="${WS}" stroke-width="1.2"/><path d="M-2 -108 L2 -108 L1.5 -84 L0 -80 L-1.5 -84 Z" fill="#7FA9C9"/>`,
+    armL:armsBoth('down',W,skin)});
+}
+function tankFigure(){
+  const skin = '#C99163';
+  return person({skin, legCol:'#3A3E44', torso:'<path d="M-19 -108 Q0 -116 19 -108 L21 -56 L-21 -56 Z" fill="#4A4A52"/>',
+    hair:'<path d="M-9 -134 Q0 -140 9 -134" stroke="#E0B08A" stroke-width="2" fill="none"/>',
+    extra:'<path d="M-13 -128 Q0 -146 13 -128" stroke="#3E3E3E" stroke-width="3" fill="none"/><rect x="11" y="-128" width="6" height="9" rx="2" fill="#3E3E3E"/><path d="M14 -119 Q10 -112 4 -113" stroke="#3E3E3E" stroke-width="1.6" fill="none"/><circle cx="4" cy="-113" r="2" fill="#3E3E3E"/>',
+    armL:armsBoth('down',skin,skin,13)});
+}
+function niobeFigure(){
+  const skin = '#8A5A3C';
+  return person({skin, legCol:'#2E2A2A', torso:shirtT('#6E2A2A') + '<rect x="-17" y="-72" width="34" height="5" fill="#2A1A1A"/>',
+    hair:`<circle cx="0" cy="-149" r="7" fill="#1E1A1A"/><path d="M-12 -128 Q-13 -146 0 -148 Q13 -146 12 -128 Q8 -134 0 -134 Q-8 -134 -12 -128 Z" fill="#1E1A1A"/><rect x="-13" y="-133" width="26" height="4" rx="2" fill="#C9484B"/>`,
+    armL:armsBoth('down','#6E2A2A',skin)});
+}
+function satiFigure(){
+  return `<g transform="scale(.62)">${person({skin:'#EFCBA8', legCol:'#EFCBA8', torso:'<path d="M-17 -108 Q0 -116 17 -108 L26 -46 L-26 -46 Z" fill="#F2B45A"/>',
+    hair:`<path d="M-13 -128 Q-14 -142 0 -142 Q14 -142 13 -128 Q8 -134 0 -134 Q-8 -134 -13 -128 Z" fill="#5A3A26"/><circle cx="-18" cy="-126" r="5" fill="#5A3A26"/><circle cx="18" cy="-126" r="5" fill="#5A3A26"/>`,
+    mouth:SMILE, armL:arm('L','down','#F2B45A','#EFCBA8') + arm('R','up','#F2B45A','#EFCBA8')})}</g>`;
+}
+function analystFigure(){
+  const skin = '#E6C29D';
+  return person({skin, legCol:'#4A4238', torso:shirtT('#7A8F6A') + '<path d="M-8 -110 L0 -98 L8 -110 Z" fill="#EEF0E6"/>',
+    hair:`<path d="M-13 -128 Q-14 -141 0 -142 Q14 -141 13 -128 Q8 -134 0 -134 Q-8 -134 -13 -128 Z" fill="#8A6F4A"/>`,
+    glasses:CLEARGL, keepEyes:true, mouth:SMILE, armL:armsBoth('down','#7A8F6A',skin)});
+}
+function deusFigure(){
+  let seed = 7;
+  const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  const dots = [];
+  const add = (x, y, r, o) => dots.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="${rnd() > .5 ? '#FFC46B' : '#FFE9B8'}" opacity="${o}"/>`);
+  const ring = (cx, cy, rx, ry, n, r0) => { for (let i = 0; i < n; i++){ const a = i / n * Math.PI * 2; add(cx + Math.cos(a) * rx + (rnd() - .5) * 4, cy + Math.sin(a) * ry + (rnd() - .5) * 4, r0 + rnd(), .95); } };
+  ring(0, -135, 72, 100, 80, 1.6);
+  ring(-28, -152, 15, 8, 18, 1.5); ring(28, -152, 15, 8, 18, 1.5);
+  ring(-28, -152, 6, 4, 8, 1.8); ring(28, -152, 6, 4, 8, 1.8);
+  for (let i = 0; i < 12; i++) add(-4 + rnd() * 8, -140 + i * 4.5, 1.4 + rnd(), .85);
+  for (let i = 0; i < 16; i++){ const t = i / 15; add(-22 + t * 44, -96 + Math.sin(t * Math.PI) * 8, 1.5 + rnd(), .9); }
+  for (let i = 0; i < 140; i++){ const a = rnd() * Math.PI * 2, d = Math.sqrt(rnd()); add(Math.cos(a) * d * 66, -135 + Math.sin(a) * d * 94, .8 + rnd() * .9, .3 + rnd() * .3); }
+  return `<g class="breathe"><ellipse cx="0" cy="-135" rx="80" ry="108" fill="#FFB347" fill-opacity=".07"/>${dots.join('')}</g>`;
+}
+
+const CAST_DRAW = {
+  jesse: pose => jesseFigure(pose),
+  jane: () => janeStandFigure(),
+  skyler: skylerFigure,
+  hank: hankFigure,
+  saul: saulFigure,
+  lydia: lydiaFigure,
+  elliott: elliottFigure,
+  mike: mikeFigure,
+  gale: galeFigure,
+  krazy8: krazy8Figure,
+  badger: badgerFigure,
+  declan: declanFigure,
+  jack: jackFigure,
+  judge: judgeFigure, todd: toddFigure,
+  neo: neoFigure, trinity: trinityFigure, morpheus: morpheusFigure, smith: smithFigure, cypher: cypherFigure,
+  oracle: oracleFigure, architect: architectFigure, tank: tankFigure, niobe: niobeFigure, sati: satiFigure,
+  analyst: analystFigure, deus: deusFigure
+};
+const SLOT_X = {1:[240], 2:[165,330], 3:[100,240,380]};
+const SLOT_PRIORITY = ['walt','skyler','jesse','jane','hank','saul','lydia','elliott','mike','gale','krazy8','badger','declan','jack','judge','todd','neo','trinity','morpheus','smith','cypher','oracle','architect','tank','niobe','sati','analyst','deus'];
+const DRAW_ORDER = ['deus','skyler','jesse','jane','hank','saul','lydia','elliott','mike','gale','krazy8','badger','declan','jack','judge','todd','smith','oracle','architect','morpheus','cypher','tank','niobe','analyst','sati','trinity','neo','walt'];
+const HEAD_TOP = {walt:-178, jesse:-152, jane:-150, skyler:-152, hank:-148, saul:-148, lydia:-152, elliott:-148, mike:-148, gale:-148, krazy8:-144, badger:-145, declan:-148, jack:-148,
+  judge:-124, todd:-148, neo:-148, trinity:-150, morpheus:-146, smith:-148, cypher:-146, oracle:-150, architect:-150,
+  tank:-146, niobe:-155, sati:-100, analyst:-148, deus:-240};
+const HEAD_TOP_POSE = {'neo:sit':-124,'neo:bench':-124,'neo:down':-40,'neo:pod':-70,'neo:fly':-150,'trinity:cafe':-124,'trinity:fall':-160,'morpheus:sit':-122,'morpheus:chair':-122,'oracle:sit':-126,'architect:sit':-126,'skyler:sit':-112,'jesse:chained':-152,'jesse:drive':-124,'walt:floor':-46};
+
+function positionsFor(cast){
+  const names = Object.keys(cast);
+  const ordered = SLOT_PRIORITY.filter(n => names.includes(n));
+  const xs = SLOT_X[ordered.length] || SLOT_X[3];
+  const pos = {};
+  ordered.forEach((n,i) => { pos[n] = {x: xs[i], y: 288}; });
+  return pos;
+}
+/* ---------- set backgrounds ---------- */
+const SKY_BASE = `<rect width="480" height="300" fill="#0F1B28"/>
+  <g fill="#EEF0E6" opacity=".7"><circle cx="40" cy="30" r="1.2"/><circle cx="120" cy="52" r="1"/><circle cx="210" cy="24" r="1.4"/><circle cx="300" cy="44" r="1"/><circle cx="350" cy="18" r="1.2"/><circle cx="455" cy="96" r="1"/><circle cx="80" cy="120" r="1"/><circle cx="260" cy="130" r="1.1"/></g>
+  <circle cx="410" cy="52" r="16" fill="#EEF0E6" opacity=".9"/>
+  <path d="M0 250 L90 205 L150 225 L240 185 L330 222 L400 200 L480 232 V300 H0 Z" fill="#1A2A33"/>
+  <path d="M0 300 V262 h30 v-14 h24 v20 h18 v-30 h26 v24 h30 v-10 h22 v18 h40 v-26 h20 v12 h36 v-18 h28 v26 h30 v-12 h26 v20 h40 v-30 h24 v22 h36 v-14 h30 V300 Z" fill="#16242E"/>
+  <g fill="#F2B45A" opacity=".8"><rect x="80" y="244" width="3" height="3"/><rect x="88" y="252" width="3" height="3"/><rect x="176" y="248" width="3" height="3"/><rect x="250" y="262" width="3" height="3"/><rect x="330" y="244" width="3" height="3"/><rect x="338" y="256" width="3" height="3"/><rect x="420" y="260" width="3" height="3"/></g>`;
+const PLANE = `M-26 0 L18 -3 Q28 0 18 3 Z M-4 -2 L-14 -16 L-8 -16 L6 -2 Z M-4 2 L-14 16 L-8 16 L6 2 Z M-24 -1 L-30 -9 L-25 -9 L-18 -1 Z`;
+
+const SET = {
+  bedroom: () => `<rect width="480" height="300" fill="#1E2C27"/>
+    <rect y="250" width="480" height="50" fill="#2B3A33"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#3E5249" stroke-width="2"/>
+    <rect x="330" y="30" width="112" height="90" rx="3" fill="#0D1820" stroke="#EEF0E6" stroke-opacity=".7" stroke-width="3"/>
+    <circle cx="410" cy="56" r="13" fill="#EEF0E6" opacity=".9"/><circle cx="404" cy="52" r="12" fill="#0D1820"/>
+    <path d="M386 31 V119 M331 75 H441" stroke="#EEF0E6" stroke-opacity=".45" stroke-width="2"/>
+    <rect x="170" y="48" width="62" height="82" rx="2" fill="#3A2F4A" stroke="#EEF0E6" stroke-opacity=".35" stroke-width="2"/>
+    <path d="M180 64 h42 M180 74 h30 M186 100 l14 -14 l14 14 l-14 14 z" stroke="#E88D8D" stroke-opacity=".7" stroke-width="2" fill="none"/>
+    <rect x="26" y="140" width="16" height="110" rx="3" fill="#5B4A3E"/>
+    <rect x="30" y="214" width="252" height="32" rx="4" fill="#5B4A3E"/>
+    <rect x="40" y="198" width="240" height="22" rx="8" fill="#D9D2C3"/>
+    <ellipse cx="92" cy="196" rx="50" ry="10" fill="#EDE7DA"/>`,
+  'sky-clear': () => SKY_BASE + `<g class="plane"><path transform="translate(0 100)" d="${PLANE}" fill="#EEF0E6"/></g>
+    <text x="240" y="170" text-anchor="middle" font-family="Cabin Sketch, cursive" font-size="20" fill="#A8B7AD">nothing happens here</text>`,
+  'sky-canon': () => SKY_BASE + `<path transform="translate(200 80)" d="${PLANE}" fill="#EEF0E6"/>
+    <path transform="translate(284 72) scale(-1 1)" d="${PLANE}" fill="#EEF0E6"/>
+    <path d="M242 62 l3 8 l8 1 l-6 5 l2 8 l-7 -4 l-7 4 l2 -8 l-6 -5 l8 -1 z" fill="#F2B45A"/>
+    <g class="teddy">
+      <circle cx="240" cy="150" r="13" fill="#E88FB0"/><circle cx="240" cy="132" r="10" fill="#E88FB0"/>
+      <circle cx="232" cy="124" r="4" fill="#E88FB0"/><circle cx="248" cy="124" r="4" fill="#E88FB0"/>
+      <ellipse cx="240" cy="136" rx="4" ry="3" fill="#F5C2D4"/>
+      <circle cx="236" cy="130" r="1.8" fill="#1C1C1C"/><path d="M242 128 l4 4 M246 128 l-4 4" stroke="#1C1C1C" stroke-width="1.2"/>
+    </g>`,
+  rv: () => `<rect width="480" height="180" fill="#3A2E22"/>
+    <rect y="180" width="480" height="120" fill="#8A6B45"/>
+    <path d="M0 180 Q120 168 240 180 T480 178" fill="none" stroke="#6E5236" stroke-width="3"/>
+    <ellipse cx="90" cy="250" rx="60" ry="10" fill="#6E5236" opacity=".5"/><ellipse cx="360" cy="260" rx="70" ry="10" fill="#6E5236" opacity=".5"/>
+    <g>
+      <rect x="60" y="110" width="300" height="100" rx="10" fill="#C9BBA0" stroke="#8F7F5E" stroke-width="3"/>
+      <rect x="60" y="150" width="300" height="14" fill="#7FD3E8" fill-opacity=".25"/>
+      <rect x="90" y="126" width="50" height="30" rx="3" fill="#3D5249" stroke="#EEF0E6" stroke-opacity=".6" stroke-width="2"/>
+      <rect x="170" y="126" width="50" height="30" rx="3" fill="#3D5249" stroke="#EEF0E6" stroke-opacity=".6" stroke-width="2"/>
+      <rect x="250" y="126" width="50" height="30" rx="3" fill="#3D5249" stroke="#EEF0E6" stroke-opacity=".6" stroke-width="2"/>
+      <rect x="330" y="140" width="24" height="60" rx="2" fill="#8F7F5E"/>
+      <circle cx="120" cy="212" r="18" fill="#1C1C1C"/><circle cx="120" cy="212" r="7" fill="#3E3E3E"/>
+      <circle cx="300" cy="212" r="18" fill="#1C1C1C"/><circle cx="300" cy="212" r="7" fill="#3E3E3E"/>
+    </g>`,
+  office: () => `<rect width="480" height="250" fill="#2B3A33"/>
+    <rect y="250" width="480" height="50" fill="#233029"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#3E5249" stroke-width="2"/>
+    <rect x="300" y="24" width="150" height="120" rx="3" fill="#7FA9C9" fill-opacity=".25" stroke="#EEF0E6" stroke-opacity=".6" stroke-width="3"/>
+    <path d="M375 24 V144 M300 84 H450" stroke="#EEF0E6" stroke-opacity=".4" stroke-width="2"/>
+    <rect x="20" y="190" width="180" height="60" rx="4" fill="#5B4A3E"/>
+    <rect x="30" y="180" width="60" height="14" rx="2" fill="#3E5249"/>
+    <ellipse cx="430" cy="248" rx="26" ry="8" fill="#274C34"/>
+    <path d="M430 248 V190" stroke="#5B4A3E" stroke-width="6"/>
+    <ellipse cx="430" cy="188" rx="22" ry="16" fill="#3E7A4E"/><ellipse cx="414" cy="196" rx="14" ry="11" fill="#4A8B5A"/><ellipse cx="448" cy="196" rx="14" ry="11" fill="#4A8B5A"/>`,
+  dinner: () => `<rect width="480" height="250" fill="#2E2A24"/>
+    <rect y="250" width="480" height="50" fill="#241F1A"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#4A3F33" stroke-width="2"/>
+    <rect x="120" y="60" width="90" height="60" rx="3" fill="#3A2F27" stroke="#8F7F5E" stroke-width="3"/>
+    <rect x="130" y="70" width="70" height="40" fill="#7FD3E8" fill-opacity=".2"/>
+    <rect x="40" y="190" width="400" height="20" rx="4" fill="#6E5236"/>
+    <rect x="30" y="210" width="420" height="16" rx="3" fill="#5B4229"/>
+    <ellipse cx="150" cy="196" rx="22" ry="6" fill="#EDE7DA"/>
+    <ellipse cx="330" cy="196" rx="22" ry="6" fill="#EDE7DA"/>
+    <rect x="210" y="182" width="8" height="16" fill="#7FD3E8" fill-opacity=".5"/>
+    <rect x="260" y="182" width="8" height="16" fill="#7FD3E8" fill-opacity=".5"/>`,
+  prison: () => `<rect width="480" height="250" fill="#2E3A44"/>
+    <rect y="250" width="480" height="50" fill="#232D35"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#3D4F5A" stroke-width="2"/>
+    <rect x="228" y="30" width="24" height="220" fill="#7FA9C9" fill-opacity=".2" stroke="#EEF0E6" stroke-opacity=".5" stroke-width="2"/>
+    <g><rect x="140" y="90" width="28" height="42" rx="3" fill="#8F7F5E"/><path d="M154 90 v-14" stroke="#8F7F5E" stroke-width="4"/></g>
+    <g><rect x="312" y="90" width="28" height="42" rx="3" fill="#8F7F5E"/><path d="M326 90 v-14" stroke="#8F7F5E" stroke-width="4"/></g>
+    <rect x="130" y="220" width="60" height="16" rx="3" fill="#4A5A64"/>
+    <rect x="290" y="220" width="60" height="16" rx="3" fill="#4A5A64"/>`,
+  storage: () => `<rect width="480" height="250" fill="#3A342A"/>
+    <rect y="250" width="480" height="50" fill="#2A251D"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#4A4030" stroke-width="2"/>
+    <g stroke="#4A4030" stroke-width="2"><path d="M0 20 H480 M0 45 H480 M0 70 H480"/></g>
+    <rect x="30" y="140" width="420" height="18" rx="2" fill="#8F7F5E"/>
+    <g>
+      <rect x="60" y="196" width="60" height="24" fill="#2E7D4F" stroke="#1D5233" stroke-width="1.5"/><rect x="60" y="205" width="60" height="4" fill="#1D5233"/>
+      <rect x="120" y="196" width="60" height="24" fill="#2E7D4F" stroke="#1D5233" stroke-width="1.5"/><rect x="120" y="205" width="60" height="4" fill="#1D5233"/>
+      <rect x="180" y="196" width="60" height="24" fill="#2E7D4F" stroke="#1D5233" stroke-width="1.5"/><rect x="180" y="205" width="60" height="4" fill="#1D5233"/>
+      <rect x="90" y="172" width="60" height="24" fill="#358B58" stroke="#1D5233" stroke-width="1.5"/><rect x="90" y="181" width="60" height="4" fill="#1D5233"/>
+      <rect x="150" y="172" width="60" height="24" fill="#358B58" stroke="#1D5233" stroke-width="1.5"/><rect x="150" y="181" width="60" height="4" fill="#1D5233"/>
+      <rect x="120" y="148" width="60" height="24" fill="#3E9862" stroke="#1D5233" stroke-width="1.5"/><rect x="120" y="157" width="60" height="4" fill="#1D5233"/>
+    </g>`,
+  carwash: () => `<rect width="480" height="250" fill="#274054"/>
+    <rect y="250" width="480" height="50" fill="#1F3243"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#38566B" stroke-width="2"/>
+    <rect x="20" y="70" width="440" height="110" rx="4" fill="#3A5A70"/>
+    <rect x="40" y="30" width="220" height="40" rx="4" fill="#EEF0E6"/>
+    <text x="150" y="57" text-anchor="middle" font-family="Cabin Sketch, cursive" font-weight="700" font-size="20" fill="#1A2823">A1A CAR WASH</text>
+    <g stroke="#EEF0E6" stroke-opacity=".7" stroke-width="6" stroke-linecap="round"><line x1="300" y1="80" x2="300" y2="150"/><line x1="330" y1="80" x2="330" y2="150"/><line x1="360" y1="80" x2="360" y2="150"/></g>
+    <g>
+      <rect x="60" y="205" width="120" height="34" rx="12" fill="#C9484B"/>
+      <circle cx="82" cy="240" r="12" fill="#1C1C1C"/><circle cx="158" cy="240" r="12" fill="#1C1C1C"/>
+      <rect x="76" y="192" width="70" height="20" rx="8" fill="#C9484B"/>
+      <rect x="90" y="196" width="20" height="12" fill="#7FD3E8" fill-opacity=".5"/>
+    </g>`,
+  chainmap: () => `<rect width="480" height="300" fill="#1A2823"/>
+    <path d="M60 40 H360 V100 H420 V260 H140 V220 H60 Z" fill="none" stroke="#5E7268" stroke-width="3"/>
+    <g fill="#5E7268" opacity=".6"><circle cx="120" cy="90" r="3"/><circle cx="220" cy="150" r="3"/><circle cx="300" cy="80" r="3"/><circle cx="340" cy="180" r="3"/></g>`,
+  desert: () => `<rect width="480" height="180" fill="#E8B87A"/>
+    <rect y="180" width="480" height="120" fill="#D9A662"/>
+    <path d="M0 180 Q120 168 240 180 T480 176" fill="none" stroke="#C4914F" stroke-width="3"/>
+    <ellipse cx="90" cy="210" rx="34" ry="16" fill="#B98A54"/><ellipse cx="330" cy="230" rx="44" ry="18" fill="#B98A54"/>
+    <g><rect x="200" y="196" width="34" height="46" rx="4" fill="#3D6FB4" stroke="#294E82" stroke-width="2"/><rect x="200" y="206" width="34" height="6" fill="#294E82"/>
+    <rect x="245" y="204" width="30" height="40" rx="4" fill="#3D6FB4" stroke="#294E82" stroke-width="2"/><rect x="245" y="213" width="30" height="6" fill="#294E82"/></g>
+    <path d="M380 260 L410 190 L416 190 L392 262 Z" fill="#8F7F5E"/><rect x="386" y="180" width="22" height="14" rx="2" fill="#6E6453"/>`,
+  bathroom: () => `<rect width="480" height="250" fill="#33424A"/>
+    <rect y="250" width="480" height="50" fill="#28343A"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#455A64" stroke-width="2"/>
+    <g stroke="#455A64" stroke-width="1" opacity=".5"><path d="M0 20 H480 M0 60 H480 M0 100 H480 M0 140 H480"/><path d="M40 0 V250 M120 0 V250 M200 0 V250 M280 0 V250 M360 0 V250 M440 0 V250"/></g>
+    <g><rect x="300" y="140" width="80" height="60" rx="6" fill="#EEF0E6"/><ellipse cx="340" cy="140" rx="40" ry="14" fill="#EEF0E6"/><ellipse cx="340" cy="140" rx="28" ry="9" fill="#33424A"/></g>
+    <g><rect x="60" y="170" width="70" height="30" rx="4" fill="#EEF0E6"/><ellipse cx="95" cy="170" rx="35" ry="8" fill="#D9DCD2"/><rect x="80" y="110" width="30" height="46" rx="2" fill="#B9C4BE" fill-opacity=".4" stroke="#EEF0E6" stroke-opacity=".6" stroke-width="2"/></g>
+    <rect x="180" y="70" width="60" height="10" rx="2" fill="#5B4A3E"/><rect x="200" y="55" width="20" height="14" rx="1" fill="#8F7F5E"/>`,
+  house: () => `<rect width="480" height="200" fill="#3D5A70"/>
+    <rect y="200" width="480" height="100" fill="#4A7A45"/>
+    <line x1="0" y1="200" x2="480" y2="200" stroke="#3A5C36" stroke-width="2"/>
+    <rect x="150" y="110" width="180" height="90" fill="#C9BBA0" stroke="#8F7F5E" stroke-width="3"/>
+    <path d="M140 110 L240 60 L340 110 Z" fill="#6E4A3A" stroke="#4A3226" stroke-width="2"/>
+    <rect x="228" y="150" width="30" height="50" fill="#5B4A3E"/>
+    <rect x="170" y="130" width="30" height="26" rx="2" fill="#3D5249" stroke="#EEF0E6" stroke-opacity=".6" stroke-width="2"/>
+    <rect x="280" y="130" width="30" height="26" rx="2" fill="#3D5249" stroke="#EEF0E6" stroke-opacity=".6" stroke-width="2"/>
+    <rect x="330" y="192" width="90" height="8" fill="#8A8A82"/>
+    <rect x="345" y="200" width="60" height="40" fill="#9A9A90" opacity=".6"/>
+    <g fill="#5E7268" opacity=".5"><ellipse cx="60" cy="220" rx="30" ry="14"/><ellipse cx="420" cy="234" rx="26" ry="12"/></g>`,
+  basement: () => `<rect width="480" height="250" fill="#4A4E48"/>
+    <rect y="250" width="480" height="50" fill="#3A3E38"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#5E6258" stroke-width="2"/>
+    <g stroke="#3E423C" stroke-width="1.5" opacity=".5"><path d="M0 60 H480 M0 130 H480 M0 190 H480"/><path d="M80 0 V250 M200 0 V250 M320 0 V250 M420 0 V250"/></g>
+    <g>
+      <rect x="360" y="0" width="90" height="14" fill="#5E6258"/><rect x="360" y="20" width="90" height="14" fill="#585C52"/>
+      <rect x="360" y="40" width="90" height="14" fill="#525650"/><rect x="360" y="60" width="90" height="14" fill="#4C504A"/>
+      <rect x="360" y="80" width="90" height="14" fill="#464A44"/><rect x="360" y="100" width="90" height="14" fill="#40443E"/>
+    </g>
+    <rect x="234" y="56" width="14" height="194" fill="#6E6E68" stroke="#454540" stroke-width="1.5"/>
+    <ellipse cx="241" cy="250" rx="26" ry="6" fill="#33362F"/>`,
+  superlab: () => `<rect width="480" height="250" fill="#3A4650"/>
+    <rect y="250" width="480" height="50" fill="#2E3841"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#4C5A66" stroke-width="2"/>
+    <g stroke="#4C5A66" stroke-width="1" opacity=".4"><path d="M0 20 H480 M0 60 H480 M0 100 H480 M0 140 H480 M0 180 H480"/></g>
+    <g>
+      <rect x="40" y="120" width="70" height="110" rx="6" fill="#8FA0AC" stroke="#5A6E7A" stroke-width="3"/>
+      <ellipse cx="75" cy="120" rx="35" ry="10" fill="#A6B6C0"/>
+      <rect x="150" y="90" width="80" height="140" rx="6" fill="#8FA0AC" stroke="#5A6E7A" stroke-width="3"/>
+      <ellipse cx="190" cy="90" rx="40" ry="10" fill="#A6B6C0"/>
+      <rect x="270" y="130" width="60" height="100" rx="6" fill="#8FA0AC" stroke="#5A6E7A" stroke-width="3"/>
+      <ellipse cx="300" cy="130" rx="30" ry="9" fill="#A6B6C0"/>
+    </g>
+    <rect x="380" y="60" width="70" height="170" rx="4" fill="#5A6E7A" fill-opacity=".3" stroke="#EEF0E6" stroke-opacity=".5" stroke-width="2"/>
+    <path d="M0 230 H480" stroke="#5A6E7A" stroke-width="4"/>`,
+  compound: () => `<rect width="480" height="250" fill="#4A3628"/>
+    <rect y="250" width="480" height="50" fill="#2E2118"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#6E5236" stroke-width="2"/>
+    <g stroke="#3A2A1E" stroke-width="2" opacity=".6"><path d="M40 0 V250 M120 0 V250 M200 0 V250 M280 0 V250 M360 0 V250 M440 0 V250"/></g>
+    <rect x="330" y="40" width="110" height="80" rx="3" fill="#3D5A70" stroke="#EEF0E6" stroke-opacity=".6" stroke-width="3"/>
+    <path d="M345 110 h30 l6 -12 h26 l6 12 h20 v10 h-88 Z" fill="#8A8A82"/><path d="M385 40 V120" stroke="#EEF0E6" stroke-opacity=".4" stroke-width="2"/>
+    <rect x="30" y="150" width="130" height="44" rx="4" fill="#5B4A3E"/><rect x="34" y="132" width="122" height="20" rx="3" fill="#8F7F5E"/>
+    <g><rect x="150" y="212" width="170" height="12" rx="3" fill="#5B3A22"/><rect x="156" y="196" width="158" height="18" rx="4" fill="#2E7D4F" stroke="#1D5233" stroke-width="2"/><circle cx="182" cy="205" r="5" fill="#EEF0E6"/><circle cx="210" cy="205" r="5" fill="#C9484B"/><circle cx="238" cy="205" r="5" fill="#111"/><rect x="152" y="224" width="8" height="26" fill="#3A2A1E"/><rect x="310" y="224" width="8" height="26" fill="#3A2A1E"/></g>
+    <g fill="#C9484B"><rect x="52" y="120" width="8" height="12" rx="1"/><rect x="72" y="118" width="8" height="14" rx="1"/><rect x="92" y="121" width="8" height="11" rx="1"/></g>`,
+  courtroom: () => `<rect width="480" height="250" fill="#5B4229"/>
+    <rect y="250" width="480" height="50" fill="#3A2A1B"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#7A5C3C" stroke-width="2"/>
+    <g stroke="#6E5236" stroke-width="2" opacity=".6"><path d="M0 60 H480 M0 110 H480 M0 160 H480"/></g>
+    <rect x="150" y="70" width="180" height="60" rx="3" fill="#7A5C3C" stroke="#3A2A1B" stroke-width="3"/>
+    <rect x="180" y="134" width="120" height="90" rx="3" fill="#6E5236" stroke="#3A2A1B" stroke-width="3"/>
+    <rect x="370" y="150" width="80" height="80" rx="3" fill="#6E5236" stroke="#3A2A1B" stroke-width="3"/><rect x="380" y="140" width="60" height="14" fill="#8F7F5E"/>
+    <rect x="30" y="40" width="4" height="120" fill="#8F7F5E"/><path d="M34 44 h60 v36 h-60 Z" fill="#3D5A70"/><g fill="#EEF0E6"><circle cx="46" cy="54" r="2"/><circle cx="60" cy="54" r="2"/><circle cx="74" cy="54" r="2"/><circle cx="53" cy="66" r="2"/><circle cx="67" cy="66" r="2"/></g><path d="M34 80 h60 M34 68 h60" stroke="#C9484B" stroke-width="5" opacity=".9" transform="translate(0 -14)"/>
+    <g fill="#4A3826"><rect x="20" y="262" width="440" height="14" rx="3"/><rect x="20" y="282" width="440" height="14" rx="3"/></g>`,
+  architect: () => `<rect width="480" height="300" fill="#E6EAE6"/>
+    <rect y="250" width="480" height="50" fill="#D2D8D2"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#B8C0B8" stroke-width="2"/>
+    <g>${(() => { let o = ''; for (let r = 0; r < 4; r++) for (let c = 0; c < 12; c++) o += `<rect x="${12 + c * 38}" y="${10 + r * 34}" width="32" height="26" rx="2" fill="#20303A"/><rect x="${15 + c * 38}" y="${13 + r * 34}" width="26" height="20" rx="1" fill="#${(r + c) % 3 === 0 ? '4A7A8A' : '2E4A56'}" opacity=".85"/>`; return o; })()}</g>
+    <rect x="20" y="150" width="60" height="100" rx="3" fill="#7FD3E8" fill-opacity=".85" stroke="#EEF0E6" stroke-width="3"/><rect x="400" y="150" width="60" height="100" rx="3" fill="#F2B45A" fill-opacity=".85" stroke="#EEF0E6" stroke-width="3"/>
+    <ellipse cx="50" cy="252" rx="46" ry="6" fill="#7FD3E8" opacity=".35"/><ellipse cx="430" cy="252" rx="46" ry="6" fill="#F2B45A" opacity=".35"/>`,
+  cafe: () => `<rect width="480" height="250" fill="#5B4234"/>
+    <rect y="250" width="480" height="50" fill="#3A2A20"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#7A5C48" stroke-width="2"/>
+    <rect x="20" y="24" width="150" height="34" rx="3" fill="#2A1E16" stroke="#EEF0E6" stroke-opacity=".5" stroke-width="2"/><text x="95" y="47" text-anchor="middle" font-family="Cabin Sketch, cursive" font-weight="700" font-size="18" fill="#F2B45A">SIMULATTE</text>
+    <rect x="300" y="30" width="150" height="100" rx="3" fill="#7FA9C9" fill-opacity=".25" stroke="#EEF0E6" stroke-opacity=".6" stroke-width="3"/>
+    <rect x="20" y="150" width="200" height="30" rx="3" fill="#8F6B4A"/><rect x="20" y="180" width="200" height="70" fill="#6E5236"/>
+    <g fill="#EEF0E6"><rect x="40" y="132" width="16" height="18" rx="2"/><rect x="66" y="134" width="14" height="16" rx="2"/></g>
+    <g><ellipse cx="390" cy="226" rx="40" ry="8" fill="#8F6B4A"/><rect x="386" y="226" width="8" height="24" fill="#6E5236"/></g>`,
+  cubicle: () => `<rect width="480" height="250" fill="#5E6A66"/>
+    <rect y="250" width="480" height="50" fill="#3E4744"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#7A8782" stroke-width="2"/>
+    <rect x="20" y="40" width="270" height="210" fill="#8A9690" stroke="#6E7A75" stroke-width="3"/><path d="M20 100 H290" stroke="#6E7A75" stroke-width="2"/>
+    <rect x="40" y="170" width="230" height="16" fill="#B8A88A"/><rect x="60" y="120" width="70" height="50" rx="3" fill="#1A2823" stroke="#EEF0E6" stroke-opacity=".6" stroke-width="2"/><path d="M75 135 h40 M75 145 h30 M75 155 h36" stroke="#3CFF6B" stroke-width="2" opacity=".8"/><rect x="88" y="170" width="14" height="6" fill="#4A4A52"/>
+    <rect x="320" y="60" width="130" height="190" rx="3" fill="#A6B6B0" stroke="#7A8782" stroke-width="3"/><path d="M385 60 V250" stroke="#7A8782" stroke-width="3"/><circle cx="376" cy="160" r="3" fill="#F2B45A"/><circle cx="394" cy="160" r="3" fill="#F2B45A"/>
+    <rect x="335" y="30" width="100" height="22" rx="2" fill="#B8973E"/><text x="385" y="46" text-anchor="middle" font-family="Cabin Sketch, cursive" font-weight="700" font-size="12" fill="#2A221C">EMPLOYEE OF THE MONTH</text>`,
+  crater: () => `<rect width="480" height="300" fill="#0C1518"/>
+    ${(() => { let o = ''; [[0,90],[390,90]].forEach(([x0, w]) => { o += `<rect x="${x0}" y="0" width="${w}" height="240" fill="#141F24"/>`; for (let r = 0; r < 6; r++) for (let c = 0; c < 3; c++){ const x = x0 + 8 + c * 28, y = 12 + r * 36; o += `<rect x="${x}" y="${y}" width="20" height="26" fill="#F2B45A" opacity=".85"/><rect x="${x + 4}" y="${y + 7}" width="12" height="4" fill="#111"/><circle cx="${x + 10}" cy="${y + 17}" r="0" fill="#111"/>`; } }); return o; })()}
+    <ellipse cx="240" cy="262" rx="200" ry="38" fill="#0A1214"/><ellipse cx="240" cy="260" rx="170" ry="26" fill="#1E3038"/>
+    <g stroke="#7FD3E8" stroke-opacity=".5" stroke-width="1.5" fill="none"><ellipse cx="240" cy="260" rx="60" ry="8"/><ellipse cx="240" cy="260" rx="110" ry="15"/></g>`,
+  dock: () => `<rect width="480" height="300" fill="#3A2A22"/>
+    <path d="M0 250 V120 Q240 -40 480 120 V250 Z" fill="#5B4232"/>
+    <ellipse cx="240" cy="36" rx="34" ry="14" fill="#F2B45A" opacity=".85"/><path d="M206 36 L150 250 M274 36 L330 250" stroke="#F2B45A" stroke-opacity=".12" stroke-width="30"/>
+    <rect y="250" width="480" height="50" fill="#2A1E18"/><line x1="0" y1="250" x2="480" y2="250" stroke="#7A5C48" stroke-width="2"/>
+    <g fill="#8A8F9C" stroke="#4A4E58" stroke-width="2"><rect x="40" y="200" width="40" height="50"/><path d="M60 200 v-30 h-12 M60 170 h30" stroke-width="6" fill="none"/><rect x="400" y="200" width="40" height="50"/><path d="M420 200 v-30 h12 M420 170 h-30" stroke-width="6" fill="none"/></g>
+    <g fill="#7A5C48" opacity=".7"><rect x="120" y="170" width="20" height="80"/><rect x="340" y="176" width="20" height="74"/></g>`,
+  hotel: () => `<rect width="480" height="300" fill="#2E2226"/>
+    <path d="M0 0 L150 60 V220 L0 300 Z" fill="#3A2A2E"/><path d="M480 0 L330 60 V220 L480 300 Z" fill="#3A2A2E"/>
+    <rect x="150" y="60" width="180" height="160" fill="#4A3538"/>
+    <path d="M0 300 L150 220 H330 L480 300 Z" fill="#5A3A3A"/><path d="M240 220 V300" stroke="#7A4A4A" stroke-width="2"/>
+    <rect x="200" y="100" width="80" height="120" rx="2" fill="#7A5C3C" stroke="#2A1A1A" stroke-width="3"/><circle cx="268" cy="166" r="4" fill="#F2B45A"/>
+    <rect x="218" y="112" width="44" height="22" rx="2" fill="#B8973E"/><text x="240" y="129" text-anchor="middle" font-family="Cabin Sketch, cursive" font-weight="700" font-size="18" fill="#2A221C">303</text>
+    <circle cx="90" cy="120" r="10" fill="#F2B45A" opacity=".5"/><circle cx="390" cy="120" r="10" fill="#F2B45A" opacity=".5"/>`,
+  kitchen: () => `<rect width="480" height="250" fill="#8A7A4E"/>
+    <rect y="250" width="480" height="50" fill="#5E5236"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#7A6A46" stroke-width="2"/>
+    <rect x="20" y="30" width="150" height="70" rx="3" fill="#6E5A38" stroke="#4A3C24" stroke-width="2"/><path d="M95 30 V100" stroke="#4A3C24" stroke-width="2"/>
+    <rect x="20" y="160" width="140" height="90" rx="3" fill="#B8B8B0" stroke="#7A7A72" stroke-width="3"/><rect x="36" y="184" width="108" height="50" rx="4" fill="#2A2A2E"/><circle cx="50" cy="172" r="4" fill="#4A4A52"/><circle cx="72" cy="172" r="4" fill="#4A4A52"/>
+    <rect x="200" y="30" width="110" height="26" rx="2" fill="#EEE6D2" stroke="#8F7F5E" stroke-width="2"/><text x="255" y="48" text-anchor="middle" font-family="Cabin Sketch, cursive" font-weight="700" font-size="13" fill="#2A221C">KNOW THYSELF</text>
+    <rect x="200" y="56" width="110" height="194" fill="#6E5A38" opacity=".35"/>
+    <rect x="380" y="196" width="34" height="54" rx="3" fill="#5B4A3E"/><rect x="372" y="190" width="50" height="8" rx="2" fill="#7A6A56"/>`,
+  lobby: () => `<rect width="480" height="250" fill="#B8BCB4"/>
+    <rect y="250" width="480" height="50" fill="#8A8E86"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#6E726A" stroke-width="2"/>
+    <g fill="#D2D6CE" stroke="#8A8E86" stroke-width="2"><rect x="30" y="20" width="36" height="230"/><rect x="130" y="20" width="36" height="230"/><rect x="314" y="20" width="36" height="230"/><rect x="414" y="20" width="36" height="230"/></g>
+    <circle cx="240" cy="160" r="62" fill="#5E7A8A" fill-opacity=".35" stroke="#4A4E58" stroke-width="4"/><path d="M240 98 V222 M178 160 H302" stroke="#4A4E58" stroke-width="4"/>
+    <g fill="#6E726A" opacity=".35">${(() => { let o = ''; for (let i = 0; i < 12; i++) o += `<rect x="${i * 40}" y="${256 + (i % 2) * 14}" width="40" height="14"/>`; return o; })()}</g>`,
+  machinecity: () => `<rect width="480" height="300" fill="#0C0A0C"/>
+    <rect width="480" height="120" fill="#F2B45A" opacity=".55"/><rect width="480" height="60" fill="#FFD98A" opacity=".5"/>
+    <path d="M0 120 Q60 100 120 118 T240 116 T360 120 T480 112 V150 H0 Z" fill="#3A2E2E"/>
+    <g fill="#141014" stroke="#2A1E22" stroke-width="2"><rect x="20" y="90" width="50" height="210"/><rect x="90" y="60" width="40" height="240"/><rect x="150" y="110" width="60" height="190"/><rect x="230" y="40" width="44" height="260"/><rect x="290" y="100" width="56" height="200"/><rect x="366" y="70" width="42" height="230"/><rect x="424" y="120" width="50" height="180"/></g>
+    <g fill="#F2B45A" opacity=".8"><rect x="100" y="90" width="4" height="4"/><rect x="240" y="80" width="4" height="4"/><rect x="376" y="110" width="4" height="4"/><rect x="164" y="150" width="4" height="4"/><rect x="310" y="140" width="4" height="4"/></g>
+    <path d="M250 0 L238 40 L252 40 L232 90" stroke="#FFF6D0" stroke-width="3" fill="none"/><path d="M110 20 L100 50 L112 50 L98 80" stroke="#FFF6D0" stroke-width="2.5" fill="none" opacity=".8"/>`,
+  park: () => `<rect width="480" height="180" fill="#F2B45A" opacity=".85"/><rect width="480" height="110" fill="#7FA9C9" opacity=".6"/>
+    <g fill="none" stroke-width="5" stroke-linecap="round" opacity=".75"><path d="M60 170 Q240 10 420 170" stroke="#EE8F8F"/><path d="M76 170 Q240 30 404 170" stroke="#F2B45A"/><path d="M92 170 Q240 50 388 170" stroke="#3CFF6B"/><path d="M108 170 Q240 70 372 170" stroke="#7FD3E8"/></g>
+    <rect y="180" width="480" height="120" fill="#4A7A45"/><line x1="0" y1="180" x2="480" y2="180" stroke="#3A5C36" stroke-width="2"/>
+    <g stroke="#4A3226" stroke-width="5" fill="none"><path d="M380 250 L400 170 L420 250 M400 170 H460 M460 170 L440 250"/><path d="M420 172 v34" stroke-width="2"/></g><rect x="410" y="204" width="20" height="5" fill="#8F7F5E"/>
+    <g><rect x="40" y="226" width="90" height="8" rx="2" fill="#8F6B4A"/><rect x="44" y="204" width="82" height="6" rx="2" fill="#8F6B4A"/><rect x="48" y="234" width="6" height="18" fill="#4A3226"/><rect x="116" y="234" width="6" height="18" fill="#4A3226"/></g>`,
+  pod: () => `<rect width="480" height="300" fill="#0B1E1A"/>
+    ${(() => { let o = ''; for (let r = 0; r < 4; r++) for (let c = 0; c < 9; c++){ const x = 14 + c * 52, y = 8 + r * 44; o += `<rect x="${x}" y="${y}" width="40" height="34" rx="14" fill="#E8A0B0" fill-opacity=".22" stroke="#F5C2D4" stroke-opacity=".5" stroke-width="1.5"/><path d="M${x + 20} ${y + 34} v10" stroke="#7FD3E8" stroke-opacity=".5" stroke-width="1.5"/>`; } return o; })()}
+    <rect y="250" width="480" height="50" fill="#07140F"/><line x1="0" y1="250" x2="480" y2="250" stroke="#2F6B3E" stroke-width="2"/>`,
+  redroom: () => `<rect width="480" height="250" fill="#2A1414"/>
+    <rect y="250" width="480" height="50" fill="#1B0E0E"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#4A2424" stroke-width="2"/>
+    <rect x="330" y="30" width="112" height="110" rx="3" fill="#1A2A3A" stroke="#EEF0E6" stroke-opacity=".6" stroke-width="3"/>
+    <g stroke="#7FD3E8" stroke-opacity=".6" stroke-width="1.5"><path d="M345 40 l-6 30 M365 36 l-6 40 M385 42 l-6 26 M405 38 l-6 36 M425 44 l-6 30 M350 90 l-6 30 M380 94 l-6 34 M410 90 l-6 30"/></g>
+    <path d="M386 31 V139 M331 85 H441" stroke="#EEF0E6" stroke-opacity=".4" stroke-width="2"/>
+    <ellipse cx="90" cy="110" rx="38" ry="52" fill="#9AA5A8" fill-opacity=".35" stroke="#B8C0C4" stroke-width="4"/>
+    <g fill="#5A1E1E" stroke="#8A2E2E" stroke-width="2"><rect x="30" y="170" width="70" height="60" rx="14"/><rect x="180" y="176" width="70" height="60" rx="14"/></g><g stroke="#2A0E0E" stroke-width="1.5" fill="none"><path d="M44 184 l10 12 l-4 14 M200 190 l8 10"/></g>`,
+  restaurant: () => `<rect width="480" height="250" fill="#3A1418"/>
+    <rect y="250" width="480" height="50" fill="#26090C"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#5A2A2E" stroke-width="2"/>
+    <path d="M20 20 Q60 60 20 140 M100 20 Q60 60 100 140" fill="#5A1E24" stroke="#7A2E36" stroke-width="2"/><path d="M380 20 Q420 60 380 140 M460 20 Q420 60 460 140" fill="#5A1E24" stroke="#7A2E36" stroke-width="2"/>
+    <g fill="#F2B45A" opacity=".55"><circle cx="160" cy="30" r="10"/><circle cx="240" cy="24" r="10"/><circle cx="320" cy="30" r="10"/></g>
+    <path d="M40 206 H440 L460 250 H20 Z" fill="#EEF0E6"/><path d="M20 250 H460 V262 H20 Z" fill="#D2D6CE"/>
+    <g><rect x="132" y="180" width="6" height="26" fill="#7FD3E8" fill-opacity=".5"/><ellipse cx="135" cy="180" rx="9" ry="6" fill="#EE8F8F" fill-opacity=".5"/><rect x="342" y="180" width="6" height="26" fill="#7FD3E8" fill-opacity=".5"/><ellipse cx="345" cy="180" rx="9" ry="6" fill="#EE8F8F" fill-opacity=".5"/></g>`,
+  ship: () => `<rect width="480" height="250" fill="#0E1A1A"/>
+    <rect y="250" width="480" height="50" fill="#0A1212"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#2F6B3E" stroke-width="2"/>
+    <g stroke="#1E3838" stroke-width="6"><path d="M60 0 V250 M420 0 V250 M0 40 H480"/></g>
+    <g>${[[90,60],[190,60],[290,60]].map(([x,y]) => `<rect x="${x}" y="${y}" width="80" height="60" rx="3" fill="#050A06" stroke="#7A8F86" stroke-width="3"/><g stroke="#3CFF6B" stroke-width="2" opacity=".85"><path d="M${x+10} ${y+12} v36 M${x+22} ${y+8} v40 M${x+34} ${y+14} v30 M${x+46} ${y+10} v38 M${x+58} ${y+16} v28 M${x+70} ${y+9} v38"/></g>`).join('')}</g>
+    <g fill="#3A3E44" stroke="#1E2226" stroke-width="2"><rect x="60" y="190" width="70" height="60" rx="14"/><rect x="350" y="190" width="70" height="60" rx="14"/></g><path d="M95 190 Q95 160 110 150 M385 190 Q385 160 370 150" stroke="#7FD3E8" stroke-width="2" fill="none"/>`,
+  street: () => `<rect width="480" height="300" fill="#0C1620"/>
+    ${(() => { let o = ''; [[0,110,150],[120,90,130],[220,120,170],[350,100,140]].forEach(([x,w,h]) => { o += `<rect x="${x}" y="${250-h}" width="${w}" height="${h}" fill="#16222E"/>`; for (let r = 0; r < 4; r++) for (let c = 0; c < 3; c++) if ((r * 3 + c + x) % 3 !== 0) o += `<rect x="${x + 10 + c * 30}" y="${250 - h + 12 + r * 30}" width="16" height="20" fill="#F2B45A" opacity=".8"/>`; }); return o; })()}
+    <rect y="250" width="480" height="50" fill="#0A1218"/><line x1="0" y1="250" x2="480" y2="250" stroke="#2E4252" stroke-width="2"/>
+    <rect x="340" y="226" width="110" height="26" rx="8" fill="#2A2E36"/><rect x="360" y="212" width="66" height="18" rx="6" fill="#2A2E36"/><circle cx="366" cy="254" r="9" fill="#111"/><circle cx="426" cy="254" r="9" fill="#111"/>
+    <g stroke="#7FD3E8" stroke-opacity=".35" stroke-width="1.2"><path d="M30 10 l-5 30 M90 30 l-5 30 M150 0 l-5 30 M210 40 l-5 30 M270 10 l-5 30 M330 30 l-5 30 M390 0 l-5 30 M450 40 l-5 30"/></g>`,
+  subway: () => `<rect width="480" height="250" fill="#6E7A74"/>
+    <g stroke="#4A5650" stroke-width="1.2" opacity=".6">${(() => { let o = ''; for (let i = 0; i <= 12; i++) o += `M${i * 40} 0 V210 `; for (let j = 0; j <= 5; j++) o += `M0 ${j * 42} H480 `; return `<path d="${o}"/>`; })()}</g>
+    <rect y="210" width="480" height="40" fill="#3A403E"/><rect y="244" width="480" height="6" fill="#F2B45A"/>
+    <rect y="250" width="480" height="50" fill="#0A0E0D"/>
+    <rect x="30" y="80" width="46" height="90" rx="4" fill="#3A403E" stroke="#1E2422" stroke-width="3"/><rect x="38" y="90" width="30" height="24" fill="#1A2823"/><rect x="36" y="128" width="34" height="30" rx="2" fill="#5E6A66"/>
+    <rect x="330" y="30" width="130" height="20" rx="2" fill="#1A2823"/><text x="395" y="45" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#3CFF6B">MOBIL AVE</text>`
+};
+/* ---------- fx ---------- */
+function bubblesFx(){
+  const c = [[120,240],[150,228],[300,250],[330,234],[360,246],[210,255]];
+  return '<g fill="#7FD3E8" fill-opacity=".5" stroke="#EEF0E6" stroke-opacity=".6">' +
+    c.map((p,i)=>`<circle class="bubble d${i%4}" cx="${p[0]}" cy="${p[1]}" r="${5+(i%3)*2}"/>`).join('') + '</g>';
+}
+function pinsFx(){
+  const pins=[[150,120],[210,150],[260,110],[300,160],[340,130]];
+  return '<g fill="#F2B45A" stroke="#1A2823" stroke-width="1">' +
+    pins.map((p,i)=>`<circle class="pin d${i%5}" cx="${p[0]}" cy="${p[1]}" r="5"/>`).join('') + '</g>';
+}
+function confettiFx(){
+  const pieces=[[60,'#7FD3E8'],[140,'#F2B45A'],[220,'#EE8F8F'],[300,'#EEF0E6'],[380,'#7FD3E8'],[420,'#F2B45A']];
+  return '<g>' + pieces.map((p,i)=>`<rect class="confetti d${i%3}" x="${p[0]}" y="-10" width="6" height="10" fill="${p[1]}"/>`).join('') + '</g>';
+}
+function lilyFx(){
+  return `<g>
+    <rect x="392" y="248" width="40" height="30" rx="3" fill="#B98A54" stroke="#8F6B3E" stroke-width="2"/>
+    <rect x="392" y="248" width="40" height="7" fill="#A67A48"/>
+    <path d="M412 248 Q408 220 412 200 M412 248 Q403 224 395 210 M412 248 Q421 222 428 206" stroke="#4A8B5A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <g fill="#EEF0E6" stroke="#D9DCD2" stroke-width=".6"><ellipse cx="395" cy="210" rx="3" ry="4"/><ellipse cx="412" cy="200" rx="3" ry="4"/><ellipse cx="428" cy="206" rx="3" ry="4"/><ellipse cx="403" cy="217" rx="2.6" ry="3.4"/><ellipse cx="420" cy="214" rx="2.6" ry="3.4"/></g>
+  </g>`;
+}
+/* ---------- new fx (Matrix + BB aftertaste) ---------- */
+function catSvg(x, y, op){
+  return `<g opacity="${op}" transform="translate(${x} ${y})"><ellipse cx="0" cy="-8" rx="13" ry="8" fill="#0A0A0A"/><circle cx="12" cy="-16" r="6" fill="#0A0A0A"/><path d="M8 -21 l1 -6 l4 4 M14 -22 l3 -5 l1 6" fill="#0A0A0A"/><path d="M-12 -8 Q-24 -12 -20 -26" stroke="#0A0A0A" stroke-width="3" fill="none"/><circle cx="14" cy="-16" r="1.2" fill="#F2B45A"/></g>`;
+}
+function codeRainFx(){
+  const glyphs = 'ｱｲｳｴｵｶｷｸｹｺ01ﾅﾆﾇﾈﾊﾋﾌ';
+  let o = '';
+  for (let i = 0; i < 14; i++){
+    const x = 14 + i * 34, txt = Array.from({length: 9}, (_, k) => glyphs[(i * 7 + k * 3) % glyphs.length]).join('\n');
+    o += `<text class="codefall${i % 3 ? '' : ' d2'}" x="${x}" y="16" font-family="Share Tech Mono, monospace" font-size="12" fill="#3CFF6B" opacity="${(.35 + (i % 4) * .12).toFixed(2)}">${Array.from({length: 9}, (_, k) => `<tspan x="${x}" dy="${k ? 15 : 0}">${glyphs[(i * 7 + k * 3) % glyphs.length]}</tspan>`).join('')}</text>`;
+  }
+  return `<g>${o}</g>`;
+}
+function screensFx(){
+  let o = '';
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 8; c++){
+    const x = 18 + c * 57, y = 12 + r * 40;
+    o += `<rect x="${x}" y="${y}" width="46" height="32" rx="2" fill="#0E1E22" stroke="#7A8F86" stroke-width="1.5"/><circle cx="${x + 23}" cy="${y + 16}" r="7" fill="#E6BE98"/><path d="M${x + 16} ${y + 14} Q${x + 23} ${y + 5} ${x + 30} ${y + 14} Z" fill="#1E1A1A"/><rect x="${x + 16}" y="${y + 14}" width="14" height="4" rx="1.5" fill="#0A0A0A"/>`;
+  }
+  return `<g opacity=".92">${o}</g>`;
+}
+function sentinelsFx(){
+  let o = '<rect width="480" height="300" fill="#050A0E" opacity=".45"/>';
+  [[90,90,1],[230,60,1.3],[370,100,.9],[160,170,.7],[330,180,.8]].forEach(([x, y, s]) => {
+    o += `<g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="0" rx="18" ry="10" fill="#5A626A" stroke="#2A2E34" stroke-width="2"/><circle cx="0" cy="0" r="3" fill="#E0474C"/>`;
+    for (let i = -3; i <= 3; i++) o += `<path d="M${i * 4} 8 Q${i * 9} 30 ${i * 6} 50" stroke="#6E767E" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+    o += '</g>';
+  });
+  o += '<g stroke="#F2B45A" stroke-width="2" stroke-linecap="round"><path class="shake" d="M120 200 l8 -10 M300 120 l-9 -8 M410 210 l7 -9 M200 230 l-6 -9"/></g>';
+  return o;
+}
+function fxNew(fx, set){
+  let out = '';
+  if (fx.includes('alarm')) out += `<rect class="alarm" x="7" y="7" width="466" height="286" fill="none" stroke="#E0474C" stroke-width="12"/><circle class="alarm" cx="240" cy="22" r="9" fill="#E0474C"/>`;
+  if (fx.includes('blue')) out += `<g transform="translate(330 30) rotate(-4)"><rect width="120" height="92" rx="2" fill="#EEF0E6" stroke="#8F8A78" stroke-width="2"/><rect x="8" y="8" width="104" height="12" fill="#2A221C"/><path d="M8 28 h50 M8 36 h50 M8 44 h50 M8 52 h50" stroke="#8F8A78" stroke-width="2"/><rect x="66" y="26" width="46" height="34" fill="#C9C4B4"/><g fill="#7FD3E8" stroke="#3D8FA8" stroke-width="1"><path d="M76 52 l6 -10 l6 10 Z"/><path d="M88 52 l5 -8 l6 8 Z"/><path d="M98 54 l4 -7 l5 7 Z"/></g><path d="M8 66 h104 M8 74 h104 M8 82 h70" stroke="#8F8A78" stroke-width="2"/></g>`;
+  if (fx.includes('bullets')) out += `<g>${[100,140,180,220,260,300,340].map((x, i) => `<g transform="translate(${x} ${140 + (i % 2) * 6})"><rect x="-8" y="-3" width="14" height="6" rx="3" fill="#C9A24A"/><path d="M6 -3 L14 0 L6 3 Z" fill="#8A6A2A"/><path d="M-20 -1 h10 M-18 2 h8" stroke="#EEF0E6" stroke-width="1" opacity=".5"/></g>`).join('')}</g>`;
+  if (fx.includes('cat')) out += catSvg(60, 248, 1) + catSvg(118, 248, .5);
+  if (fx.includes('code')) out += codeRainFx();
+  if (fx.includes('crash')) out += `<g transform="translate(240 150) rotate(38)"><ellipse cx="0" cy="0" rx="70" ry="18" fill="#5A626A" stroke="#2A2E34" stroke-width="3"/><path d="M-24 -14 l-18 -22 l16 0 M24 14 l18 22 l-16 0" fill="#6E767E"/><rect x="-46" y="-6" width="20" height="8" fill="#7FD3E8" opacity=".6"/></g><g fill="#8A8F9C" opacity=".55"><circle cx="330" cy="190" r="18"/><circle cx="360" cy="170" r="14"/><circle cx="310" cy="160" r="12"/></g>`;
+  if (fx.includes('emp')) out += `<g fill="none" stroke="#7FD3E8" stroke-width="4"><circle class="pulse" cx="240" cy="160" r="36"/><circle class="pulse" cx="240" cy="160" r="36" style="animation-delay:.6s"/><circle class="pulse" cx="240" cy="160" r="36" style="animation-delay:1.2s"/></g>`;
+  if (fx.includes('flash')) out += set === 'compound'
+    ? `<rect class="flashwin" x="331" y="41" width="108" height="78" fill="#FFFFFF"/><g stroke="#FFFFFF" stroke-width="3" opacity=".7"><path d="M385 40 L385 10 M340 40 L320 16 M430 40 L450 16"/></g>`
+    : `<rect class="flashwin" width="480" height="300" fill="#FFFFFF" opacity=".8"/>`;
+  if (fx.includes('gold')) out += `<rect width="480" height="300" fill="#F2B45A" opacity=".22"/><g fill="none" stroke="#FFE9B8" stroke-width="1.5" opacity=".6"><circle cx="240" cy="150" r="60"/><circle cx="240" cy="150" r="110"/><circle cx="240" cy="150" r="170"/><path d="M240 0 V300 M0 150 H480 M60 30 L420 270 M420 30 L60 270"/></g>`;
+  if (fx.includes('gruel')) out += `<g transform="translate(392 232)"><ellipse cx="0" cy="12" rx="34" ry="8" fill="#8A8F9C"/><path d="M-32 6 Q0 42 32 6 Z" fill="#B8BCB4" stroke="#8A8F9C" stroke-width="2"/><ellipse cx="0" cy="6" rx="32" ry="7" fill="#9A9A94"/><path d="M18 -4 L36 -26" stroke="#8F7F5E" stroke-width="3" stroke-linecap="round"/></g>`;
+  if (fx.includes('light')) out += `<g fill="#FFFFFF" opacity=".55"><path d="M240 150 L120 0 L180 0 Z"/><path d="M240 150 L330 0 L400 0 Z"/><path d="M240 150 L480 60 L480 120 Z"/><path d="M240 150 L0 190 L0 120 Z"/><path d="M240 150 L120 300 L190 300 Z"/><path d="M240 150 L330 300 L280 300 Z"/></g><path d="M240 150 L200 100 L220 70 M240 150 L290 110 L280 80 M240 150 L210 200 L230 240" stroke="#FFFFFF" stroke-width="3" fill="none" opacity=".9"/>`;
+  if (fx.includes('mirror')) out += `<g><ellipse cx="90" cy="118" rx="42" ry="58" fill="#C8D0D4" fill-opacity=".8" stroke="#EEF0E6" stroke-width="3"/><g fill="none" stroke="#FFFFFF" stroke-opacity=".7" stroke-width="1.5"><ellipse cx="90" cy="118" rx="14" ry="20"/><ellipse cx="90" cy="118" rx="26" ry="36"/></g></g>`;
+  if (fx.includes('phone')) out += `<g transform="translate(60 100)"><rect width="34" height="52" rx="4" fill="#3A403E" stroke="#EEF0E6" stroke-opacity=".6" stroke-width="2"/><rect x="6" y="8" width="22" height="12" fill="#1A2823"/><path class="shake" d="M-8 10 q-6 8 0 16 M42 10 q6 8 0 16 M-14 6 q-10 12 0 24 M48 6 q10 12 0 24" stroke="#F2B45A" stroke-width="2" fill="none"/><text x="17" y="-6" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#F2B45A">RING</text></g>`;
+  if (fx.includes('pills')) out += `<g><ellipse cx="190" cy="222" rx="34" ry="14" fill="#E6BE98"/><ellipse cx="290" cy="222" rx="34" ry="14" fill="#E6BE98"/><g transform="translate(190 214) rotate(-20)"><rect x="-14" y="-6" width="28" height="12" rx="6" fill="#E0474C"/></g><g transform="translate(290 214) rotate(20)"><rect x="-14" y="-6" width="28" height="12" rx="6" fill="#3D7BE0"/></g></g>`;
+  if (fx.includes('plug')) out += `<g><path d="M60 0 Q70 90 120 140 Q150 165 170 190" stroke="#4A4E58" stroke-width="5" fill="none"/><rect x="164" y="186" width="14" height="10" rx="2" fill="#8A8F9C"/><circle cx="188" cy="204" r="6" fill="#C99163"/><path d="M182 200 L172 192" stroke="#C99163" stroke-width="6" stroke-linecap="round"/></g>`;
+  if (fx.includes('rain')) out += `<g class="rainfall" stroke="#B8D8E8" stroke-opacity=".55" stroke-width="1.3">${Array.from({length: 46}, (_, i) => `<path d="M${(i * 37) % 500 - 10} ${(i * 53) % 320 - 30} l-6 22"/>`).join('')}</g>`;
+  if (fx.includes('screens')) out += screensFx();
+  if (fx.includes('sentinels')) out += sentinelsFx();
+  if (fx.includes('shells')) out += `<g fill="#C9A24A" stroke="#8A6A2A" stroke-width="1">${[[90,268,-20],[130,276,30],[200,270,10],[250,280,-40],[310,268,25],[360,278,-10],[410,270,35]].map(([x, y, a]) => `<rect transform="translate(${x} ${y}) rotate(${a})" x="-6" y="-2.5" width="12" height="5" rx="2"/>`).join('')}</g>`;
+  if (fx.includes('steak')) out += `<g transform="translate(240 224)"><ellipse rx="52" ry="12" fill="#EEF0E6" stroke="#B8BCB4" stroke-width="1.5"/><path d="M-30 -2 Q-34 -14 -12 -14 Q14 -18 30 -8 Q38 2 20 6 Q-10 10 -30 -2 Z" fill="#7A3A22" stroke="#4A2214" stroke-width="2"/><path d="M-18 -6 Q0 -10 18 -4 M-12 0 Q4 -2 16 2" stroke="#4A2214" stroke-width="1.6" fill="none"/></g>`;
+  if (fx.includes('sunrise')) out += `<rect width="480" height="300" fill="#F2B45A" opacity=".12"/><g><circle cx="400" cy="120" r="34" fill="#FFD98A" opacity=".92"/><g stroke="#FFD98A" stroke-width="3" stroke-linecap="round" opacity=".7"><path d="M400 70 v-14 M400 170 v14 M350 120 h-14 M450 120 h14 M365 85 l-10 -10 M435 85 l10 -10 M365 155 l-10 10 M435 155 l10 10"/></g></g>`;
+  if (fx.includes('train')) out += `<g><circle cx="470" cy="170" r="34" fill="#FFF6D0" opacity=".8"/><circle cx="470" cy="170" r="14" fill="#FFFFFF"/><g stroke="#EEF0E6" stroke-width="2.5" stroke-linecap="round" opacity=".7"><path d="M420 150 h-50 M430 170 h-70 M420 190 h-56"/></g></g>`;
+  if (fx.includes('vase')) out += `<g><g transform="translate(392 176) rotate(38)"><path d="M-9 -16 h18 l4 14 q6 8 -4 18 h-18 q-10 -10 -4 -18 Z" fill="#B98A54" stroke="#8F6B3E" stroke-width="2"/></g><g fill="#B98A54" stroke="#8F6B3E" stroke-width="1.5"><path d="M370 268 l10 -8 l6 10 Z"/><path d="M394 272 l12 -6 l2 10 Z"/><path d="M420 268 l8 -10 l6 12 Z"/></g><path d="M384 214 l-6 10 M404 214 l6 12" stroke="#EEF0E6" stroke-width="2" stroke-linecap="round" opacity=".7"/></g>`;
+  if (fx.includes('cookies')) out += `<g><rect x="28" y="238" width="100" height="6" rx="2" fill="#8F7F5E"/><g fill="#8A5A2E" stroke="#5A3A1E" stroke-width="1"><circle cx="46" cy="232" r="8"/><circle cx="68" cy="232" r="8"/><circle cx="90" cy="232" r="8"/><circle cx="112" cy="232" r="8"/></g><g fill="#3A2210"><circle cx="44" cy="230" r="1.4"/><circle cx="70" cy="234" r="1.4"/><circle cx="90" cy="230" r="1.4"/><circle cx="110" cy="234" r="1.4"/></g></g>`;
+  return out;
+}
+
+function fxLayer(fx, set){
+  let out = '';
+  if (fx.includes('zz')) out += `<g font-family="Cabin Sketch, cursive" font-size="16" fill="#EEF0E6"><text class="zz" x="84" y="164">z</text><text class="zz d2" x="94" y="154">z</text></g>`;
+  if (fx.includes('cough')) out += `<text class="shake" x="136" y="166" font-family="JetBrains Mono, monospace" font-size="11" fill="#F2B45A">*cough*</text>`;
+  if (fx.includes('wet')) out += `<g fill="#7FD3E8"><circle class="drop" cx="60" cy="110" r="2.2"/><circle class="drop d2" cx="70" cy="106" r="2.2"/><circle class="drop d3" cx="80" cy="111" r="2.2"/></g>`;
+  if (fx.includes('siren')) out += set === 'bedroom'
+    ? `<rect class="siren" x="332" y="32" width="108" height="86"/>`
+    : `<rect class="siren-edge" x="7" y="7" width="466" height="286" fill="none" stroke-width="14"/>`;
+  if (fx.includes('bubbles')) out += bubblesFx();
+  if (fx.includes('pins')) out += pinsFx();
+  if (fx.includes('confetti')) out += confettiFx();
+  if (fx.includes('lily')) out += lilyFx();
+  out += fxNew(fx, set);
+  return out;
+}
+
+/* ---------- speech bubble ---------- */
+function sayBubble(x, topY, text){
+  const words = String(text).split(' ');
+  let lines = [text];
+  if (text.length > 22 && words.length > 1){
+    const mid = Math.ceil(words.length/2);
+    lines = [words.slice(0,mid).join(' '), words.slice(mid).join(' ')];
+  }
+  const maxLen = Math.max.apply(null, lines.map(l=>l.length));
+  const w = Math.min(220, Math.max(70, maxLen * 7.4 + 22));
+  const h = lines.length === 2 ? 44 : 30;
+  let bx = x - w/2;
+  bx = Math.max(6, Math.min(474 - w, bx));
+  let by = Math.max(4, topY - h - 16);
+  const tailX = Math.max(bx + 12, Math.min(bx + w - 12, x));
+  const textStartY = lines.length === 2 ? by + 17 : by + h/2 + 5;
+  const lineEls = lines.map((l,i)=>`<text x="${(bx+w/2).toFixed(1)}" y="${(textStartY+i*17).toFixed(1)}" text-anchor="middle" font-family="Cabin Sketch, cursive" font-weight="700" font-size="14" fill="#1A2823">${esc(l)}</text>`).join('');
+  return `<g class="say">
+    <path d="M${(tailX-7).toFixed(1)} ${(by+h).toFixed(1)} L${tailX.toFixed(1)} ${(by+h+11).toFixed(1)} L${(tailX+7).toFixed(1)} ${(by+h).toFixed(1)} Z" fill="#EEF0E6"/>
+    <rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${w.toFixed(1)}" height="${h}" rx="9" fill="#EEF0E6"/>
+    ${lineEls}
+  </g>`;
+}
+
+/* ---------- scene assembly ---------- */
+const BEDROOM_HEAD = {
+  jesse: {lie: {x:68, top:171}, sit: {x:69, top:120}},
+  jane: {back: {x:118, top:176}, side: {x:118, top:177}, 'sit-scream': {x:120, top:121}, 'sit-glare': {x:120, top:121}}
+};
+
+function buildScene(spec){
+  const set = spec.set, cast = spec.cast || {}, fx = spec.fx || [];
+  let svg = (SET[set] || SET.office)();
+  let positions = {};
+  if (set === 'bedroom'){
+    svg += bedroomCastSVG(cast);
+    if (cast.walt){
+      const wp = WALT_POSE[cast.walt] || WALT_POSE.stand;
+      positions.walt = {x: wp.x, topY: 288 + HEAD_TOP.walt};
+      svg += `<g transform="translate(${wp.x} 288)">${waltFigure(cast.walt, fx)}</g>`;
+    }
+    ['jesse','jane'].forEach(name => {
+      const h = cast[name] && BEDROOM_HEAD[name][cast[name]];
+      if (h) positions[name] = {x: h.x, topY: h.top};
+    });
+  } else {
+    const feet = positionsFor(cast);
+    DRAW_ORDER.filter(n => cast[n]).forEach(name => {
+      const pos = feet[name];
+      positions[name] = {x: pos.x, topY: pos.y + (HEAD_TOP_POSE[name + ':' + cast[name]] || HEAD_TOP[name] || -150)};
+      const draw = name === 'walt' ? waltFigure(cast.walt, fx) : CAST_DRAW[name](cast[name]);
+      svg += `<g transform="translate(${pos.x} ${pos.y})">${draw}</g>`;
+    });
+  }
+  svg += fxLayer(fx, set);
+  if (spec.say && positions[spec.say.who]){
+    const p = positions[spec.say.who];
+    svg += sayBubble(p.x, p.topY, spec.say.text);
+  }
+  return svg;
+}
+
+const SUPPORTED = {
+  sets: Object.keys(SET),
+  cast: {
+    walt: Object.keys(WALT_POSE),
+    jesse: ['lie','sit','stand','run','chained','drive'],
+    jane: ['back','side','sit-scream','sit-glare','stand'],
+    skyler: ['stand','spreadsheet','ceo','sit'],
+    hank: ['read','suspicious','laugh'],
+    saul: ['pitch','stand'],
+    lydia: ['stand','panic'],
+    elliott: ['stand','shock'],
+    mike: ['stand'],
+    gale: ['stand'],
+    krazy8: ['chained','stand'],
+    badger: ['stand'],
+    declan: ['stand'],
+    jack: ['stand'],
+    judge: ['sit'],
+    todd: ['stand'],
+    neo: ['sit','stand','pod','coat','fight','down','fly','blind','rain','bench'],
+    trinity: ['stand','coat','fall','cafe'],
+    morpheus: ['sit','stand','chair'],
+    smith: ['stand','fight','oracle','many'],
+    cypher: ['drink','stand'],
+    oracle: ['cookie','stand','sit'],
+    architect: ['sit','stand'],
+    tank: ['stand'],
+    niobe: ['stand'],
+    sati: ['stand'],
+    analyst: ['stand'],
+    deus: ['face']
+  },
+  fx: ['zz','cough','wet','halo','sweat','siren','bubbles','pins','confetti','lily','alarm','blue','bullets','cat','code','crash','emp','flash','gold','gruel','light','mirror','phone','pills','plug','rain','screens','sentinels','shells','steak','sunrise','train','vase','cookies']
+};
+if (typeof module !== 'undefined' && module.exports) { module.exports = SUPPORTED; module.exports.buildScene = buildScene; }
+const MOMENTS = (typeof window !== 'undefined' && window.MOMENTS) || [];
+
+if (typeof document !== 'undefined'){
+  const scene = document.getElementById('scene');
+  const cap = document.getElementById('sceneCap');
+  const panel = document.getElementById('panel');
+  const stage = document.querySelector('.stage');
+  const eyebrowEl = document.getElementById('eyebrow');
+  const modeTabsEl = document.getElementById('modeTabs');
+  const momentPickerEl = document.getElementById('momentPicker');
+  const resumeRowEl = document.getElementById('resumeRow');
+  const seasonStripEl = document.getElementById('seasonStrip');
+  const mapSvg = document.getElementById('map');
+  const galleryBoxEl = document.getElementById('galleryBox');
+  const galleryHeadingEl = document.getElementById('galleryHeading');
+  const galleryGridEl = document.getElementById('galleryGrid');
+  const badgeGridEl = document.getElementById('badgeGrid');
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let seen = new Set();
+  try { seen = new Set(JSON.parse(localStorage.getItem('up-seen') || '[]')); } catch (e) {}
+  const saveSeen = () => { try { localStorage.setItem('up-seen', JSON.stringify([...seen])); } catch (e) {} };
+
+  let MOMENT_ID = null;
+  try { MOMENT_ID = localStorage.getItem('up-moment'); } catch (e) {}
+  if (!MOMENT_ID || !MOMENTS.some(m => m.id === MOMENT_ID)) MOMENT_ID = MOMENTS.length ? MOMENTS[0].id : null;
+
+  let path = [], step = 0;
+
+  function currentMoment(){ return MOMENTS.find(m => m.id === MOMENT_ID) || MOMENTS[0]; }
+
+  function resolveNode(moment, p){
+    if (!p.length) return null;
+    if (p[0] === 'aired') return moment.aired;
+    let choices = moment.choices, node = null;
+    for (const id of p){
+      node = (choices || []).find(c => c.id === id);
+      if (!node) return null;
+      choices = node.next ? node.next.choices : null;
+    }
+    return node;
+  }
+
+  function seenBeneath(key){
+    for (const k of seen) if (k === key || k.indexOf(key + '/') === 0) return true;
+    return false;
+  }
+  function markSeen(moment, p){ seen.add([moment.id, ...p].join('/')); saveSeen(); }
+
+  function choiceBtn(moment, node){
+    const key = [moment.id, ...path, node.id].join('/');
+    return `<button class="choice${seenBeneath(key) ? ' seen' : ''}" data-go="${esc(node.id)}"><b>${esc(node.label)}</b><span>${esc(node.tag)}</span></button>`;
+  }
+
+  function beatsPanel(label, beats, st){
+    const bt = beats[st], last = st === beats.length - 1;
+    return `<div class="kicker">${esc(label)}</div>
+      <div class="steps" role="img" aria-label="Step ${st + 1} of ${beats.length}">${beats.map((_, i) => `<i class="${i <= st ? 'on' : ''}"></i>`).join('')}</div>
+      <p>${esc(bt.text)}</p>
+      <div class="row"><button class="btn" data-next>${last ? 'See how it ends' : 'Next'}</button>
+      <button class="linkish" data-home>Back to the choice</button><button class="linkish" data-restart>Start this moment over</button></div>`;
+  }
+
+  function checkpointPanel(moment, node){
+    return `<div class="checkpoint">
+        <div class="kicker">So far</div>
+        <h2>${esc(node.checkpoint.name)}</h2>
+        <p>${esc(node.checkpoint.summary)}</p>
+      </div>
+      <h2>${esc(node.next.question)}</h2>
+      <div class="choices">${node.next.choices.map(c => choiceBtn(moment, c)).join('')}</div>
+      <div class="row"><button class="linkish" data-home>Back to the choice</button><button class="linkish" data-restart>Start this moment over</button></div>`;
+  }
+
+  function endingPanel(moment, ending, isAired){
+    const airedMeter = moment.aired.ending.meter;
+    return `<div class="ending">
+      <div class="kicker">${isAired ? 'The real timeline' : 'Your timeline'}</div>
+      <h2>${esc(ending.name)}</h2>
+      <p>${esc(ending.summary)}</p>
+      <div class="meter"><div class="lab"><span>Heisenberg meter</span><span>${ending.meter}/100${isAired ? '' : ' · as aired: ' + airedMeter}</span></div>
+      <div class="bar"><div class="fill" style="width:0"></div>${isAired ? '' : `<div class="mark" style="left:${airedMeter}%"></div>`}</div></div>
+      <div class="stat">${ending.pct == null ? 'This is the version that aired.' : `<strong>${ending.pct}%</strong> of visitors chose this (demo figure)`}</div>
+      <div class="row"><button class="btn" data-share>Copy my timeline</button><button class="btn ghost" data-home>Try another choice</button><button class="linkish" data-restart>Start this moment over</button></div>
+      ${shareRow({text: ending.share, url: absUrl('/short-stories/' + moment.id + '/')})}
+      <div class="toast" role="status"></div>
+      <textarea class="sharebox" id="sharebox" readonly hidden aria-label="Your timeline, ready to copy"></textarea>
+    </div>`;
+  }
+
+  function animateMeter(meter){
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const f = panel.querySelector('.fill'); if (f) f.style.width = meter + '%';
+    }));
+  }
+
+  function drawScene(spec, caption){
+    scene.innerHTML = buildScene(spec);
+    cap.textContent = caption;
+    if (!reduce && scene.animate) scene.animate([{opacity:.25},{opacity:1}], {duration:320, easing:'ease-out'});
+  }
+
+  function renderMomentPicker(moment){
+    momentPickerEl.innerHTML = MOMENTS.map(m =>
+      `<button class="moment-btn${m.id === moment.id ? ' active' : ''}" data-moment="${esc(m.id)}" aria-pressed="${m.id === moment.id}">${esc(m.code)} · ${esc(m.title)}</button>`).join('');
+  }
+
+  function renderSeasonStrip(moment){
+    const bySeason = {}; MOMENTS.forEach(m => { bySeason[m.season] = m; });
+    let html = '';
+    for (let s = 1; s <= 5; s++){
+      const m = bySeason[s];
+      html += m
+        ? `<button class="strip-dot${m.id === moment.id ? ' active' : ''}" data-moment="${esc(m.id)}" title="${esc(m.code)} · ${esc(m.title)}" aria-label="${esc(m.code)} · ${esc(m.title)}"><span class="dot"></span><span class="lab">S${s}</span></button>`
+        : `<span class="strip-dot empty"><span class="dot"></span><span class="lab">S${s}</span></span>`;
+    }
+    seasonStripEl.innerHTML = html;
+  }
+
+  function curve(x0,y0,x1,y1){
+    const mx = x0 + (x1-x0)*0.5;
+    return `M${x0} ${y0} C ${mx} ${y0} ${mx} ${y1} ${x1} ${y1}`;
+  }
+  function nodeLabel(x,y,text,color,small){
+    return `<circle cx="${x}" cy="${y}" r="${small?4.5:5.5}" fill="${color}"/><text x="${x+12}" y="${y+5}" font-family="Cabin Sketch, cursive" font-size="${small?13:16}" font-weight="700" fill="${color}">${esc(text)}</text>`;
+  }
+
+  function drawMap(moment){
+    const n = moment.choices.length;
+    const W = 1040, H = Math.max(260, 70 + n * 90);
+    mapSvg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const forkX = 70, forkY = 30, l1X = 440, leafX = 820;
+    const top = 60, bandH = (H - top - 20) / n;
+    let out = '';
+    out += `<circle class="pulse" cx="${forkX}" cy="${forkY}" r="6" fill="#7FD3E8"/><circle cx="${forkX}" cy="${forkY}" r="6" fill="#7FD3E8"/>`;
+    out += `<text x="${forkX}" y="${forkY-14}" font-family="Cabin Sketch, cursive" font-size="15" font-weight="700" fill="#F2B45A">${esc(moment.code)} · ${esc(moment.episode)}</text>`;
+    out += `<path class="branch aired" d="M${forkX} ${forkY} H${leafX+80}"/>`;
+    out += nodeLabel(leafX+80, forkY, 'As aired', '#EEF0E6');
+    moment.choices.forEach((c,i) => {
+      const y1 = top + bandH*i + bandH/2;
+      const activeTop = path[0] === c.id;
+      const key1 = [moment.id, c.id].join('/');
+      const seenTop = seenBeneath(key1);
+      const cls1 = activeTop ? 'active' : (seenTop ? 'visited' : 'unknown');
+      out += `<path class="branch ${cls1}" d="${curve(forkX, forkY, l1X, y1)}"/>`;
+      const lab1 = seenTop ? c.checkpoint.name : (activeTop ? '…' : '?');
+      const col1 = activeTop ? '#7FD3E8' : (seenTop ? '#A8B7AD' : '#5E7268');
+      out += nodeLabel(l1X, y1, lab1, col1);
+      const kids = (c.next && c.next.choices) || [];
+      const m = kids.length || 1;
+      const subH = bandH * 0.86;
+      kids.forEach((k,j) => {
+        const y2 = y1 - subH/2 + (m > 1 ? (subH/(m-1))*j : subH/2);
+        const activeLeaf = activeTop && path[1] === k.id;
+        const key2 = [moment.id, c.id, k.id].join('/');
+        const seenLeaf = seen.has(key2);
+        const cls2 = activeLeaf ? 'active' : (seenLeaf ? 'visited' : 'unknown');
+        out += `<path class="branch ${cls2}" d="${curve(l1X, y1, leafX, y2)}"/>`;
+        const lab2 = seenLeaf ? k.ending.name : (activeLeaf ? '…' : '?');
+        const col2 = activeLeaf ? '#7FD3E8' : (seenLeaf ? '#A8B7AD' : '#5E7268');
+        out += nodeLabel(leafX, y2, lab2, col2, true);
+      });
+    });
+    mapSvg.innerHTML = out;
+  }
+
+  function renderDonate(){
+    const el = document.getElementById('donateRow');
+    if (SITE.paypalUrl){
+      el.innerHTML = `<a class="btn" href="${esc(SITE.paypalUrl)}" target="_blank" rel="noopener">Donate with PayPal</a>
+        <div><img src="assets/paypal-qr.png" width="140" height="140" alt="PayPal donation QR code"><p class="qr-cap">Scan with your phone</p></div>`;
+    } else {
+      el.innerHTML = `<button class="btn" disabled>PayPal link coming soon</button>`;
+    }
+  }
+  function renderIdea(){
+    const el = document.getElementById('ideaRow');
+    if (SITE.ideaFormUrl){
+      el.innerHTML = `<a class="btn" href="${esc(SITE.ideaFormUrl)}" target="_blank" rel="noopener">Send feedback</a>`;
+    } else {
+      el.innerHTML = `<button class="btn" disabled>Form coming soon</button>`;
+    }
+  }
+
+  /* =========================================================
+     Journey engine (window.JOURNEYS). Generic over journey id
+     so a second journey (e.g. The Matrix) needs only new files.
+     ========================================================= */
+  const JOURNEYS = (typeof window !== 'undefined' && window.JOURNEYS) || {};
+
+  function clamp(n){ return Math.max(0, Math.min(100, n)); }
+
+  function evalTerm(term, scores, flags){
+    let m = term.match(/^(\w+)\s*(>=|<=|==|<|>)\s*(-?\d+)$/);
+    if (m){
+      const score = scores[m[1]];
+      if (score === undefined) return false;
+      const val = Number(m[3]);
+      switch (m[2]){
+        case '>=': return score >= val;
+        case '<=': return score <= val;
+        case '==': return score === val;
+        case '<':  return score < val;
+        case '>':  return score > val;
+      }
+      return false;
+    }
+    m = term.match(/^!(\w+)$/);
+    if (m) return !flags.has(m[1]);
+    m = term.match(/^(\w+)$/);
+    if (m) return flags.has(m[1]);
+    return false;
+  }
+  function parseWhen(when, scores, flags){
+    if (!when) return true;
+    return String(when).split('&&').map(s => s.trim()).filter(Boolean).every(t => evalTerm(t, scores, flags));
+  }
+
+  function journeyList(){ return Object.keys(JOURNEYS).sort().map(id => JOURNEYS[id]); }
+  function journeyChapters(journey){ return (journey.chapters || []).slice().sort((a,b) => a.n - b.n); }
+
+  /* Chapter numbers are not assumed to be 1..10: several chapters may share the same `n`
+     (mutually exclusive variants gated by a chapter-level `when`, e.g. a Breaking Bad
+     ch11a/ch11b pair), and a journey may have any number of steps (e.g. a ~9-chapter
+     Matrix journey). Nothing here hardcodes a chapter count. */
+  function chapterNs(journey){ return [...new Set(journeyChapters(journey).map(c => c.n))].sort((a,b) => a-b); }
+  function totalSteps(journey){ return chapterNs(journey).length; }
+  function nextChapter(journey, st, afterN){
+    const chapters = journeyChapters(journey);
+    const ns = chapterNs(journey).filter(n => n > afterN);
+    for (const n of ns){
+      const group = chapters.filter(c => c.n === n);
+      const hit = group.find(c => parseWhen(c.when, st.scores, st.flags));
+      if (hit) return hit; // a chapter whose `when` is false is skipped entirely (falls through to the next n)
+    }
+    return null;
+  }
+  function canonChoiceFor(chapter){ return chapter.canon != null ? chapter.canon : CANON_CHOICE[chapter.id]; }
+
+  const CANON_CHOICE = {
+    ridealong: 'a', basement: 'a', graymatter: 'a', lawyer: 'a', phoenix: 'c',
+    gale: 'a', endtimes: 'a', buyout: 'a', cashpile: 'b', tohajiilee: 'b'
+  };
+  /* Badges are per journey. The generic ones (early exit, every / never canon) work off each chapter's `canon` field. */
+  const GENERIC_BADGES = [
+    {id: 'earlyExit', name: 'Early Exit', desc: 'Took one of the early exits.'},
+    {id: 'everyChoiceCanon', name: 'Every Choice Canon', desc: 'Picked the canon choice in every chapter you played.'},
+    {id: 'neverCanon', name: 'Never Canon', desc: 'Finished without a single canon choice.'}
+  ];
+  const JOURNEY_BADGES = {
+    'breaking-bad': [
+      {id: 'savedJane', name: 'Saved Jane', desc: 'Jane made it out of that bedroom alive.', test: st => st.flags.has('janeAlive')},
+      {id: 'pureHeisenberg', name: 'Pure Heisenberg', desc: 'Ended a run at 95 or more on the meter.', test: (st, e) => e.meter >= 95},
+      {id: 'carwashTycoon', name: 'Car Wash Tycoon', desc: 'Built the chain of car washes.', test: st => st.flags.has('carwash')}
+    ],
+    'matrix': [
+      {id: 'bothPills', name: 'Took Both Pills', desc: 'Swallowed the red and the blue. Somehow it worked.', test: st => st.flags.has('bothPills')},
+      {id: 'savedMorpheus', name: 'Saved Morpheus', desc: 'Went into the building and got him out.', test: st => st.flags.has('rescued')},
+      {id: 'trinityLives', name: 'Trinity Lives', desc: 'Trinity made it through the whole trilogy.', test: st => (st.flags.has('trinitySafe') || st.flags.has('defendZion')) && !st.flags.has('trinityLost')},
+      {id: 'askedManager', name: 'Asked for the Manager', desc: 'Asked the Architect to see a manager.', test: st => st.flags.has('manager')},
+      {id: 'trueBeliever', name: 'True Believer', desc: 'Ended a run at 95 or more Belief.', test: (st, e) => e.meter >= 95}
+    ]
+  };
+  function badgeDefs(journey){ return (JOURNEY_BADGES[journey.id] || []).concat(GENERIC_BADGES); }
+  function badgeName(journey, id){ const d = badgeDefs(journey).find(b => b.id === id); return d ? d.name : id; }
+  function meterKey(journey){ return journey.meterScore || 'darkness'; }
+  function meterLabel(journey){ return journey.meterLabel || 'Heisenberg'; }
+
+  function freshJourneyState(journey){
+    return {journeyId: journey.id, scores: Object.assign({}, journey.start), flags: new Set(),
+      afterN: 0, path: [], status: 'active', ending: null, earnedBadges: [], step: 0, activeChoiceId: null};
+  }
+  function loadJourneyState(journey){
+    let raw = null;
+    try { raw = JSON.parse(localStorage.getItem('up-journey-' + journey.id) || 'null'); } catch (e) {}
+    if (raw && raw.status === 'active'){
+      return {journeyId: journey.id, scores: Object.assign({}, journey.start, raw.scores || {}),
+        flags: new Set(raw.flags || []), afterN: raw.afterN || 0, path: raw.path || [],
+        status: 'active', ending: null, earnedBadges: [], step: raw.step || 0, activeChoiceId: raw.activeChoiceId || null};
+    }
+    return freshJourneyState(journey);
+  }
+  function saveJourneyState(journey, st){
+    try { localStorage.setItem('up-journey-' + journey.id, JSON.stringify({
+      scores: st.scores, flags: [...st.flags], afterN: st.afterN,
+      path: st.path, status: st.status, step: st.step, activeChoiceId: st.activeChoiceId})); } catch (e) {}
+  }
+  function clearJourneyState(journey){ try { localStorage.removeItem('up-journey-' + journey.id); } catch (e) {} }
+
+  function loadFound(journey){ try { return new Set(JSON.parse(localStorage.getItem('up-journey-found-' + journey.id) || '[]')); } catch (e) { return new Set(); } }
+  function saveFound(journey, set){ try { localStorage.setItem('up-journey-found-' + journey.id, JSON.stringify([...set])); } catch (e) {} }
+  function loadBadges(journey){ try { return new Set(JSON.parse(localStorage.getItem('up-journey-badges-' + journey.id) || '[]')); } catch (e) { return new Set(); } }
+  function saveBadges(journey, set){ try { localStorage.setItem('up-journey-badges-' + journey.id, JSON.stringify([...set])); } catch (e) {} }
+
+  function findableTotal(journey){
+    return Object.keys(journey.exits || {}).length + (journey.endings || []).filter(e => !e.fallback).length;
+  }
+
+  function resolveEnding(journey, st, exitKey){
+    const meter = st.scores[meterKey(journey)];
+    if (exitKey){
+      const ex = journey.exits[exitKey];
+      return {kind: 'exit', id: exitKey, name: ex.name, summary: ex.summary, share: ex.share, meter: meter};
+    }
+    const list = journey.endings || [];
+    const hit = list.find(e => parseWhen(e.when, st.scores, st.flags)) || list[list.length - 1];
+    return {kind: 'ending', id: hit.id, name: hit.name, summary: hit.summary, share: hit.share, meter: meter};
+  }
+
+  function computeBadges(journey, st, ending){
+    const chapters = journeyChapters(journey);
+    const canonIdFor = chapterId => { const ch = chapters.find(c => c.id === chapterId); return ch && canonChoiceFor(ch); };
+    const earned = new Set();
+    (JOURNEY_BADGES[journey.id] || []).forEach(b => { try { if (b.test(st, ending)) earned.add(b.id); } catch (e) {} });
+    if (ending.kind === 'exit'){
+      earned.add('earlyExit');
+    } else if (st.path.length){
+      // "every chapter" / "no chapter" means every chapter actually played this run, since
+      // conditional chapters (a chapter-level `when`) mean not every declared chapter is played.
+      const allCanon = st.path.every(p => { const c = canonIdFor(p.chapterId); return c != null && c === p.choiceId; });
+      if (allCanon) earned.add('everyChoiceCanon');
+      else if (!st.path.some(p => canonIdFor(p.chapterId) === p.choiceId)) earned.add('neverCanon');
+    }
+    return earned;
+  }
+
+  function resolveSetup(chapter, st){
+    const variants = chapter.setup.variants || [];
+    const hit = variants.find(v => parseWhen(v.when, st.scores, st.flags));
+    return {
+      kicker: chapter.setup.kicker,
+      text: hit ? hit.text : chapter.setup.text,
+      scene: (hit && hit.scene) || chapter.setup.scene,
+      caption: chapter.setup.caption
+    };
+  }
+  function visibleBeats(choice, st){ return (choice.beats || []).filter(b => parseWhen(b.when, st.scores, st.flags)); }
+  function applyChoice(st, choice){
+    const effects = choice.effects || {};
+    Object.keys(effects).forEach(k => { st.scores[k] = clamp((st.scores[k] || 0) + effects[k]); });
+    (choice.flags || []).forEach(f => st.flags.add(f));
+  }
+
+  let MODE = 'journey';
+  try { MODE = localStorage.getItem('up-mode') || 'journey'; } catch (e) {}
+  if (MODE !== 'journey' && MODE !== 'moments') MODE = 'journey';
+
+  let JOURNEY_ID = null;
+  try { JOURNEY_ID = localStorage.getItem('up-journey-id'); } catch (e) {}
+  if (!JOURNEY_ID || !journeyList().some(j => j.id === JOURNEY_ID)) JOURNEY_ID = journeyList().length ? journeyList()[0].id : null;
+
+  let JST = null;
+  function currentJourney(){ const list = journeyList(); return list.find(j => j.id === JOURNEY_ID) || list[0]; }
+  function ensureJST(){
+    const journey = currentJourney();
+    if (!journey) return;
+    if (!JST || JST.journeyId !== journey.id) JST = loadJourneyState(journey);
+  }
+
+  function renderModeTabs(){
+    const tabs = [['journey', 'The journey'], ['moments', 'Short stories']];
+    modeTabsEl.innerHTML = tabs.map(([id, label]) =>
+      `<button class="moment-btn${MODE === id ? ' active' : ''}" data-mode="${id}" aria-pressed="${MODE === id}">${esc(label)}</button>`).join('');
+  }
+  function renderSubPicker(){
+    if (MODE === 'journey'){
+      const journeys = journeyList();
+      const journey = currentJourney();
+      momentPickerEl.innerHTML = journeys.map(j =>
+        `<button class="moment-btn${journey && j.id === journey.id ? ' active' : ''}" data-journey="${esc(j.id)}" aria-pressed="${!!(journey && j.id === journey.id)}">${esc(jmeta(j).series ? jmeta(j).series + ': ' + j.title : j.title)}</button>`).join('');
+    } else {
+      renderMomentPicker(currentMoment());
+    }
+  }
+
+  function journeyChoiceBtn(c){
+    return `<button class="choice" data-jchoice="${esc(c.id)}"><b>${esc(c.label)}</b><span>${esc(c.tag)}</span></button>`;
+  }
+  function journeyBeatsPanel(choice, beats, st, chapter, hasNextChapter){
+    const bt = beats[st], last = st === beats.length - 1;
+    const nextLabel = !last ? 'Next' : (choice.exit || !hasNextChapter ? 'See how it ends' : 'Next chapter');
+    return `<div class="kicker">${esc(chapter.code)} · ${esc(chapter.title)} - ${esc(choice.label)}</div>
+      <div class="steps" role="img" aria-label="Step ${st + 1} of ${beats.length}">${beats.map((_, i) => `<i class="${i <= st ? 'on' : ''}"></i>`).join('')}</div>
+      <p>${esc(bt.text)}</p>
+      <div class="row"><button class="btn" data-jnext>${nextLabel}</button></div>`;
+  }
+
+  function advanceAfterChapter(journey, chapter, choice){
+    JST.path.push({chapterId: chapter.id, code: chapter.code, title: chapter.title, choiceId: choice.id, label: choice.label});
+    if (choice.exit){ finishJourney(journey, choice.exit); return; }
+    const next = nextChapter(journey, JST, chapter.n);
+    if (!next){ finishJourney(journey, null); return; }
+    JST.afterN = chapter.n; JST.activeChoiceId = null; JST.step = 0;
+    saveJourneyState(journey, JST);
+  }
+  function finishJourney(journey, exitKey){
+    const ending = resolveEnding(journey, JST, exitKey);
+    const badges = computeBadges(journey, JST, ending);
+    JST.status = 'ended'; JST.ending = ending; JST.earnedBadges = [...badges];
+    const found = loadFound(journey); found.add((ending.kind === 'exit' ? 'exit:' : 'end:') + ending.id); saveFound(journey, found);
+    const allBadges = loadBadges(journey); badges.forEach(b => allBadges.add(b)); saveBadges(journey, allBadges);
+    clearJourneyState(journey);
+  }
+
+  function shareRow(info){
+    const enc = encodeURIComponent, u = info.url;
+    const links = [
+      ['Reddit', 'https://www.reddit.com/submit?url=' + enc(u) + '&title=' + enc(info.text)],
+      ['X', 'https://twitter.com/intent/tweet?text=' + enc(info.text) + '&url=' + enc(u)],
+      ['WhatsApp', 'https://wa.me/?text=' + enc(info.text + ' ' + u)],
+      ['Facebook', 'https://www.facebook.com/sharer/sharer.php?u=' + enc(u)]
+    ];
+    const native = (typeof navigator !== 'undefined' && navigator.share) ? '<button class="btn ghost" data-native-share>Share...</button>' : '';
+    return `<div class="kicker">Share this ending</div><div class="row sharerow">${links.map(l => `<a class="btn ghost" href="${esc(l[1])}" target="_blank" rel="noopener">${l[0]}</a>`).join('')}${native}</div>`;
+  }
+  function shareInfo(){
+    if (MODE === 'journey'){
+      const journey = currentJourney(), ending = JST.ending;
+      return {text: ending.share.replace('{meter}', ending.meter), url: endingPageUrl(journey, ending), tag: jmeta(journey).tagline, title: ending.name};
+    }
+    const moment = currentMoment();
+    const ending = path[0] === 'aired' ? moment.aired.ending : resolveNode(moment, path).ending;
+    return {text: ending.share, url: absUrl('/short-stories/' + moment.id + '/'), tag: 'The Uncertainty Principle, an unofficial Breaking Bad what-if.', title: ending.name};
+  }
+
+  function renderJourneyEnding(journey){
+    const ending = JST.ending, badges = JST.earnedBadges || [];
+    const labels = journey.scoreLabels || {};
+    const scoreRows = Object.keys(journey.start).map(k =>
+      `<div class="meter"><div class="lab"><span>${esc(labels[k] || k)}</span><span>${JST.scores[k]}/100</span></div>
+        <div class="bar"><div class="fill jfill" data-k="${esc(k)}" style="width:0"></div></div></div>`).join('');
+    const pathRows = JST.path.map(p => `<li><b>${esc(p.code)}</b> ${esc(p.title)} - ${esc(p.label)}</li>`).join('');
+    const badgeRow = badges.length
+      ? badges.map(b => `<span class="gallery-chip badge earned">${esc(badgeName(journey, b))}</span>`).join('')
+      : '<span class="gallery-chip">None this run</span>';
+    cap.textContent = ending.kind === 'exit' ? 'An early ending.' : 'The end of the road.';
+    panel.innerHTML = `<div class="ending">
+      <div class="kicker">${ending.kind === 'exit' ? 'An early ending' : 'Your timeline'}</div>
+      <h2>${esc(ending.name)}</h2>
+      <p>${esc(ending.summary)}</p>
+      <div class="meter"><div class="lab"><span>${esc(meterLabel(journey))} meter</span><span>${ending.meter}/100</span></div>
+        <div class="bar"><div class="fill" style="width:0"></div></div></div>
+      <div class="scorebars">${scoreRows}</div>
+      <div class="kicker">The path you took</div>
+      <ul class="pathlist">${pathRows}</ul>
+      <div class="kicker">Badges earned this run</div>
+      <div class="row">${badgeRow}</div>
+      <div class="row"><button class="btn" data-share>Copy my timeline</button><button class="btn ghost" data-journey-restart>Play again</button></div>
+      ${shareRow(shareInfo())}
+      <div class="toast" role="status"></div>
+      <textarea class="sharebox" id="sharebox" readonly hidden aria-label="Your timeline, ready to copy"></textarea>
+    </div>`;
+    animateMeter(ending.meter);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      panel.querySelectorAll('.jfill').forEach(f => { f.style.width = JST.scores[f.dataset.k] + '%'; });
+    }));
+  }
+
+  function seasonOf(code){ const m = /^[SM](\d+)/.exec(code); return m ? Number(m[1]) : 1; }
+  function cv(name, fb){ try { return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fb; } catch (e) { return fb; } }
+
+  function drawJourneyMap(journey, chapters){
+    const W = 1040, H = 300;
+    const cChalk = cv('--chalk', '#EEF0E6'), cCrystal = cv('--crystal', '#7FD3E8'), cAmber = cv('--amber', '#F2B45A'), cFaint = cv('--chalk-faint', '#5E7268');
+    const unit = /^M/.test((chapters[0] || {}).code || '') ? 'FILM' : 'SEASON';
+    mapSvg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const marginX = 60, usableW = W - marginX * 2;
+    const seasons = chapters.map(c => seasonOf(c.code));
+    const minS = Math.min.apply(null, seasons), maxS = Math.max.apply(null, seasons);
+    const span = usableW / (maxS - minS + 1);
+    const xFor = ch => {
+      const s = seasonOf(ch.code);
+      const sameSeason = chapters.filter(c => seasonOf(c.code) === s);
+      const rank = sameSeason.findIndex(c => c.id === ch.id);
+      const within = sameSeason.length > 1 ? rank / (sameSeason.length - 1) : 0.5;
+      return marginX + (s - minS) * span + span * 0.15 + within * span * 0.7;
+    };
+    const baseY = 150;
+    const offsetFor = choiceId => choiceId === 'a' ? -46 : (choiceId === 'c' ? 46 : 0);
+    const ns = chapterNs(journey);
+    const repFor = n => { const group = chapters.filter(c => c.n === n); return group.find(c => canonChoiceFor(c) != null) || group[0]; };
+
+    let out = '';
+    for (let s = minS; s <= maxS; s++){
+      const x = marginX + (s - minS) * span + span / 2;
+      out += `<text x="${x.toFixed(1)}" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="${cFaint}">${unit} ${s}</text>`;
+      out += `<line x1="${x.toFixed(1)}" y1="28" x2="${x.toFixed(1)}" y2="${H - 16}" stroke="${cFaint}" stroke-opacity=".5" stroke-width="1" stroke-dasharray="2 6"/>`;
+    }
+    // canon line: one point per chapter-number step, using the chapter variant marked canon
+    // when a step has more than one (a chapter-level `when` splits it into variants).
+    const canonPts = ns.map(n => { const rep = repFor(n); return {x: xFor(rep), y: baseY + offsetFor(canonChoiceFor(rep))}; });
+    out += `<path class="branch aired" d="${canonPts.map((p, i) => (i === 0 ? 'M' : 'L') + p.x.toFixed(1) + ' ' + p.y.toFixed(1)).join(' ')}"/>`;
+    const lastCanon = canonPts[canonPts.length - 1];
+    if (lastCanon) out += nodeLabel(lastCanon.x + 14, lastCanon.y, 'Canon path', cChalk, true);
+
+    const playedNs = new Set(JST.path.map(p => { const ch = chapters.find(c => c.id === p.chapterId); return ch ? ch.n : null; }));
+    ns.forEach(n => {
+      if (playedNs.has(n)) return;
+      const x = xFor(repFor(n));
+      out += `<circle cx="${x.toFixed(1)}" cy="${baseY}" r="3.5" fill="${cFaint}" opacity=".5"/>`;
+    });
+
+    if (JST.path.length){
+      const pts = JST.path.map(p => {
+        const ch = chapters.find(c => c.id === p.chapterId);
+        return {x: xFor(ch), y: baseY + offsetFor(p.choiceId)};
+      });
+      out += `<path class="branch active" d="${pts.map((p, i) => (i === 0 ? 'M' : 'L') + p.x.toFixed(1) + ' ' + p.y.toFixed(1)).join(' ')}"/>`;
+      pts.forEach((p, i) => {
+        const label = JST.path[i].label.length > 18 ? JST.path[i].label.slice(0, 16) + '…' : JST.path[i].label;
+        out += nodeLabel(p.x, p.y, label, cCrystal, true);
+      });
+    }
+    if (JST.status === 'active'){
+      const chapter = nextChapter(journey, JST, JST.afterN);
+      if (chapter){
+        const x = xFor(chapter);
+        out += `<circle class="pulse" cx="${x.toFixed(1)}" cy="${baseY}" r="7" fill="${cAmber}"/><circle cx="${x.toFixed(1)}" cy="${baseY}" r="7" fill="none" stroke="${cAmber}" stroke-width="2"/>`;
+        out += `<text x="${x.toFixed(1)}" y="${baseY - 16}" text-anchor="middle" font-family="Cabin Sketch, cursive" font-weight="700" font-size="14" fill="${cAmber}">${esc(chapter.code)}</text>`;
+      }
+    }
+    mapSvg.innerHTML = out;
+  }
+
+  function renderGallery(journey){
+    const found = loadFound(journey);
+    galleryHeadingEl.textContent = `You've found ${found.size} of ${findableTotal(journey)} endings`;
+    const items = [];
+    Object.keys(journey.exits || {}).forEach(key => items.push({id: 'exit:' + key, name: journey.exits[key].name}));
+    (journey.endings || []).filter(e => !e.fallback).forEach(e => items.push({id: 'end:' + e.id, name: e.name}));
+    galleryGridEl.innerHTML = items.map(it => {
+      const isFound = found.has(it.id);
+      return `<span class="gallery-chip${isFound ? ' found' : ''}">${isFound ? esc(it.name) : '?'}</span>`;
+    }).join('');
+    const badges = loadBadges(journey);
+    badgeGridEl.innerHTML = badgeDefs(journey).map(b => {
+      const earned = badges.has(b.id);
+      return `<span class="gallery-chip badge${earned ? ' earned' : ''}" title="${esc(b.desc)}">${esc(b.name)}</span>`;
+    }).join('');
+  }
+
+  function viewJourney(){
+    const journey = currentJourney();
+    if (!journey) return;
+    ensureJST();
+    const chapters = journeyChapters(journey);
+    renderSubPicker();
+
+    if (JST.status === 'ended'){
+      eyebrowEl.textContent = `${journey.title} · ${JST.ending.name}`;
+      renderJourneyEnding(journey);
+      drawJourneyMap(journey, chapters);
+      renderGallery(journey);
+      return;
+    }
+
+    const chapter = nextChapter(journey, JST, JST.afterN);
+    if (!chapter){
+      // No chapter left matches from here (content changed under a saved run, or the journey
+      // genuinely has no more steps) -> resolve the finale from wherever the run stopped.
+      finishJourney(journey, null);
+      return viewJourney();
+    }
+
+    if (JST.path.length){
+      resumeRowEl.hidden = false;
+      resumeRowEl.innerHTML = `<div class="resume-note"><span>Resume your journey - chapter ${chapter.n} of ${totalSteps(journey)}.</span><button class="btn ghost" data-journey-restart>Start over</button></div>`;
+    }
+    eyebrowEl.textContent = `${chapter.code} · Chapter ${chapter.n} of ${totalSteps(journey)} · ${chapter.title}`;
+
+    if (!JST.activeChoiceId){
+      const setup = resolveSetup(chapter, JST);
+      drawScene(setup.scene, setup.caption);
+      panel.innerHTML = `<div class="kicker">${esc(setup.kicker)}</div>
+        <p>${esc(setup.text)}</p>
+        <h2>${esc(chapter.question)}</h2>
+        <div class="choices">${chapter.choices.map(c => journeyChoiceBtn(c)).join('')}</div>`;
+    } else {
+      const choice = chapter.choices.find(c => c.id === JST.activeChoiceId);
+      const beats = visibleBeats(choice, JST);
+      if (JST.step < beats.length){
+        drawScene(beats[JST.step].scene, beats[JST.step].caption);
+        const hasNextChapter = !choice.exit && nextChapter(journey, JST, chapter.n) !== null;
+        panel.innerHTML = journeyBeatsPanel(choice, beats, JST.step, chapter, hasNextChapter);
+      } else {
+        advanceAfterChapter(journey, chapter, choice);
+        return viewJourney();
+      }
+    }
+    drawJourneyMap(journey, chapters);
+    renderGallery(journey);
+  }
+
+  function switchJourney(id){
+    if (id === JOURNEY_ID) return;
+    JOURNEY_ID = id;
+    try { localStorage.setItem('up-journey-id', JOURNEY_ID); } catch (e) {}
+    JST = null;
+    render(); settle();
+  }
+
+  function view(){
+    const moment = currentMoment();
+    if (!moment) return;
+    eyebrowEl.textContent = `Season ${moment.season} · Episode ${moment.ep} · ${moment.episode}`;
+    renderMomentPicker(moment);
+    renderSeasonStrip(moment);
+
+    if (!path.length){
+      drawScene(moment.setup.scene, moment.setup.caption);
+      panel.innerHTML = `<div class="kicker">${esc(moment.setup.kicker)}</div>
+        <p>${esc(moment.setup.text)}</p>
+        <h2>${esc(moment.question)}</h2>
+        <div class="choices">${moment.choices.map(c => choiceBtn(moment, c)).join('')}</div>
+        <div><button class="linkish" data-go="aired">Or see what really happened</button></div>`;
+    } else if (path[0] === 'aired'){
+      const node = moment.aired;
+      if (step < node.beats.length){
+        drawScene(node.beats[step].scene, node.beats[step].caption);
+        panel.innerHTML = beatsPanel('The real timeline', node.beats, step);
+      } else {
+        markSeen(moment, path);
+        panel.innerHTML = endingPanel(moment, node.ending, true);
+        animateMeter(node.ending.meter);
+      }
+    } else {
+      const node = resolveNode(moment, path);
+      if (!node){ path = []; step = 0; return view(); }
+      if (step < node.beats.length){
+        drawScene(node.beats[step].scene, node.beats[step].caption);
+        panel.innerHTML = beatsPanel(node.label, node.beats, step);
+      } else if (node.next){
+        panel.innerHTML = checkpointPanel(moment, node);
+      } else if (node.ending){
+        markSeen(moment, path);
+        panel.innerHTML = endingPanel(moment, node.ending, false);
+        animateMeter(node.ending.meter);
+      }
+    }
+    drawMap(moment);
+  }
+
+  function share(){
+    const info = shareInfo();
+    const text = info.text + ' ' + info.tag + ' ' + info.url;
+    const toast = panel.querySelector('.toast'), box = panel.querySelector('.sharebox');
+    const fallback = () => {
+      box.value = text; box.hidden = false; box.focus(); box.select();
+      toast.textContent = 'Copying is blocked here. Select the text below and copy it.';
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => { toast.textContent = 'Copied. Paste it anywhere.'; }, fallback);
+      } else fallback();
+    } catch (err) { fallback(); }
+  }
+  function nativeShare(){
+    const info = shareInfo();
+    try { navigator.share({title: info.title, text: info.text, url: info.url}).catch(() => {}); } catch (e) {}
+  }
+
+  function settle(){
+    const f = panel.querySelector('button'); if (f) f.focus({preventScroll:true});
+    if (window.innerWidth < 820) stage.scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block: 'start'});
+  }
+
+  function switchMoment(id){
+    if (id === MOMENT_ID) return;
+    MOMENT_ID = id; path = []; step = 0;
+    try { localStorage.setItem('up-moment', MOMENT_ID); } catch (e) {}
+    view(); settle();
+  }
+
+  function switchMode(mode){
+    if (mode === MODE) return;
+    MODE = mode;
+    try { localStorage.setItem('up-mode', MODE); } catch (e) {}
+    render(); settle();
+  }
+
+  const rainCv = document.getElementById('rain');
+  const titleEl = document.getElementById('mainTitle'), ledeEl = document.getElementById('mainLede');
+  let rainTimer = 0, rainCols = null;
+  function drawRain(step){
+    const ctx = rainCv.getContext && rainCv.getContext('2d'); if (!ctx) return;
+    const w = rainCv.width = window.innerWidth, h = rainCv.height = window.innerHeight, fs = 16;
+    if (!rainCols || rainCols.length !== Math.ceil(w / fs)) rainCols = Array.from({length: Math.ceil(w / fs)}, () => Math.floor(Math.random() * h / fs));
+    const glyphs = '01ｱｲｳｴｵｶｷｸｹｺﾅﾆﾇﾈﾊﾋﾌ';
+    ctx.clearRect(0, 0, w, h);
+    ctx.font = fs + 'px "Share Tech Mono", monospace';
+    rainCols.forEach((row, i) => {
+      for (let k = 0; k < 12; k++){
+        const y = (row - k) * fs; if (y < 0 || y > h) continue;
+        ctx.globalAlpha = k === 0 ? 0.95 : Math.max(0.05, 0.55 - k * 0.05);
+        ctx.fillStyle = k === 0 ? '#D9FFE0' : '#3CFF6B';
+        ctx.fillText(glyphs[Math.floor(Math.random() * glyphs.length)], i * fs, y);
+      }
+      if (step) rainCols[i] = (row * fs > h && Math.random() > 0.96) ? 0 : row + 1;
+    });
+    ctx.globalAlpha = 1;
+  }
+  function startRain(){
+    if (!rainCv || rainTimer) return;
+    drawRain(false);
+    if (reduce) return; // a single still frame for people who prefer reduced motion
+    rainTimer = setInterval(() => { if (!document.hidden) drawRain(true); }, 90);
+  }
+  function stopRain(){
+    if (rainTimer){ clearInterval(rainTimer); rainTimer = 0; }
+    if (rainCv && rainCv.getContext){ const ctx = rainCv.getContext('2d'); if (ctx) ctx.clearRect(0, 0, rainCv.width, rainCv.height); }
+  }
+  window.addEventListener('resize', () => { if (rainCv && document.documentElement.getAttribute('data-theme') === 'matrix'){ rainCols = null; drawRain(false); } });
+  function applyTheme(){
+    const j = MODE === 'journey' ? currentJourney() : null;
+    const theme = (j && jmeta(j).theme) || '';
+    if (theme) document.documentElement.setAttribute('data-theme', theme); else document.documentElement.removeAttribute('data-theme');
+    if (theme === 'matrix') startRain(); else stopRain();
+  }
+  function renderHeader(){
+    if (MODE === 'journey' && currentJourney()){
+      const j = currentJourney();
+      titleEl.textContent = j.title; ledeEl.textContent = j.subtitle || '';
+    } else {
+      titleEl.textContent = 'The Uncertainty Principle';
+      ledeEl.textContent = 'Pick a moment, then pick what Walt does differently. Every choice bends the rest of the story.';
+    }
+  }
+
+  function render(){
+    applyTheme(); renderHeader();
+    renderModeTabs();
+    resumeRowEl.hidden = true; resumeRowEl.innerHTML = '';
+    if (MODE === 'journey'){
+      seasonStripEl.hidden = true;
+      galleryBoxEl.hidden = false;
+      viewJourney();
+    } else {
+      seasonStripEl.hidden = false;
+      galleryBoxEl.hidden = true;
+      view();
+    }
+  }
+
+  panel.addEventListener('click', ev => {
+    const t = ev.target.closest('button'); if (!t) return;
+    if (t.dataset.jchoice){
+      const journey = currentJourney();
+      const chapter = nextChapter(journey, JST, JST.afterN);
+      const choice = chapter.choices.find(c => c.id === t.dataset.jchoice);
+      applyChoice(JST, choice);
+      JST.activeChoiceId = choice.id; JST.step = 0;
+      saveJourneyState(journey, JST);
+      viewJourney(); settle();
+      return;
+    }
+    if ('jnext' in t.dataset){
+      JST.step++;
+      saveJourneyState(currentJourney(), JST);
+      viewJourney(); settle();
+      return;
+    }
+    if ('journeyRestart' in t.dataset){
+      const journey = currentJourney();
+      clearJourneyState(journey);
+      JST = freshJourneyState(journey);
+      viewJourney(); settle();
+      return;
+    }
+    if (t.dataset.go){
+      if (t.dataset.go === 'aired'){ path = ['aired']; step = 0; }
+      else { path.push(t.dataset.go); step = 0; }
+      view(); settle();
+    } else if ('next' in t.dataset){ step++; view(); settle(); }
+    else if ('home' in t.dataset){
+      path.pop();
+      if (path.length){ const n = resolveNode(currentMoment(), path); step = n ? n.beats.length : 0; }
+      else step = 0;
+      view(); settle();
+    } else if ('restart' in t.dataset){ path = []; step = 0; view(); settle(); }
+    else if ('share' in t.dataset){ share(); }
+    else if ('nativeShare' in t.dataset){ nativeShare(); }
+  });
+  resumeRowEl.addEventListener('click', ev => {
+    const t = ev.target.closest('button[data-journey-restart]'); if (!t) return;
+    const journey = currentJourney();
+    clearJourneyState(journey);
+    JST = freshJourneyState(journey);
+    viewJourney(); settle();
+  });
+  modeTabsEl.addEventListener('click', ev => {
+    const t = ev.target.closest('button[data-mode]'); if (t) switchMode(t.dataset.mode);
+  });
+  momentPickerEl.addEventListener('click', ev => {
+    const tm = ev.target.closest('button[data-moment]'); if (tm){ switchMoment(tm.dataset.moment); return; }
+    const tj = ev.target.closest('button[data-journey]'); if (tj){ switchJourney(tj.dataset.journey); return; }
+  });
+  seasonStripEl.addEventListener('click', ev => {
+    const t = ev.target.closest('button[data-moment]'); if (t) switchMoment(t.dataset.moment);
+  });
+
+  /* Deep links from the static pages: /?journey=breaking-bad&chapter=felina starts that journey at that chapter with start scores. */
+  function satisfyWhen(when, st){
+    String(when || '').split('&&').map(x => x.trim()).filter(Boolean).forEach(t => {
+      let m = t.match(/^(\w+)\s*(>=|<=|==|<|>)\s*(-?\d+)$/);
+      if (m){ const v = Number(m[3]); st.scores[m[1]] = m[2] === '<' ? v - 1 : (m[2] === '>' ? v + 1 : v); return; }
+      m = t.match(/^!(\w+)$/); if (m){ st.flags.delete(m[1]); return; }
+      if (/^\w+$/.test(t)) st.flags.add(t);
+    });
+  }
+  function applyDeepLink(){
+    let q; try { q = new URLSearchParams(location.search); } catch (e) { return; }
+    const jid = q.get('journey'), journey = jid && JOURNEYS[jid];
+    if (!journey) return;
+    MODE = 'journey'; JOURNEY_ID = jid; JST = null;
+    try { localStorage.setItem('up-mode', MODE); localStorage.setItem('up-journey-id', JOURNEY_ID); } catch (e) {}
+    const chapter = (journey.chapters || []).find(c => c.id === q.get('chapter'));
+    if (chapter){
+      clearJourneyState(journey);
+      JST = freshJourneyState(journey);
+      satisfyWhen(chapter.when, JST);
+      JST.afterN = chapter.n - 1;
+      saveJourneyState(journey, JST);
+    }
+    try { history.replaceState(null, '', location.pathname); } catch (e) {}
+  }
+
+  renderDonate();
+  renderIdea();
+  applyDeepLink();
+  ensureJST();
+  render();
+}
+})();
+</script>
+
+</body>
+</html>
