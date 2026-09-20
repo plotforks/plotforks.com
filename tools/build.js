@@ -138,7 +138,12 @@ fetch(${JSON.stringify(COUNTER_URL.replace(/\/e$/, '/funds'))}, {credentials: 'o
 </script>` : '';
 
 const FONTS_LINK = '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Share+Tech+Mono&display=swap">';
-const FAVICON = '<link rel="icon" type="image/svg+xml" href="/favicon.svg">';
+/* Search-result icon: Google wants a square icon whose side is a multiple of 48 px, crawlable, and it still asks for
+   /favicon.ico by default. The .ico and the PNGs are generated once by tools/make-icons.py into assets/icons/. */
+const FAVICON = ['<link rel="icon" href="/favicon.ico" sizes="48x48">',
+  '<link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any">',
+  '<link rel="icon" type="image/png" href="/icon-192.png" sizes="192x192">',
+  '<link rel="apple-touch-icon" href="/apple-touch-icon.png">'].join('\n');
 const STYLE = INDEX_SRC.match(/<style>([\s\S]*?)<\/style>/)[1];
 const EXTRA_CSS = `
 /* static pages */
@@ -395,11 +400,19 @@ ${frag}
 
 /* ---------- static extras ---------- */
 const FORK_SVG = (w) => `<svg width="${w}" height="${w}" viewBox="220 180 360 420" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="26"><path d="M400 560 V420" stroke="#EEF0E6"/><path d="M400 420 C400 350 290 330 270 250" stroke="#7FD3E8"/><path d="M400 420 V240" stroke="#EEF0E6"/><path d="M400 420 C400 350 510 330 530 250" stroke="#F2B45A"/></g><circle cx="270" cy="228" r="30" fill="#7FD3E8"/><circle cx="400" cy="218" r="30" fill="#EEF0E6"/><circle cx="530" cy="228" r="30" fill="#F2B45A"/><circle cx="400" cy="420" r="22" fill="#1A2823" stroke="#EEF0E6" stroke-width="10"/></svg>`;
+/* The search-result icon is shown at 16 to 32 px, so it is a bolder cut of the logo: thicker strokes and nodes, no hub ring,
+   and a square box (Google rejects non-square icons) with an even margin around the fork. */
+const FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="150 126 500 500"><rect x="150" y="126" width="500" height="500" rx="100" fill="#22332D"/><g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="46"><path d="M400 560 V400" stroke="#EEF0E6"/><path d="M400 420 C400 350 290 330 270 250" stroke="#7FD3E8"/><path d="M400 420 V240" stroke="#EEF0E6"/><path d="M400 420 C400 350 510 330 530 250" stroke="#F2B45A"/></g><circle cx="270" cy="228" r="48" fill="#7FD3E8"/><circle cx="400" cy="218" r="48" fill="#EEF0E6"/><circle cx="530" cy="228" r="48" fill="#F2B45A"/></svg>`;
 const FORK_GREEN = (w) => FORK_SVG(w).replace(/#7FD3E8/g, '#3CFF6B').replace(/#F2B45A/g, '#B8F5C4').replace(/#EEF0E6/g, '#B8F5C4').replace('#1A2823', '#050A06');
 
 function buildStatics(){
   write('site.css', STYLE + EXTRA_CSS);
-  write('favicon.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="200 170 400 460"><rect x="200" y="170" width="400" height="460" rx="60" fill="#22332D"/>${FORK_SVG(1).replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '')}</svg>`);
+  write('favicon.svg', FAVICON_SVG);
+  /* Pre-rendered icons (tools/make-icons.py). A missing one fails check-dist, because the head links to all of them. */
+  ['favicon.ico', 'icon-192.png', 'icon-96.png', 'icon-48.png', 'apple-touch-icon.png'].forEach(f => {
+    const src = path.join(ROOT, 'assets', 'icons', f);
+    if (fs.existsSync(src)) write(f, fs.readFileSync(src));
+  });
   write('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${abs('/sitemap.xml')}\n`);
   write('CNAME', BASE_URL.replace(/^https?:\/\//, '') + '\n');
   write('.nojekyll', '');
