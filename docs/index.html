@@ -123,6 +123,20 @@ h1{font:700 clamp(36px,6.4vw,60px)/1 var(--display);margin:10px 0 8px;text-wrap:
 .donate p{margin:0;color:var(--chalk-dim);max-width:60ch}
 .donate-row{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
 .donate-row img{width:140px;height:140px;border-radius:6px;background:#fff;padding:6px;display:block}
+.fundsline{margin:8px 0 0;font:600 13px/1.45 var(--mono);color:var(--chalk-dim)}
+.fundsline a{color:var(--amber);text-decoration:none;border-bottom:1px dashed currentColor}
+.fundsline a:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.funds{display:grid;gap:10px;border:2px dashed var(--line);border-radius:8px;padding:12px 14px;max-width:60ch}
+.funds .figs{display:flex;flex-wrap:wrap;gap:8px 28px}
+.funds .figs div{font-size:13px;color:var(--chalk-dim)}
+.funds .figs b{display:block;font:700 26px/1.1 var(--display);color:var(--chalk)}
+.funds .fnote{margin:0;font-size:13px;color:var(--chalk-dim)}
+.funds details{font-size:14px;color:var(--chalk-dim)}
+.funds summary{cursor:pointer}
+.funds summary:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.funds ul{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:4px}
+.funds li{display:flex;flex-wrap:wrap;gap:2px 10px}
+.funds li b{font-family:var(--mono);color:var(--chalk);font-weight:600}
 .qr-cap{font:12px/1.3 var(--mono);color:var(--chalk-faint);text-align:center;margin:6px 0 0}
 .fanlinks{border-top:1px solid rgba(238,240,230,.1);padding-top:14px;display:grid;gap:10px}
 .fanlinks h3{margin:0;font:700 20px/1 var(--display)}
@@ -189,6 +203,7 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
   <div class="eyebrow" id="eyebrow">Interactive what-if stories</div>
   <h1 id="mainTitle">The Uncertainty Principle</h1>
   <p class="lede" id="mainLede">Pick a journey, then change what happens at each turning point. Every choice bends the rest of the story.</p>
+<p class="fundsline" id="fundsShort" hidden></p>
 </header>
 <nav class="chiprow" id="journeyPicker" aria-label="Choose a journey"></nav>
 <div class="row" id="resumeRow" hidden></div>
@@ -217,10 +232,11 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
   <div class="donate-row" id="ideaRow"></div>
   <p class="qr-cap" style="text-align:left">By sending an idea you agree we may adapt it on the site.</p>
 </section>
-<section class="donate">
+<section class="donate" id="donate">
   <h3>Keep the timelines coming</h3>
   <p>This is a free fan project. If it made you laugh, you can chip in for the next journey.</p>
   <div class="donate-row" id="donateRow"></div>
+  <div class="funds" id="fundsFull" hidden></div>
 </section>
 <section class="fanlinks">
   <h3>More for fans</h3>
@@ -1552,6 +1568,27 @@ if (typeof document !== 'undefined'){
       el.innerHTML = `<button class="btn" disabled>PayPal link coming soon</button>`;
     }
   }
+  /* Open books. The totals are typed in by hand on the private admin page of the counter Worker and served
+     publicly as GET /funds: money received, money spent, money left, and what the spending was. Donations are never
+     listed one by one and carry no name. Hidden until the first entry, and hidden again on any error. */
+  function fmtEur(c){ c = Number(c) || 0; return (c < 0 ? '-' : '') + '€' + (Math.abs(c) / 100).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
+  function renderFunds(){
+    if (!SITE.counterUrl) return;
+    fetch(SITE.counterUrl.replace(/\/e$/, '/funds'), {credentials: 'omit'}).then(r => r.ok ? r.json() : null).then(f => {
+      if (!f || !(f.received > 0 || f.spent > 0)) return;
+      const gifts = f.gifts === 1 ? '1 gift' : (Number(f.gifts) || 0) + ' gifts';
+      const left = f.left >= 0 ? `${fmtEur(f.left)} left` : `${fmtEur(-f.left)} paid by the owner so far`;
+      const shortEl = document.getElementById('fundsShort');
+      shortEl.innerHTML = `Open books: ${fmtEur(f.received)} received in ${gifts}, ${fmtEur(f.spent)} spent, ${left}. <a href="#donate">Details</a>`;
+      shortEl.hidden = false;
+      const spend = (f.spending || []).map(x => `<li><span>${esc(x.day)}</span><b>${fmtEur(x.cents)}</b><span>${esc(x.note)}</span></li>`).join('');
+      const full = document.getElementById('fundsFull');
+      full.innerHTML = `<div class="figs"><div><b>${fmtEur(f.received)}</b>received in ${gifts}</div><div><b>${fmtEur(f.spent)}</b>spent</div><div><b>${fmtEur(Math.max(0, f.left))}</b>left</div></div>`
+        + `<p class="fnote">Typed in by hand by the site owner from the donation account${f.since ? ', counting from ' + esc(f.since) : ''}${f.updated ? ', last updated ' + esc(f.updated) : ''}. Payment fees are listed as spending. No donor names are kept.</p>`
+        + (spend ? `<details><summary>What the money was spent on</summary><ul>${spend}</ul></details>` : '');
+      full.hidden = false;
+    }).catch(() => {});
+  }
   function renderIdea(){
     const el = document.getElementById('ideaRow');
     if (SITE.ideaFormUrl){
@@ -2129,6 +2166,7 @@ if (typeof document !== 'undefined'){
   }
 
   renderDonate();
+  renderFunds();
   renderIdea();
   applyDeepLink();
   ensureJST();

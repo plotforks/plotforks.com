@@ -119,6 +119,24 @@ function copyDir(src, dst, filter){
 const analyticsTag = () => CF_TOKEN
   ? `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='${JSON.stringify({ token: CF_TOKEN })}'></script>` : '';
 
+/* Open books line for the static pages (chapters, endings, journeys), which do not run the app. Reads the public
+   GET /funds of the counter Worker and shows one line under the crumbs. Hidden until there is a first entry, and on any error.
+   Same wording as renderFunds() in index.html. */
+const COUNTER_URL = siteVal('counterUrl');
+const FUNDS_SNIPPET = COUNTER_URL ? `<script>
+(function(){
+var el = document.getElementById('fundsShort'); if (!el || !window.fetch) return;
+function eur(c){ c = Number(c) || 0; return (c < 0 ? '-' : '') + '€' + (Math.abs(c) / 100).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
+fetch(${JSON.stringify(COUNTER_URL.replace(/\/e$/, '/funds'))}, {credentials: 'omit'}).then(function(r){ return r.ok ? r.json() : null; }).then(function(f){
+  if (!f || !(f.received > 0 || f.spent > 0)) return;
+  var g = f.gifts === 1 ? '1 gift' : (Number(f.gifts) || 0) + ' gifts';
+  var left = f.left >= 0 ? eur(f.left) + ' left' : eur(-f.left) + ' paid by the owner so far';
+  el.textContent = 'Open books: ' + eur(f.received) + ' received in ' + g + ', ' + eur(f.spent) + ' spent, ' + left + '. ';
+  var a = document.createElement('a'); a.href = '/#donate'; a.textContent = 'Details'; el.appendChild(a); el.hidden = false;
+}).catch(function(){});
+})();
+</script>` : '';
+
 const FONTS_LINK = '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Share+Tech+Mono&display=swap">';
 const FAVICON = '<link rel="icon" type="image/svg+xml" href="/favicon.svg">';
 const STYLE = INDEX_SRC.match(/<style>([\s\S]*?)<\/style>/)[1];
@@ -189,12 +207,14 @@ ${analyticsTag()}
 <div class="wrap">
 <header class="page">
 ${o.crumbs ? crumbs(o.crumbs) : ''}
+<p class="fundsline" id="fundsShort" hidden></p>
 </header>
 <main class="page">
 ${o.body}
 </main>
 <footer>${esc(o.legal || 'Unofficial fan parody. Not affiliated with the studios or networks behind the shows. All characters are drawn from scratch.')} ${esc(COUNT_NOTE)} <a href="/" style="color:inherit">${SITE_NAME}</a></footer>
 </div>
+${FUNDS_SNIPPET}
 </body>
 </html>
 `;

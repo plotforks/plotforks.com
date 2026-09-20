@@ -3,12 +3,14 @@
  *   POST /e            anonymous event from the site (always 204)
  *   GET  /admin        private stats page (asks for the admin key in the browser)
  *   GET  /admin/data   aggregated JSON, needs header X-Key = secret ADMIN_KEY
+ *   GET  /funds        PUBLIC totals of the donations ledger; /admin/ledger* is the private side (see ledger.js)
  *   GET  /             "ok"
  *
  * Stored: only (UTC day, event key, count). No IP, user agent, cookie or referrer is read or kept.
  * Key = type|journey|a|b|source, source is "web" or "itch" (derived from the Origin header).
  */
 import { META } from './meta.js';
+import { publicFunds, ledgerList, ledgerAdd, ledgerDelete } from './ledger.js';
 
 const ID = /^[A-Za-z0-9_-]{1,40}$/;
 const CLICKS = new Set(['donate', 'feedback', 'share', 'itch']);
@@ -142,6 +144,15 @@ export default {
         });
       }
       if (m === 'GET' && url.pathname === '/admin/data') return await adminData(request, env, url);
+      if (m === 'GET' && url.pathname === '/funds') return await publicFunds(env);
+      if (url.pathname === '/admin/ledger' || url.pathname === '/admin/ledger/delete') {
+        if (!(await sameKey(request.headers.get('X-Key'), env.ADMIN_KEY))) {
+          return new Response('Unauthorized', { status: 401, headers: { 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' } });
+        }
+        if (m === 'GET' && url.pathname === '/admin/ledger') return await ledgerList(env);
+        if (m === 'POST' && url.pathname === '/admin/ledger') return await ledgerAdd(request, env);
+        if (m === 'POST' && url.pathname === '/admin/ledger/delete') return await ledgerDelete(request, env);
+      }
     } catch (e) {
       return new Response('Not found', { status: 404 });
     }
@@ -288,6 +299,46 @@ function render(data){
   out.innerHTML = h;
 }
 
+/* ---- donations ledger: add / delete rows, the public site shows only the totals ---- */
+function eur(c){ return (c / 100).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' EUR'; }
+function today(){ return new Date().toISOString().slice(0, 10); }
+function ledgerMsg(t, bad){ var m = $('lmsg'); if (m){ m.textContent = t; m.className = bad ? 'lbad' : 'dim'; } }
+function renderLedger(d){
+  var tin = 0, tout = 0, nin = 0, h = '';
+  d.rows.forEach(function(r){ if (r.kind === 'in'){ tin += r.cents; nin++; } else tout += r.cents; });
+  h += '<h2>Donations ledger <span class="dim">public totals, entered by hand</span></h2>';
+  h += '<div class="stats"><div><span class="num big">' + eur(tin) + '</span>received (' + nin + ')</div><div><span class="num big">' + eur(tout) + '</span>spent</div><div><span class="num big">' + eur(tin - tout) + '</span>left</div></div>';
+  h += '<div class="lform"><select id="lkind" aria-label="Kind"><option value="in">Received</option><option value="out">Spent</option></select>';
+  h += '<input id="lamt" inputmode="decimal" placeholder="Amount, EUR" aria-label="Amount in euro" autocomplete="off">';
+  h += '<input id="lnote" placeholder="What for (spent only)" maxlength="80" aria-label="Note for spending" autocomplete="off">';
+  h += '<input id="lday" type="date" max="' + today() + '" aria-label="Date, empty means today">';
+  h += '<button id="ladd" class="go">Add</button></div><p id="lmsg" class="dim">Donation rows never keep a name or a note. Spent rows are shown publicly with their note.</p>';
+  d.rows.slice(0, 60).forEach(function(r){
+    h += '<div class="lrow"><span class="num">' + esc(r.day) + '</span><span>' + (r.kind === 'in' ? 'received' : 'spent: ' + esc(r.note)) + '</span><span class="num">' + (r.kind === 'in' ? '+' : '-') + eur(r.cents) + '</span><button data-del="' + r.id + '" aria-label="Delete this row">Delete</button></div>';
+  });
+  if (d.rows.length > 60) h += '<p class="dim">Showing the newest 60 of ' + d.rows.length + ' rows.</p>';
+  if (!d.rows.length) h += '<p class="dim">No entries yet. The public page shows nothing until the first one.</p>';
+  $('ledger').innerHTML = h; $('ledger').hidden = false;
+}
+function loadLedger(){
+  fetch('/admin/ledger', {headers: {'X-Key': recall('pfkey')}, cache: 'no-store'}).then(function(r){ return r.ok ? r.json() : null; }).then(function(d){ if (d) renderLedger(d); }).catch(function(){});
+}
+function ledgerPost(path, body, done){
+  fetch(path, {method: 'POST', headers: {'X-Key': recall('pfkey'), 'Content-Type': 'application/json'}, body: JSON.stringify(body), cache: 'no-store'})
+    .then(function(r){ return r.json().then(function(j){ return {ok: r.ok, j: j}; }); })
+    .then(function(x){ if (x.ok){ done(); } else { ledgerMsg(x.j && x.j.error ? x.j.error : 'Failed', true); } })
+    .catch(function(){ ledgerMsg('Network error.', true); });
+}
+$('ledger').addEventListener('click', function(e){
+  var add = e.target.closest('#ladd'), del = e.target.closest('[data-del]');
+  if (add){
+    var kind = $('lkind').value, body = {kind: kind, amount: $('lamt').value, note: $('lnote').value, day: $('lday').value};
+    ledgerPost('/admin/ledger', body, loadLedger);
+  } else if (del && confirm('Delete this row? The public total changes.')){
+    ledgerPost('/admin/ledger/delete', {id: Number(del.getAttribute('data-del'))}, loadLedger);
+  }
+});
+
 function setStatus(t){ $('status').textContent = t; }
 function load(){
   var key = $('key').value || recall('pfkey');
@@ -303,6 +354,7 @@ function load(){
     $('gate').hidden = true; $('signout').hidden = false;
     setStatus('Updated ' + new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC');
     render(data);
+    loadLedger();
   }).catch(function(){ setStatus('Network error.'); });
 }
 document.querySelectorAll('[data-range]').forEach(function(b){
@@ -314,7 +366,7 @@ document.querySelectorAll('[data-range]').forEach(function(b){
 });
 $('go').addEventListener('click', load);
 $('key').addEventListener('keydown', function(e){ if (e.key === 'Enter') load(); });
-$('signout').addEventListener('click', function(){ store('pfkey', null); $('out').innerHTML = ''; $('gate').hidden = false; $('signout').hidden = true; setStatus(''); });
+$('signout').addEventListener('click', function(){ store('pfkey', null); $('out').innerHTML = ''; $('ledger').innerHTML = ''; $('ledger').hidden = true; $('gate').hidden = false; $('signout').hidden = true; setStatus(''); });
 if (recall('pfkey')) load();
 })();
 `;
@@ -367,6 +419,13 @@ svg{width:100%;height:auto;display:block}
 .sw.bw{background:var(--crystal)}
 .sw.bi{background:var(--amber)}
 .empty{font-size:18px;color:var(--dim);padding:24px 0}
+select{font:inherit;color:var(--chalk);background:var(--board-deep);border:2px solid var(--line);border-radius:6px;padding:8px 10px;min-height:40px}
+.lform{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
+.lform input{width:auto;flex:1 1 140px;max-width:none}
+.lform input[type=date]{flex:0 1 160px;color-scheme:dark}
+.lrow{display:grid;grid-template-columns:auto 1fr auto auto;gap:4px 10px;align-items:center;border-bottom:1px solid var(--line);padding:6px 0;font-size:14px}
+.lrow button{min-height:32px;padding:2px 10px;font-size:13px}
+.lbad{color:#ff9a8a;font-size:13px}
 `;
 
 function adminPage() {
@@ -396,6 +455,7 @@ function adminPage() {
   <button id="go" class="go">Show numbers</button>
 </div>
 <p id="status" role="status"></p>
+<section id="ledger" class="card" hidden></section>
 <div id="out"></div>
 </div>
 <script>${CLIENT_JS.replace('__META__', () => meta)}</script>
