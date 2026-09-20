@@ -246,7 +246,7 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
     <li><a href="/the-matrix/">The Matrix: There Is No Spoiler</a></li>
   </ul>
 </section>
-<footer>Unofficial what-if stories, made as fan parody. Breaking Bad and The Matrix, and their characters, belong to their respective owners. Not affiliated with Sony Pictures Television, AMC or Warner Bros. All characters are drawn from scratch. We count anonymous plays, choices and endings, with no cookies and no personal data.</footer>
+<footer>Unofficial what-if stories, made as fan parody. Breaking Bad and The Matrix, and their characters, belong to their respective owners. Not affiliated with Sony Pictures Television, AMC or Warner Bros. All characters are drawn from scratch. We count anonymous plays, choices and endings, with no cookies and no personal data. <small style="opacity:.7">A free copy of this site is kept at plotforks.github.io, so the stories stay available even if this domain ever lapses.</small></footer>
 </div>
 <script src="stories/bb-journey/journey.js"></script>
 <script src="stories/bb-journey/ch01.js"></script>
@@ -299,6 +299,7 @@ function noCount(){ try { return localStorage.getItem(NOCOUNT_KEY) === '1'; } ca
     const q = new URLSearchParams(location.search), v = q.get('nostats');
     if (v !== '1' && v !== '0') return;
     try { if (v === '1') localStorage.setItem(NOCOUNT_KEY, '1'); else localStorage.removeItem(NOCOUNT_KEY); } catch (e) {}
+    try { window.addEventListener('DOMContentLoaded', () => { const t = document.createElement('div'); t.textContent = v === '1' ? 'Counting is now OFF on this device.' : 'Counting is back ON on this device.'; t.style.cssText = 'position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:99;padding:10px 16px;border-radius:8px;background:#F2B45A;color:#1A2823;font:700 14px system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.4)'; document.body.appendChild(t); setTimeout(() => t.remove(), 4500); }); } catch (e) {}
     q.delete('nostats'); const rest = q.toString();
     history.replaceState(null, '', location.pathname + (rest ? '?' + rest : ''));
   } catch (e) {}

@@ -24,7 +24,7 @@ function sourceOf(origin) {
   let u;
   try { u = new URL(origin); } catch (e) { return null; }
   if (u.protocol !== 'https:') return null;
-  if (u.origin === 'https://plotforks.com' || u.origin === 'https://www.plotforks.com') return 'web';
+  if (u.origin === 'https://plotforks.com' || u.origin === 'https://www.plotforks.com' || u.origin === 'https://plotforks.github.io') return 'web';
   const h = u.hostname;
   if (h === 'itch.io' || h.endsWith('.itch.io') || h.endsWith('.itch.zone')) return 'itch';
   return null;

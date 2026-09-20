@@ -26,7 +26,7 @@ const siteVal = k => { const m = new RegExp(k + ':\\s*"([^"]*)"').exec(SITE_BLOC
 const BASE_URL = siteVal('baseUrl').replace(/\/$/, '');           // the one place the public URL comes from (SITE.baseUrl in index.html)
 const CF_TOKEN = siteVal('cfAnalyticsToken');                     // empty string = no analytics
 const SITE_NAME = 'plotforks';
-const COUNT_NOTE = 'We count anonymous plays, choices and endings, with no cookies and no personal data.';   // also in the footer of index.html
+const COUNT_NOTE = 'We count anonymous plays, choices and endings, with no cookies and no personal data. A free copy of this site is kept at plotforks.github.io, so the stories stay available even if this domain ever lapses.';   // also in the footer of index.html
 const EDGE_CANDIDATES = [
   'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
   'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe'
