@@ -22,7 +22,10 @@
 :root[data-theme="matrix"] h1,:root[data-theme="matrix"] .panel h2,:root[data-theme="matrix"] .ending h2,:root[data-theme="matrix"] .mapbox h3,:root[data-theme="matrix"] .donate h3,:root[data-theme="matrix"] .fanlinks h3,:root[data-theme="matrix"] .choice b{font-weight:400}
 :root[data-theme="matrix"] .choice b{font-size:18px}
 :root[data-theme="matrix"] .stage{border-color:rgba(60,255,107,.35);box-shadow:0 0 24px rgba(60,255,107,.08)}
-:root[data-theme="matrix"] .btn{color:#03110A}
+/* Only the solid buttons sit on a green fill; ghost buttons keep green text on black, always visible (not only on hover). */
+:root[data-theme="matrix"] .btn:not(.ghost){color:#03110A}
+:root[data-theme="matrix"] .btn.ghost{color:var(--chalk);border-color:rgba(60,255,107,.45)}
+:root[data-theme="matrix"] .btn.ghost:hover{color:var(--crystal);border-color:var(--crystal)}
 #rain{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;opacity:.2;z-index:0}
 :root:not([data-theme="matrix"]) #rain{display:none}
 .wrap{position:relative;z-index:1}

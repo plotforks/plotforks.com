@@ -9,7 +9,7 @@
 (window.JOURNEYS["matrix"] = window.JOURNEYS["matrix"] || {}).chapters =
   window.JOURNEYS["matrix"].chapters || [];
 window.JOURNEYS["matrix"].chapters.push({
-  n: 5, canon: "a", id: "subway", code: "M1", episode: "The Matrix", title: "Smith in the subway",
+  n: 8, canon: "a", id: "subway", code: "M1", episode: "The Matrix", title: "Smith in the subway",
   setup: {
     kicker: "An empty subway station.",
     text: "The only way out is a ringing payphone. Morpheus and Trinity are already through it. Before Neo can pick up, Agent Smith shoots the phone off the wall and steps onto the platform. Nobody who has fought an Agent has lived to talk about it. Neo could run. He could also do something much less sensible.",

@@ -1,5 +1,34 @@
 # The Matrix journey: blueprint (Opus design, 2026-09-19)
 
+## EXPANSION 2026-09-20 (Opus pass done, Sonnet pass pending)
+Six new chapters, so the trilogy is now **15 chapters**. Old files keep their names, only `n` moved:
+
+| n | file | chapter |
+|---|---|---|
+| 1 | **n01-ledge.js** | the phone and the scaffolding at Metacortex (new) |
+| 2 | **n02-interrogation.js** | Smith's room, the deal and the bug (new) |
+| 3 | ch01.js | red pill or blue (was n1) |
+| 4 | **n04-jump.js** | the jump program (new) |
+| 5 | ch02.js | Cypher's drink (was n2) |
+| 6 | ch03.js | the Oracle (was n3) |
+| 7 | ch04.js | the Agents have Morpheus (was n4) |
+| 8 | ch05.js | Smith in the subway (was n5) |
+| 9 | **n09-merovingian.js** | the Frenchman's dessert, Reloaded (new) |
+| 10 | ch06.js | the Architect (was n6) |
+| 11 | **n11-mobilave.js** | the station between, Revolutions (new) |
+| 12 | ch07.js | Machine City or Zion (was n7) |
+| 13 | **n13-deusdeal.js** | `when: "machineCity"`, what Neo asks the machines (new) |
+| 14 | ch08.js | the last fight with Smith (was n8) |
+| 15 | ch09.js | the park at sunrise (was n9) |
+
+New flags: ledgeJump, hidAtWork, informant, silentRoom, noJump, cheatJump, persephone, merovFight, merovDeal,
+karma, trainFight, peaceOnly, freeAll, askedTrinity.
+9 new endings (29 findable): She Comes Back, Nightclub Rematch, The Open Door, We Will See, The Connection,
+The Other File, The Napkin, Lower the Gravity, The Man Who Checked.
+New art for the Sonnet pass: set `rooftops`; cast `merovingian` (stand), `persephone` (stand), `trainman` (stand);
+fx `bug`. Optional and nicer if cheap: a `ledge` set for chapter 1. Everything else reuses existing sets and poses.
+All-canon path is unchanged and still lands on "The Sunrise": canon letters are now b,a,a,a,a,a,a,a,a,a,a,a,a,a,a.
+
 ## STATUS (update at the end of every session)
 - Written (Opus), all content done: stories/matrix-journey/journey.js, ch01 to ch08, the aftertaste ch09, endings.js. Every chapter carries `canon` (all "a").
 - 2026-09-19 path simulation (node, engine rules: chapter `when`, variants, beat `when` after effects, clamp 0..100, first-match endings): 8,751 paths, all 18 finale endings and both exits reachable, 0 fallback hits, all-canon path lands on "The Sunrise" (belief 95). Findable total 20 (18 + 2 exits); the 3 `fallback: true` endings are safety nets only.

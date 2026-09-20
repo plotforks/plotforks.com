@@ -4,7 +4,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 10, canon: "b", id: "tohajiilee", code: "S5E13", episode: "To'hajiilee", title: "Cornered in the desert",
+  n: 16, canon: "b", id: "tohajiilee", code: "S5E13", episode: "To'hajiilee", title: "Cornered in the desert",
   setup: {
     kicker: "To'hajiilee, New Mexico.",
     text: "Hank has tricked Walt into the desert, and Walt is pinned behind a rock with Hank closing in. In a panic he has already called Jack's crew for help. They are on their way.",
@@ -12,6 +12,8 @@ window.JOURNEYS["breaking-bad"].chapters.push({
     scene: {set: "desert", cast: {walt: "phone", hank: "suspicious"}},
     variants: [
       {when: "jesse>=70", text: "Hank has tricked Walt into the desert, and Walt is pinned behind a rock with Hank closing in. Jesse is not with Hank. He is on the phone, telling Walt to run. Jack's crew is already on the way."},
+      {when: "bookLab", text: "The handwriting match went into a federal file, the file grew a task force, and the task force moved slowly enough for Walt to notice it coming. Hank has finally tricked him into the desert, with four colleagues listening on an open channel. Walt is pinned behind a rock, and in a panic he has already called Jack's crew for help."},
+      {when: "bookMissed", text: "It took Hank another nine months and somebody else's mistake, but he got there, and he has tricked Walt into the desert. Walt is pinned behind a rock with Hank closing in, still quietly amazed at how long this took. In a panic he has already called Jack's crew for help."},
       {when: "carwash", text: "Hank has traced the car wash books back to Walt and tricked him into the desert. Walt is pinned behind a rock with Hank closing in. In a panic he has already called Jack's crew for help. They are on their way."}
     ]
   },
@@ -26,10 +28,10 @@ window.JOURNEYS["breaking-bad"].chapters.push({
     ]},
     {id: "b", label: "Let Jack's crew come", tag: "What the show did.",
      effects: {darkness: 20}, flags: ["shootout"], beats: [
-      {scene: {set: "desert", cast: {jack: "stand", walt: "stand"}}, caption: "Too late to call it off.",
-       text: "Jack's crew arrives and the desert goes loud. Walt, already in handcuffs, shouts for it to stop. Nobody listens to him anymore."},
-      {scene: {set: "desert", cast: {walt: "stand"}}, caption: "Nothing he can offer.",
-       text: "When it is quiet again, nothing Walt can offer changes what happens next."}
+      {scene: {set: "desert", cast: {hank: "suspicious", walt: "stand"}}, caption: "Cuffed, four minutes too late.",
+       text: "Hank cuffs him, reads him his rights and telephones Marie, and Walt lets him, because the call he made twenty minutes ago is already halfway across the desert at eighty miles an hour."},
+      {scene: {set: "desert", cast: {jack: "stand", walt: "kneel"}}, caption: "Three trucks, stopping hard.",
+       text: "Three trucks come over the ridge and stop hard, and men get out behind the doors. Hank puts Walt on the ground and gets behind his own car. Nobody has fired yet. Everybody is waiting for somebody."}
     ]},
     {id: "c", label: "Offer Hank a deal", tag: "Everything, for the family.",
      effects: {darkness: 10}, flags: ["deal"], beats: [

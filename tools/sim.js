@@ -8,7 +8,7 @@ if (process.argv.length <= 2){
   fs.readdirSync(root).filter(d => fs.statSync(path.join(root, d)).isDirectory()).forEach(d => {
     const dir = path.join(root, d), all = fs.readdirSync(dir).filter(f => f.endsWith('.js'));
     const jid = /JOURNEYS\["([^"]+)"\]/.exec(fs.readFileSync(path.join(dir, 'journey.js'), 'utf8'))[1];
-    const files = ['journey.js', ...all.filter(f => /^ch/.test(f)).sort(), 'endings.js'];
+    const files = ['journey.js', ...all.filter(f => /^(ch|n\d)/.test(f)).sort(), 'endings.js'];
     console.log('=== ' + jid + ' ===');
     const r = cp.spawnSync(process.execPath, [__filename, dir, jid, ...files], {encoding: 'utf8'});
     process.stdout.write(r.stdout + r.stderr); if (r.status) bad++;
@@ -62,7 +62,7 @@ chapters.forEach(c => {
 J.endings.forEach(e => checkWhen(e.when, `ending ${e.id}`));
 const meterKey = J.meterScore || 'darkness';
 const counts = {}, beatCounts = {}, emptyBeatRuns = [];
-let total = 0, canonEnding = null;
+let canonEnding = null, total = 0;
 function next(st, afterN){
   for (const n of ns.filter(n => n > afterN)){
     const hit = chapters.filter(c => c.n === n).find(c => ev(c.when, st));
@@ -70,28 +70,70 @@ function next(st, afterN){
   }
   return null;
 }
-function walk(st, afterN, allCanon){
-  const ch = next(st, afterN);
-  if (!ch){
-    const e = J.endings.find(e => ev(e.when, st));
-    const key = e ? e.id + (e.fallback ? ' (FALLBACK)' : '') : 'NONE';
-    counts[key] = (counts[key] || 0) + 1; total++;
-    if (allCanon) canonEnding = `${key} [${Object.entries(st.scores).map(([k, v]) => k + '=' + v).join(' ')}] flags=${[...st.flags].join(',')}`;
-    return;
-  }
-  for (const c of ch.choices){
-    const s = {scores: Object.assign({}, st.scores), flags: new Set(st.flags)};
-    Object.entries(c.effects || {}).forEach(([k, v]) => s.scores[k] = clamp((s.scores[k] || 0) + v));
-    (c.flags || []).forEach(f => s.flags.add(f));
-    const vis = (c.beats || []).filter(b => ev(b.when, s)).length;
-    const bk = `${ch.id}.${c.id}:${vis}`; beatCounts[bk] = (beatCounts[bk] || 0) + 1;
-    if (vis < 2) emptyBeatRuns.push(bk);
-    if (c.exit){ const k = 'EXIT ' + c.exit; counts[k] = (counts[k] || 0) + 1; total++; continue; }
-    walk(s, ch.n, allCanon && c.id === ch.canon);
-  }
+/* Randomised search instead of full enumeration: with 19 chapters there are more than a billion paths.
+   Phase 1: SAMPLES random walks. Phase 2: for every ending still unreached, more walks that favour choices setting
+   the flags (and raising the scores) its condition asks for. Every ending found is reachable by construction;
+   an ending reported unreached after both phases needs a human look at its rule. Seeded, so runs repeat exactly. */
+let seed = 20260920;
+const rnd = () => { seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+const SAMPLES = 300000, GOAL_SAMPLES = 60000;
+const startState = () => ({scores: Object.assign({}, J.start), flags: new Set()});
+function stepInto(st, c){
+  Object.entries(c.effects || {}).forEach(([k, v]) => st.scores[k] = clamp((st.scores[k] || 0) + v));
+  (c.flags || []).forEach(f => st.flags.add(f));
 }
-walk({scores: Object.assign({}, J.start), flags: new Set()}, 0, true);
-console.log(`Paths: ${total}`);
+function randomWalk(weight){
+  const st = startState(); let after = 0, ch;
+  while ((ch = next(st, after))){
+    let pick;
+    if (weight){
+      const w = ch.choices.map(c => weight(c)), sum = w.reduce((a, b) => a + b, 0);
+      let r = rnd() * sum; pick = ch.choices[0];
+      for (let k = 0; k < w.length; k++){ if ((r -= w[k]) <= 0){ pick = ch.choices[k]; break; } }
+    } else pick = ch.choices[Math.floor(rnd() * ch.choices.length)];
+    const s = {scores: Object.assign({}, st.scores), flags: new Set(st.flags)};
+    stepInto(s, pick);
+    const vis = (pick.beats || []).filter(b => ev(b.when, s)).length;
+    if (vis < 2) emptyBeatRuns.push(`${ch.id}.${pick.id}:${vis}`);
+    if (pick.exit){ counts['EXIT ' + pick.exit] = (counts['EXIT ' + pick.exit] || 0) + 1; total++; return; }
+    Object.assign(st.scores, s.scores); st.flags = s.flags; after = ch.n;
+  }
+  const e = J.endings.find(e => ev(e.when, st));
+  const key = e ? e.id + (e.fallback ? ' (FALLBACK)' : '') : 'NONE';
+  counts[key] = (counts[key] || 0) + 1; total++;
+}
+for (let n = 0; n < SAMPLES; n++) randomWalk();
+J.endings.filter(e => !e.fallback && !counts[e.id]).forEach(e => {
+  const want = new Set(), wantScore = {};
+  String(e.when || '').split('&&').map(x => x.trim()).filter(Boolean).forEach(t => {
+    let m = t.match(/^(\w+)\s*(>=|>)\s*(-?\d+)$/); if (m){ wantScore[m[1]] = 1; return; }
+    m = t.match(/^(\w+)\s*(<=|<)\s*(-?\d+)$/); if (m){ wantScore[m[1]] = -1; return; }
+    m = t.match(/^!?(\w+)$/); if (m && t[0] !== '!') want.add(m[1]);
+  });
+  /* Flags that earlier endings test for would shadow this one, so steer away from them. */
+  const blockers = new Set();
+  J.endings.slice(0, J.endings.indexOf(e)).forEach(x => String(x.when || '').split('&&').map(t => t.trim()).forEach(t => { const m = t.match(/^(\w+)$/); if (m && !want.has(m[1])) blockers.add(m[1]); }));
+  for (let n = 0; n < GOAL_SAMPLES && !counts[e.id]; n++){
+    randomWalk(c => {
+      const f = c.flags || [];
+      return (1 + 6 * f.filter(x => want.has(x)).length + 2 * Object.keys(wantScore).filter(k => (c.effects || {})[k] * wantScore[k] > 0).length) * (f.some(x => blockers.has(x)) ? 0.1 : 1);
+    });
+  }
+});
+/* One straight walk along every chapter's canon choice, to report the all-canon ending. */
+(function(){
+  let st = {scores: Object.assign({}, J.start), flags: new Set()}, after = 0, ch;
+  while ((ch = next(st, after))){
+    const c = ch.choices.find(x => x.id === ch.canon) || ch.choices[0];
+    Object.entries(c.effects || {}).forEach(([k, v]) => st.scores[k] = clamp((st.scores[k] || 0) + v));
+    (c.flags || []).forEach(f => st.flags.add(f));
+    if (c.exit) return;
+    after = ch.n;
+  }
+  const e = J.endings.find(e => ev(e.when, st));
+  canonEnding = `${e ? e.id : 'NONE'} [${Object.entries(st.scores).map(([k, v]) => k + '=' + v).join(' ')}] flags=${[...st.flags].join(',')}`;
+})();
+console.log(`Random walks: ${total}`);
 Object.entries(counts).sort((a, b) => b[1] - a[1]).forEach(([k, v]) => console.log(`  ${k}: ${v}`));
 const unreached = J.endings.filter(e => !e.fallback && !counts[e.id]).map(e => e.id);
 const exitsUnreached = Object.keys(J.exits).filter(k => !counts['EXIT ' + k]);

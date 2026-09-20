@@ -11,7 +11,7 @@
 (window.JOURNEYS["matrix"] = window.JOURNEYS["matrix"] || {}).chapters =
   window.JOURNEYS["matrix"].chapters || [];
 window.JOURNEYS["matrix"].chapters.push({
-  n: 8, canon: "a", id: "lastfight", code: "M3", episode: "The Matrix Revolutions", title: "The last fight with Smith",
+  n: 14, canon: "a", id: "lastfight", code: "M3", episode: "The Matrix Revolutions", title: "The last fight with Smith",
   setup: {
     kicker: "The Matrix, in the rain.",
     text: "The machines have plugged Neo in from the Machine City. Every face at every window is Smith's, and the one waiting in the street wears the Oracle's coat. He tells Neo, pleasantly, that this ends with Neo's death. He has seen it. The rest of the Smiths settle in to watch.",

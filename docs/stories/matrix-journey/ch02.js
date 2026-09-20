@@ -9,7 +9,7 @@
 (window.JOURNEYS["matrix"] = window.JOURNEYS["matrix"] || {}).chapters =
   window.JOURNEYS["matrix"].chapters || [];
 window.JOURNEYS["matrix"].chapters.push({
-  n: 2, canon: "a", id: "cypher", code: "M1", episode: "The Matrix", title: "Cypher's drink",
+  n: 5, canon: "a", id: "cypher", code: "M1", episode: "The Matrix", title: "Cypher's drink",
   setup: {
     kicker: "The Nebuchadnezzar, after midnight.",
     text: "Neo has been rebuilt, retrained and taught kung fu in an afternoon, and he can't sleep. On the bridge, Cypher is watching green code fall down the screens. He pours Neo a glass of homemade liquor that he says is good for cleaning engines and nothing else. Then he asks: if Neo could go back into the Matrix and forget all this, would he?",

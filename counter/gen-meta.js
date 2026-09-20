@@ -5,7 +5,7 @@ const root = path.join(__dirname, '..', 'stories');
 const out = {};
 fs.readdirSync(root).filter(d => fs.statSync(path.join(root, d)).isDirectory()).forEach(d => {
   const dir = path.join(root, d), all = fs.readdirSync(dir).filter(f => f.endsWith('.js'));
-  const files = ['journey.js', ...all.filter(f => /^ch/.test(f)).sort(), 'endings.js'];
+  const files = ['journey.js', ...all.filter(f => /^(ch|n\d)/.test(f)).sort(), 'endings.js'];
   const ctx = { window: {} }; vm.createContext(ctx);
   files.forEach(f => vm.runInContext(fs.readFileSync(path.join(dir, f), 'utf8'), ctx, { filename: f }));
   Object.values(ctx.window.JOURNEYS).forEach(J => {

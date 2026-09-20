@@ -5,13 +5,14 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 7, canon: "a", id: "endtimes", code: "S4E12", episode: "End Times", title: "Getting Jesse back",
+  n: 10, canon: "a", id: "endtimes", code: "S4E12", episode: "End Times", title: "Getting Jesse back",
   setup: {
     kicker: "The White house, a pool, a garden.",
     text: "Gus has pulled Jesse close and pushed Walt out. Walt can't reach Gus without Jesse, and Jesse no longer trusts him. Walt is out of time and out of ideas, except for one.",
     caption: "Out of time, not out of ideas.",
     scene: {set: "house", cast: {walt: "stand"}, fx: ["lily"]},
     variants: [
+      {when: "noSaul", text: "Gus has pulled Jesse close and pushed Walt out. Walt can't reach Gus without Jesse, and Jesse no longer trusts him. He also has no lawyer, no large quiet man to lift things out of pockets, and nobody to call who is not already listed in his phone under a real name. Walt is out of time and out of ideas, except for one."},
       {when: "galeAlive", text: "Gus has pulled Jesse close and pushed Walt out. Walt can't reach Gus without Jesse, and Jesse no longer trusts him. A postcard from Nepal sits on the kitchen counter. Walt is out of time and out of ideas, except for one."}
     ]
   },

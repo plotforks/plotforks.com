@@ -7,7 +7,7 @@
 (window.JOURNEYS["matrix"] = window.JOURNEYS["matrix"] || {}).chapters =
   window.JOURNEYS["matrix"].chapters || [];
 window.JOURNEYS["matrix"].chapters.push({
-  n: 1, canon: "a", id: "pills", code: "M1", episode: "The Matrix", title: "Red pill or blue",
+  n: 3, canon: "a", id: "pills", code: "M1", episode: "The Matrix", title: "Red pill or blue",
   setup: {
     kicker: "A dark room, a thunderstorm.",
     text: "By day Thomas Anderson writes software for a respectable company. By night he is a hacker called Neo, and he has spent years looking for something he can't name. Tonight a man called Morpheus sits across from him with a pill in each hand. Blue, and Neo wakes up in bed remembering nothing. Red, and he finds out what the Matrix is.",

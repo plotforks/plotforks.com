@@ -1,5 +1,42 @@
 # Breaking Bad journey: blueprint (Opus design, 2026-09-19)
 
+## EXPANSION 2026-09-20 (Opus pass done, Sonnet pass pending)
+Dimos asked for more Gus, more Mike, more Saul, a Hank-decides-about-the-book chapter, a Jack-spares-Hank branch and a
+"rational investor" money chapter. The journey went from 11 to **18 chapters**; ids and URLs of the old chapters are unchanged,
+only their `n` moved. File names of the old chapters were NOT renamed, so the map below is the source of truth:
+
+| n | file | chapter |
+|---|---|---|
+| 1-5 | ch01..ch05.js | unchanged |
+| 6 | **ch06-halfmeasures.js** | S3E12 Mike's bar speech (new) |
+| 7 | ch06.js | Gale (was n6) |
+| 8 | **ch08-boxcutter.js** | S4E1 Gus in the lab (new) |
+| 9 | **ch09-saul.js** | S4E11 how much Saul is told (new) |
+| 10 | ch07.js | End Times (was n7) |
+| 11 | ch08.js | Buyout (was n8) |
+| 12 | **ch12-saymyname.js** | S5E7 Mike's go-bag (new) |
+| 13 | ch09.js | cash pile (was n9; the bathroom beats moved out to n15) |
+| 14 | **ch14-portfolio.js** | diversify the money (new) |
+| 15 | **ch15-hank.js** | Hank's turn in the bathroom, the only chapter played as Hank (new) |
+| 16 | ch10.js | To'hajiilee (was n10; new variants for bookMissed / bookLab) |
+| 17 | **ch17-standoff.js** | `when: "shootout"`, behind the cars, nobody has fired yet (new) |
+| 18 | **ch17-jack.js** | `when: "shotsFired"`, Jack names a price for Hank (new) |
+| 19 | ch11a.js / ch11b.js | aftertaste pair (was n11) |
+
+The shootout branch now forks twice. `ch16` choice b only brings Jack's crew to the ridge; `ch17-standoff.js`
+decides whether a shot is ever fired. The two aftertaste chapters switch on a new flag `atLarge` (Walt is still
+free) instead of `shootout`, so the no-shots arrest branch finishes at the sentencing chapter and the two
+free-man branches finish at Felina.
+
+New flags: mikeDeal, mikeRespect, mikeWatch, ranThemDown, victorLives, blamedJesse, saulIn, noSaul, testedSaul, saulLoyal,
+mikeLives, mikeDead, ninePaid, portfolio, chainTycoon, barrel, bookFound, bookMissed, bookLab, hankLives, soldJesse, hankDead.
+13 new endings (35 findable in total): Sold Not Saved, Hank Gets Him, Two Survivors, Federal Witness, The Hostage Price,
+Mike Was Waiting, Victor's Blue, Counsel of Record, Compound Interest, Postcard From Mike, Exhibit A, The Offshore Trust,
+No Lawyer Present.
+Still to do (Sonnet): new art (cast `gus` stand/fold, hank `cuffed`, mike `sit`, set `bar`, fx `chart`, a daytime look for
+`street` which is currently a Matrix night set), `<script>` tags, `S.chapterTitles` in tools/build.js, badges, gen-meta,
+check.js / sim.js / check-dist.js, rebuild and deploy.
+
 ## STATUS (update at the end of every session)
 - Written (Opus), all content done: journey.js, ch01 to ch10, the aftertaste pair ch11a/ch11b (both `n: 11`, gated by chapter-level `when`), endings.js. Every chapter carries `canon` (ch1 a, ch2 a, ch3 a, ch4 a, ch5 c, ch6 a, ch7 a, ch8 a, ch9 b, ch10 b, ch11a a, ch11b a).
 - 2026-09-19 path simulation (node, engine rules: chapter `when`, variants, beat `when` after effects, clamp 0..100, first-match endings): 53,467 paths, all 19 finale endings and all 3 exits reachable, 0 fallback hits, all-canon path lands on "Felina". Findable total 22 (19 + 3 exits); the 3 `fallback: true` endings are safety nets only.

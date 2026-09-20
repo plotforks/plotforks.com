@@ -4,7 +4,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 8, canon: "a", id: "buyout", code: "S5E6", episode: "Buyout", title: "Five million each",
+  n: 11, canon: "a", id: "buyout", code: "S5E6", episode: "Buyout", title: "Five million each",
   setup: {
     kicker: "A diner, then the desert.",
     text: "Gus is gone, and Walt, Jesse and Mike run their own operation. Mike and Jesse have an offer from a rival named Declan: sell him their supply for five million dollars each and walk away. They want Walt to take it too.",

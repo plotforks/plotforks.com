@@ -9,7 +9,7 @@
 (window.JOURNEYS["matrix"] = window.JOURNEYS["matrix"] || {}).chapters =
   window.JOURNEYS["matrix"].chapters || [];
 window.JOURNEYS["matrix"].chapters.push({
-  n: 3, canon: "a", id: "oracle", code: "M1", episode: "The Matrix", title: "The Oracle's kitchen",
+  n: 6, canon: "a", id: "oracle", code: "M1", episode: "The Matrix", title: "The Oracle's kitchen",
   setup: {
     kicker: "An apartment, a kitchen, the smell of cookies.",
     text: "Morpheus brings Neo to the Oracle, the woman who told him the One would come. She is baking. She tells Neo not to worry about the vase, and he turns and knocks it over. Then she looks at his palms and his eyes and tells him, kindly, that he has the gift but seems to be waiting for something. Maybe his next life. And Morpheus, she adds, will give his life for him.",

@@ -47,7 +47,10 @@
 :root[data-theme="matrix"] h1,:root[data-theme="matrix"] .panel h2,:root[data-theme="matrix"] .ending h2,:root[data-theme="matrix"] .mapbox h3,:root[data-theme="matrix"] .donate h3,:root[data-theme="matrix"] .fanlinks h3,:root[data-theme="matrix"] .choice b{font-weight:400}
 :root[data-theme="matrix"] .choice b{font-size:18px}
 :root[data-theme="matrix"] .stage{border-color:rgba(60,255,107,.35);box-shadow:0 0 24px rgba(60,255,107,.08)}
-:root[data-theme="matrix"] .btn{color:#03110A}
+/* Only the solid buttons sit on a green fill; ghost buttons keep green text on black, always visible (not only on hover). */
+:root[data-theme="matrix"] .btn:not(.ghost){color:#03110A}
+:root[data-theme="matrix"] .btn.ghost{color:var(--chalk);border-color:rgba(60,255,107,.45)}
+:root[data-theme="matrix"] .btn.ghost:hover{color:var(--crystal);border-color:var(--crystal)}
 #rain{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;opacity:.2;z-index:0}
 :root:not([data-theme="matrix"]) #rain{display:none}
 .wrap{position:relative;z-index:1}
@@ -251,15 +254,29 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
 <script src="stories/bb-journey/ch03.js"></script>
 <script src="stories/bb-journey/ch04.js"></script>
 <script src="stories/bb-journey/ch05.js"></script>
+<script src="stories/bb-journey/ch06-halfmeasures.js"></script>
 <script src="stories/bb-journey/ch06.js"></script>
 <script src="stories/bb-journey/ch07.js"></script>
+<script src="stories/bb-journey/ch08-boxcutter.js"></script>
+<script src="stories/bb-journey/ch09-saul.js"></script>
 <script src="stories/bb-journey/ch08.js"></script>
+<script src="stories/bb-journey/ch12-saymyname.js"></script>
 <script src="stories/bb-journey/ch09.js"></script>
+<script src="stories/bb-journey/ch14-portfolio.js"></script>
+<script src="stories/bb-journey/ch15-hank.js"></script>
 <script src="stories/bb-journey/ch10.js"></script>
+<script src="stories/bb-journey/ch17-standoff.js"></script>
+<script src="stories/bb-journey/ch17-jack.js"></script>
 <script src="stories/bb-journey/ch11a.js"></script>
 <script src="stories/bb-journey/ch11b.js"></script>
 <script src="stories/bb-journey/endings.js"></script>
 <script src="stories/matrix-journey/journey.js"></script>
+<script src="stories/matrix-journey/n01-ledge.js"></script>
+<script src="stories/matrix-journey/n02-interrogation.js"></script>
+<script src="stories/matrix-journey/n04-jump.js"></script>
+<script src="stories/matrix-journey/n09-merovingian.js"></script>
+<script src="stories/matrix-journey/n11-mobilave.js"></script>
+<script src="stories/matrix-journey/n13-deusdeal.js"></script>
 <script src="stories/matrix-journey/ch01.js"></script>
 <script src="stories/matrix-journey/ch02.js"></script>
 <script src="stories/matrix-journey/ch03.js"></script>
@@ -273,8 +290,24 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
 <script>
 (function(){
 const SITE = { paypalUrl: "https://paypal.me/plotforks", ideaFormUrl: "https://tally.so/r/rjXG1p", baseUrl: "https://plotforks.com", cfAnalyticsToken: "f665688338944dd6974436d5828774fe", counterUrl: "https://plotforks-counter.dimos-chatzinikolaou.workers.dev/e" };
+/* Private mode for the owner: open /?nostats=1 once on a device to stop all counting there, /?nostats=0 to resume.
+   Stored per browser in localStorage (never sent anywhere). Every read and write is wrapped, so blocked storage cannot break the page. */
+const NOCOUNT_KEY = 'pf-nocount';
+function noCount(){ try { return localStorage.getItem(NOCOUNT_KEY) === '1'; } catch (e) { return false; } }
+(function(){
+  try {
+    const q = new URLSearchParams(location.search), v = q.get('nostats');
+    if (v !== '1' && v !== '0') return;
+    try { if (v === '1') localStorage.setItem(NOCOUNT_KEY, '1'); else localStorage.removeItem(NOCOUNT_KEY); } catch (e) {}
+    q.delete('nostats'); const rest = q.toString();
+    history.replaceState(null, '', location.pathname + (rest ? '?' + rest : ''));
+  } catch (e) {}
+})();
+if (typeof document !== 'undefined' && noCount()){
+  try { const ft = document.querySelector('footer'); if (ft) ft.insertAdjacentHTML('beforeend', ' <strong>Counting off on this device.</strong>'); } catch (e) {}
+}
 /* Cloudflare Web Analytics (cookieless, no consent banner needed). Only injected when a token is set. */
-if (SITE.cfAnalyticsToken && typeof document !== 'undefined' && !document.querySelector('script[data-cf-beacon]')){
+if (SITE.cfAnalyticsToken && typeof document !== 'undefined' && !noCount() && !document.querySelector('script[data-cf-beacon]')){
   const cf = document.createElement('script'); cf.defer = true;
   cf.src = 'https://static.cloudflareinsights.com/beacon.min.js';
   cf.setAttribute('data-cf-beacon', JSON.stringify({token: SITE.cfAnalyticsToken}));
@@ -284,7 +317,7 @@ if (SITE.cfAnalyticsToken && typeof document !== 'undefined' && !document.queryS
    A no-op without SITE.counterUrl, when Do Not Track / Global Privacy Control is on, or on any error. Never throws. */
 function track(ev){
   try {
-    if (!SITE.counterUrl || navigator.doNotTrack === '1' || navigator.globalPrivacyControl === true) return;
+    if (!SITE.counterUrl || noCount() || navigator.doNotTrack === '1' || navigator.globalPrivacyControl === true) return;
     const body = JSON.stringify(ev);
     let sent = false;
     if (navigator.sendBeacon) sent = navigator.sendBeacon(SITE.counterUrl, new Blob([body], {type: 'text/plain'}));
@@ -616,6 +649,7 @@ function skylerFigure(pose){
 
 /* ---------- Hank: bald, goatee, broad, polo ---------- */
 function hankFigure(pose){
+  if (pose === 'cuffed') return hankCuffedFigure();
   if (pose === 'read'){
     return `<g class="breathe">
       <rect x="-16" y="-40" width="32" height="40" rx="3" fill="#3E5249"/>
@@ -746,6 +780,54 @@ function toddFigure(){
   return person({skin:'#EFCBA8', torso:shirtT('#4F6B5A'), legCol:'#9A8A6A', hair:HAIR_SHORT('#C9A86A'),
     mouth:'<path d="M-4 -115 Q0 -111 4 -115" stroke="#5A2A22" stroke-width="1.6" fill="none"/>',
     armL:arm('L','down','#4F6B5A','#EFCBA8'), armR:arm('R','down','#4F6B5A','#EFCBA8')});
+}
+
+/* ---------- 2026-09-20 additions: Gus, Mike seated, Hank cuffed, Merovingian, Persephone, Trainman ---------- */
+function gusFigure(pose){
+  const kind = pose === 'fold' ? 'lap' : 'stiff';
+  return person({skin:'#D9A47C', torso:suitT('#D9B84A', '#F4F1E4', '#5A2A22'), legCol:'#2E2A26',
+    hair:`<path d="M-13 -128 Q-14 -141 0 -142 Q14 -141 13 -128 Q9 -133 0 -134 Q-9 -133 -13 -128 Z" fill="#5A4636"/>`,
+    glasses:CLEARGL, keepEyes:true,
+    armL:arm('L', kind, '#D9B84A', '#D9A47C'), armR:arm('R', kind, '#D9B84A', '#D9A47C')});
+}
+function mikeSitFigure(){
+  return person({sit:true, skin:'#D9A97C', torso:shirtT('#B79A6E'), legCol:'#3A362E',
+    hair:`<path d="M-11 -132 Q0 -136 11 -132 Q11 -128 8 -126 Q0 -130 -8 -126 Q-11 -128 -11 -132 Z" fill="#9C948A" fill-opacity=".8"/>`,
+    mouth:'<path d="M-4 -115 h8" stroke="#5A2A22" stroke-width="1.6"/>',
+    armL:arm('L','lap','#B79A6E','#D9A97C'),
+    armR:arm('R','lap','#B79A6E','#D9A97C') + `<rect x="4" y="-62" width="9" height="12" rx="2" fill="#EEF0E6" stroke="#8F8A78" stroke-width="1"/>`});
+}
+function hankCuffedFigure(){
+  return `<g class="breathe">
+    <ellipse cx="0" cy="-5" rx="32" ry="7" fill="#33422F"/>
+    <rect x="-22" y="-30" width="44" height="18" rx="8" fill="#33422F"/>
+    <path d="M-19 -90 Q0 -98 19 -90 L21 -28 L-21 -28 Z" fill="#4A6A4E"/>
+    <path d="M-19 -90 Q0 -98 19 -90 L20 -78 Q0 -84 -20 -78 Z" fill="#8A7A5A" opacity=".45"/>
+    <circle cx="0" cy="-108" r="14" fill="#E2B48C"/>
+    <path d="M-14 -96 Q-16 -86 -10 -82 Q0 -78 10 -82 Q16 -86 14 -96 Z" fill="#C99A73"/>
+    <g class="eyes"><circle cx="-5" cy="-109" r="1.7" fill="#2A221C"/><circle cx="5" cy="-109" r="1.7" fill="#2A221C"/></g>
+    <path d="M-11 -118 l8 3 M11 -118 l-8 3" stroke="#2A221C" stroke-width="2"/><path d="M-5 -97 h10" stroke="#5A2A22" stroke-width="2"/>
+    <path d="M-19 -84 Q-27 -62 -20 -38" stroke="#4A6A4E" stroke-width="10" stroke-linecap="round" fill="none"/>
+    <path d="M19 -84 Q27 -62 20 -38" stroke="#4A6A4E" stroke-width="10" stroke-linecap="round" fill="none"/>
+  </g>`;
+}
+function merovingianFigure(){
+  return person({skin:'#E6C29D', torso:suitT('#2A1E2E', '#F4F1E4', '#8A1E36'), legCol:'#1E1620', hair:HAIR_SHORT('#C8C8C0'),
+    mouth:'<path d="M-6 -117 Q0 -110 6 -117" stroke="#5A2A22" stroke-width="2" fill="none"/>',
+    extra:`<path d="M-6 -113 Q0 -104 6 -113 L4 -108 Q0 -103 -4 -108 Z" fill="#B8B8B0"/><g transform="translate(58 -106)"><path d="M-6 -10 h12 l-2 12 q-4 6 -8 0 z" fill="#B0203A" fill-opacity=".85" stroke="#EEF0E6" stroke-width="1"/><path d="M0 4 v10 M-5 14 h10" stroke="#EEF0E6" stroke-width="1.5"/></g>`,
+    armL:arm('L','down','#2A1E2E','#E6C29D'), armR:arm('R','reach','#2A1E2E','#E6C29D')});
+}
+function persephoneFigure(){
+  return person({skin:'#E6BE98', torso:coatT('#F4F1E4', '#B8B4A4'), legCol:'#F4F1E4',
+    hair:`<path d="M-14 -126 Q-15 -142 0 -143 Q15 -142 14 -126 Q16 -104 10 -92 Q11 -116 0 -132 Q-11 -116 -10 -92 Q-16 -104 -14 -126 Z" fill="#1E1418"/>`,
+    mouth:'<path d="M-4 -116 Q0 -113 4 -116" stroke="#8A1E36" stroke-width="2" fill="none"/>',
+    armL:arm('L','down','#F4F1E4','#E6BE98'), armR:arm('R','lap','#F4F1E4','#E6BE98')});
+}
+function trainmanFigure(){
+  return person({skin:'#D9A97C', torso:shirtT('#4A6078'), legCol:'#2E3A4A',
+    hair:`<path d="M-14 -128 Q0 -148 14 -128 Q0 -134 -14 -128 Z" fill="#2E3A4A"/><rect x="-16" y="-130" width="32" height="4" rx="2" fill="#1E2632"/>`,
+    extra:`<g transform="translate(30 -62)"><path d="M0 -14 v-6 M-6 -20 h12" stroke="#8A8F9C" stroke-width="2"/><rect x="-6" y="-14" width="12" height="16" rx="2" fill="#F2B45A" fill-opacity=".85" stroke="#8A6A2A" stroke-width="1.5"/></g><g fill="#8A8F9C"><circle cx="-14" cy="-70" r="2.5"/><circle cx="-8" cy="-68" r="2.5"/><circle cx="-2" cy="-70" r="2.5"/></g>`,
+    armL:arm('L','down','#4A6078','#D9A97C'), armR:arm('R','down','#4A6078','#D9A97C')});
 }
 
 /* ---------- Matrix cast: flat caricatures drawn from scratch ---------- */
@@ -895,7 +977,9 @@ const CAST_DRAW = {
   saul: saulFigure,
   lydia: lydiaFigure,
   elliott: elliottFigure,
-  mike: mikeFigure,
+  mike: pose => pose === 'sit' ? mikeSitFigure() : mikeFigure(),
+  gus: gusFigure,
+  merovingian: merovingianFigure, persephone: persephoneFigure, trainman: trainmanFigure,
   gale: galeFigure,
   krazy8: krazy8Figure,
   badger: badgerFigure,
@@ -907,12 +991,12 @@ const CAST_DRAW = {
   analyst: analystFigure, deus: deusFigure
 };
 const SLOT_X = {1:[240], 2:[165,330], 3:[100,240,380]};
-const SLOT_PRIORITY = ['walt','skyler','jesse','jane','hank','saul','lydia','elliott','mike','gale','krazy8','badger','declan','jack','judge','todd','neo','trinity','morpheus','smith','cypher','oracle','architect','tank','niobe','sati','analyst','deus'];
-const DRAW_ORDER = ['deus','skyler','jesse','jane','hank','saul','lydia','elliott','mike','gale','krazy8','badger','declan','jack','judge','todd','smith','oracle','architect','morpheus','cypher','tank','niobe','analyst','sati','trinity','neo','walt'];
-const HEAD_TOP = {walt:-178, jesse:-152, jane:-150, skyler:-152, hank:-148, saul:-148, lydia:-152, elliott:-148, mike:-148, gale:-148, krazy8:-144, badger:-145, declan:-148, jack:-148,
+const SLOT_PRIORITY = ['walt','skyler','jesse','jane','hank','saul','lydia','elliott','mike','gus','gale','krazy8','badger','declan','jack','judge','todd','neo','trinity','morpheus','smith','cypher','oracle','architect','tank','niobe','sati','analyst','deus','merovingian','persephone','trainman'];
+const DRAW_ORDER = ['deus','skyler','jesse','jane','hank','saul','lydia','elliott','mike','gus','gale','krazy8','badger','declan','jack','judge','todd','smith','oracle','architect','morpheus','cypher','tank','niobe','analyst','sati','trinity','neo','walt','merovingian','persephone','trainman'];
+const HEAD_TOP = {walt:-178, jesse:-152, jane:-150, skyler:-152, hank:-148, saul:-148, lydia:-152, elliott:-148, mike:-148, gus:-148, merovingian:-148, persephone:-150, trainman:-150, gale:-148, krazy8:-144, badger:-145, declan:-148, jack:-148,
   judge:-124, todd:-148, neo:-148, trinity:-150, morpheus:-146, smith:-148, cypher:-146, oracle:-150, architect:-150,
   tank:-146, niobe:-155, sati:-100, analyst:-148, deus:-240};
-const HEAD_TOP_POSE = {'neo:sit':-124,'neo:bench':-124,'neo:down':-40,'neo:pod':-70,'neo:fly':-150,'trinity:cafe':-124,'trinity:fall':-160,'morpheus:sit':-122,'morpheus:chair':-122,'oracle:sit':-126,'architect:sit':-126,'skyler:sit':-112,'jesse:chained':-152,'jesse:drive':-124,'walt:floor':-46};
+const HEAD_TOP_POSE = {'neo:sit':-124,'neo:bench':-124,'neo:down':-40,'neo:pod':-70,'neo:fly':-150,'trinity:cafe':-124,'trinity:fall':-160,'morpheus:sit':-122,'morpheus:chair':-122,'oracle:sit':-126,'architect:sit':-126,'skyler:sit':-112,'jesse:chained':-152,'jesse:drive':-124,'walt:floor':-46,'mike:sit':-124,'hank:cuffed':-122};
 
 function positionsFor(cast){
   const names = Object.keys(cast);
@@ -1192,7 +1276,32 @@ const SET = {
     <rect y="210" width="480" height="40" fill="#3A403E"/><rect y="244" width="480" height="6" fill="#F2B45A"/>
     <rect y="250" width="480" height="50" fill="#0A0E0D"/>
     <rect x="30" y="80" width="46" height="90" rx="4" fill="#3A403E" stroke="#1E2422" stroke-width="3"/><rect x="38" y="90" width="30" height="24" fill="#1A2823"/><rect x="36" y="128" width="34" height="30" rx="2" fill="#5E6A66"/>
-    <rect x="330" y="30" width="130" height="20" rx="2" fill="#1A2823"/><text x="395" y="45" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#3CFF6B">MOBIL AVE</text>`
+    <rect x="330" y="30" width="130" height="20" rx="2" fill="#1A2823"/><text x="395" y="45" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#3CFF6B">MOBIL AVE</text>`,
+  bar: () => `<rect width="480" height="250" fill="#2A2220"/>
+    <rect y="250" width="480" height="50" fill="#1A1412"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#4A382C" stroke-width="2"/>
+    <circle cx="240" cy="120" r="150" fill="#F2B45A" opacity=".07"/>
+    <rect x="150" y="50" width="180" height="96" rx="3" fill="#3A302A" stroke="#6E5236" stroke-width="3"/>
+    <g stroke="#8F7F5E" stroke-width="3"><path d="M40 84 H140 M340 84 H440 M40 124 H140 M340 124 H440"/></g>
+    <g>${[[52,'#7FD3E8'],[70,'#B0203A'],[88,'#C9A24A'],[106,'#4A8B5A'],[124,'#B98A54'],[352,'#C9A24A'],[370,'#7FD3E8'],[388,'#B0203A'],[406,'#4A8B5A'],[424,'#B98A54']].map(([x,c]) => `<rect x="${x}" y="58" width="9" height="26" rx="3" fill="${c}" fill-opacity=".8"/><rect x="${x + 2}" y="50" width="5" height="9" fill="${c}" fill-opacity=".8"/>`).join('')}</g>
+    <rect x="0" y="196" width="480" height="18" fill="#7A5638"/><rect x="0" y="214" width="480" height="36" fill="#3A2A1E"/>
+    <g><rect x="66" y="228" width="34" height="8" rx="3" fill="#6E4A32"/><rect x="80" y="236" width="6" height="20" fill="#4A382C"/><rect x="380" y="228" width="34" height="8" rx="3" fill="#6E4A32"/><rect x="394" y="236" width="6" height="20" fill="#4A382C"/></g>
+    <g><rect x="230" y="168" width="10" height="28" rx="3" fill="#B0203A" fill-opacity=".85"/><rect x="232" y="158" width="6" height="12" fill="#B0203A" fill-opacity=".85"/><path d="M252 196 l3 -14 h12 l3 14 Z" fill="#C8E6F0" fill-opacity=".35" stroke="#EEF0E6" stroke-opacity=".6" stroke-width="1"/></g>`,
+  rooftops: () => `<rect width="480" height="300" fill="#DCE4E8"/>
+    <g fill="#B8C4CA"><rect x="0" y="150" width="60" height="100"/><rect x="70" y="120" width="50" height="130"/><rect x="130" y="160" width="70" height="90"/><rect x="290" y="130" width="60" height="120"/><rect x="360" y="110" width="50" height="140"/><rect x="420" y="150" width="60" height="100"/></g>
+    <g fill="#8A969C"><rect x="18" y="104" width="22" height="30" rx="3"/><path d="M16 104 L29 92 L42 104 Z"/><rect x="24" y="134" width="3" height="16"/><rect x="34" y="134" width="3" height="16"/><rect x="376" y="80" width="22" height="30" rx="3"/><path d="M374 80 L387 68 L400 80 Z"/><rect x="382" y="110" width="3" height="16"/><rect x="392" y="110" width="3" height="16"/></g>
+    <rect x="0" y="250" width="226" height="50" fill="#6E7478"/><rect x="254" y="250" width="226" height="50" fill="#6E7478"/>
+    <rect x="226" y="250" width="28" height="50" fill="#4A5258"/>
+    <line x1="0" y1="250" x2="226" y2="250" stroke="#4A5258" stroke-width="3"/><line x1="254" y1="250" x2="480" y2="250" stroke="#4A5258" stroke-width="3"/>
+    <g stroke="#9AA3A8" stroke-width="2"><path d="M0 268 H226 M254 268 H480"/></g>`,
+  corner: () => `<rect width="480" height="200" fill="#7FB3D6"/>
+    <circle cx="410" cy="46" r="20" fill="#FFE9B8" opacity=".9"/>
+    <g fill="#C9A77C" stroke="#8F7F5E" stroke-width="2"><rect x="0" y="80" width="150" height="126"/><rect x="330" y="60" width="150" height="146"/></g>
+    <g fill="#3D5249" stroke="#EEF0E6" stroke-opacity=".6" stroke-width="2"><rect x="20" y="104" width="32" height="30" rx="2"/><rect x="66" y="104" width="32" height="30" rx="2"/><rect x="352" y="88" width="32" height="30" rx="2"/><rect x="400" y="88" width="32" height="30" rx="2"/></g>
+    <rect x="34" y="158" width="30" height="48" fill="#6E4A3A"/><path d="M0 80 h150" stroke="#8F6B3E" stroke-width="6"/>
+    <rect y="206" width="480" height="20" fill="#A8A08E"/><line x1="0" y1="206" x2="480" y2="206" stroke="#8A8272" stroke-width="2"/>
+    <rect y="226" width="480" height="74" fill="#55575A"/><g stroke="#EEF0E6" stroke-width="3" stroke-dasharray="26 22" opacity=".7"><path d="M0 264 H480"/></g>
+    <g><rect x="196" y="184" width="86" height="8" rx="2" fill="#8F6B4A"/><rect x="196" y="168" width="86" height="6" rx="2" fill="#8F6B4A"/><rect x="202" y="192" width="6" height="14" fill="#4A3226"/><rect x="270" y="192" width="6" height="14" fill="#4A3226"/></g>`
 };
 /* ---------- fx ---------- */
 function bubblesFx(){
@@ -1275,6 +1384,9 @@ function fxNew(fx, set){
   if (fx.includes('sunrise')) out += `<rect width="480" height="300" fill="#F2B45A" opacity=".12"/><g><circle cx="400" cy="120" r="34" fill="#FFD98A" opacity=".92"/><g stroke="#FFD98A" stroke-width="3" stroke-linecap="round" opacity=".7"><path d="M400 70 v-14 M400 170 v14 M350 120 h-14 M450 120 h14 M365 85 l-10 -10 M435 85 l10 -10 M365 155 l-10 10 M435 155 l10 10"/></g></g>`;
   if (fx.includes('train')) out += `<g><circle cx="470" cy="170" r="34" fill="#FFF6D0" opacity=".8"/><circle cx="470" cy="170" r="14" fill="#FFFFFF"/><g stroke="#EEF0E6" stroke-width="2.5" stroke-linecap="round" opacity=".7"><path d="M420 150 h-50 M430 170 h-70 M420 190 h-56"/></g></g>`;
   if (fx.includes('vase')) out += `<g><g transform="translate(392 176) rotate(38)"><path d="M-9 -16 h18 l4 14 q6 8 -4 18 h-18 q-10 -10 -4 -18 Z" fill="#B98A54" stroke="#8F6B3E" stroke-width="2"/></g><g fill="#B98A54" stroke="#8F6B3E" stroke-width="1.5"><path d="M370 268 l10 -8 l6 10 Z"/><path d="M394 272 l12 -6 l2 10 Z"/><path d="M420 268 l8 -10 l6 12 Z"/></g><path d="M384 214 l-6 10 M404 214 l6 12" stroke="#EEF0E6" stroke-width="2" stroke-linecap="round" opacity=".7"/></g>`;
+  if (fx.includes('chart')) out += `<g transform="translate(290 34)"><rect width="160" height="96" rx="4" fill="#0E1E22" stroke="#EEF0E6" stroke-opacity=".6" stroke-width="2"/><g stroke="#5E7268" stroke-opacity=".6" stroke-width="1"><path d="M12 24 H148 M12 46 H148 M12 68 H148"/></g><path d="M14 80 L44 64 L70 70 L100 40 L128 30 L148 14" stroke="#7FD3E8" stroke-width="3" fill="none" stroke-linejoin="round" stroke-linecap="round"/><path d="M136 12 L150 12 L148 26" stroke="#F2B45A" stroke-width="3" fill="none" stroke-linecap="round"/><g fill="#F2B45A"><circle cx="44" cy="64" r="3"/><circle cx="100" cy="40" r="3"/></g></g>`;
+  if (fx.includes('dust')) out += `<g fill="#C9A268" opacity=".5"><ellipse cx="70" cy="272" rx="46" ry="14"/><ellipse cx="200" cy="282" rx="58" ry="12"/><ellipse cx="330" cy="274" rx="52" ry="14"/><ellipse cx="430" cy="280" rx="40" ry="11"/></g><g stroke="#EEF0E6" stroke-width="2" stroke-linecap="round" opacity=".5"><path d="M20 250 h50 M140 260 h60 M300 256 h60 M400 262 h48"/></g>`;
+  if (fx.includes('bug')) out += `<g transform="translate(250 240)"><ellipse rx="14" ry="6" fill="#B8C0C4" stroke="#5E6A72" stroke-width="1.5"/><circle cx="-14" cy="0" r="4" fill="#B8C0C4" stroke="#5E6A72" stroke-width="1.5"/><path d="M-8 4 l-6 8 M0 6 l0 9 M8 4 l6 8 M-8 -4 l-6 -8 M0 -6 l0 -9 M8 -4 l6 -8" stroke="#5E6A72" stroke-width="1.5" stroke-linecap="round"/><circle cx="-16" cy="-1" r="1" fill="#E0474C"/></g>`;
   if (fx.includes('cookies')) out += `<g><rect x="28" y="238" width="100" height="6" rx="2" fill="#8F7F5E"/><g fill="#8A5A2E" stroke="#5A3A1E" stroke-width="1"><circle cx="46" cy="232" r="8"/><circle cx="68" cy="232" r="8"/><circle cx="90" cy="232" r="8"/><circle cx="112" cy="232" r="8"/></g><g fill="#3A2210"><circle cx="44" cy="230" r="1.4"/><circle cx="70" cy="234" r="1.4"/><circle cx="90" cy="230" r="1.4"/><circle cx="110" cy="234" r="1.4"/></g></g>`;
   return out;
 }
@@ -1364,11 +1476,15 @@ const SUPPORTED = {
     jesse: ['lie','sit','stand','run','chained','drive'],
     jane: ['back','side','sit-scream','sit-glare','stand'],
     skyler: ['stand','spreadsheet','ceo','sit'],
-    hank: ['read','suspicious','laugh'],
+    hank: ['read','suspicious','laugh','stand','cuffed'],
     saul: ['pitch','stand'],
     lydia: ['stand','panic'],
     elliott: ['stand','shock'],
-    mike: ['stand'],
+    mike: ['stand','sit'],
+    gus: ['stand','fold'],
+    merovingian: ['stand'],
+    persephone: ['stand'],
+    trainman: ['stand'],
     gale: ['stand'],
     krazy8: ['chained','stand'],
     badger: ['stand'],
@@ -1389,7 +1505,7 @@ const SUPPORTED = {
     analyst: ['stand'],
     deus: ['face']
   },
-  fx: ['zz','cough','wet','halo','sweat','siren','bubbles','pins','confetti','lily','alarm','blue','bullets','cat','code','crash','emp','flash','gold','gruel','light','mirror','phone','pills','plug','rain','screens','sentinels','shells','steak','sunrise','train','vase','cookies']
+  fx: ['zz','cough','wet','halo','sweat','siren','bubbles','pins','confetti','lily','alarm','blue','bullets','cat','code','crash','emp','flash','gold','gruel','light','mirror','phone','pills','plug','rain','screens','sentinels','shells','steak','sunrise','train','vase','cookies','chart','dust','bug']
 };
 if (typeof module !== 'undefined' && module.exports) { module.exports = SUPPORTED; module.exports.buildScene = buildScene; }
 
@@ -1513,14 +1629,24 @@ if (typeof document !== 'undefined'){
     'breaking-bad': [
       {id: 'savedJane', name: 'Saved Jane', desc: 'Jane made it out of that bedroom alive.', test: st => st.flags.has('janeAlive')},
       {id: 'pureHeisenberg', name: 'Pure Heisenberg', desc: 'Ended a run at 95 or more on the meter.', test: (st, e) => e.meter >= 95},
-      {id: 'carwashTycoon', name: 'Car Wash Tycoon', desc: 'Built the chain of car washes.', test: st => st.flags.has('carwash')}
+      {id: 'carwashTycoon', name: 'Car Wash Tycoon', desc: 'Built the chain of car washes.', test: st => st.flags.has('carwash')},
+      {id: 'diversified', name: 'Diversified', desc: 'Put the money into a proper portfolio.', test: st => st.flags.has('portfolio')},
+      {id: 'mikeRetired', name: 'Mike Retired', desc: 'Let Mike walk away in one piece.', test: st => st.flags.has('mikeLives')},
+      {id: 'hankLived', name: 'Hank Lived', desc: 'Hank survived the desert.', test: st => st.flags.has('hankLives')},
+      {id: 'nobodyFired', name: 'Nobody Fired', desc: 'Not a single shot in the desert.', test: st => st.flags.has('noShots')},
+      {id: 'neverTrustedSaul', name: 'Never Trusted Saul', desc: 'Cut the lawyer out of the plan.', test: st => st.flags.has('noSaul')},
+      {id: 'missedItByThatMuch', name: 'Missed It By That Much', desc: 'Hank left the book on the shelf.', test: st => st.flags.has('bookMissed')}
     ],
     'matrix': [
       {id: 'bothPills', name: 'Took Both Pills', desc: 'Swallowed the red and the blue. Somehow it worked.', test: st => st.flags.has('bothPills')},
       {id: 'savedMorpheus', name: 'Saved Morpheus', desc: 'Went into the building and got him out.', test: st => st.flags.has('rescued')},
       {id: 'trinityLives', name: 'Trinity Lives', desc: 'Trinity made it through the whole trilogy.', test: st => (st.flags.has('trinitySafe') || st.flags.has('defendZion')) && !st.flags.has('trinityLost')},
       {id: 'askedManager', name: 'Asked for the Manager', desc: 'Asked the Architect to see a manager.', test: st => st.flags.has('manager')},
-      {id: 'trueBeliever', name: 'True Believer', desc: 'Ended a run at 95 or more Belief.', test: (st, e) => e.meter >= 95}
+      {id: 'trueBeliever', name: 'True Believer', desc: 'Ended a run at 95 or more Belief.', test: (st, e) => e.meter >= 95},
+      {id: 'outTheWindow', name: 'Out the Window', desc: 'Climbed onto the scaffold at Metacortex.', test: st => st.flags.has('ledgeJump')},
+      {id: 'askedForTrinity', name: 'Asked for Trinity', desc: 'Asked the machines to bring her back.', test: st => st.flags.has('askedTrinity')},
+      {id: 'openDoor', name: 'The Open Door', desc: 'Won everyone the right to leave.', test: st => st.flags.has('freeAll')},
+      {id: 'cheatedTheJump', name: 'Cheated the Jump', desc: 'Asked for less gravity instead of believing.', test: st => st.flags.has('cheatJump')}
     ]
   };
   function badgeDefs(journey){ return (JOURNEY_BADGES[journey.id] || []).concat(GENERIC_BADGES); }

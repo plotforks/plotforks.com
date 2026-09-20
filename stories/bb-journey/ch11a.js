@@ -12,13 +12,15 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 11, canon: "a", when: "shootout", id: "felina", code: "S5E16", episode: "Felina", title: "Jack's compound",
+  n: 19, canon: "a", when: "atLarge", id: "felina", code: "S5E16", episode: "Felina", title: "Jack's compound",
   setup: {
     kicker: "Aftertaste. A compound outside Albuquerque.",
     text: "Months in a New Hampshire cabin did not agree with Walt. He has driven back with a car bought for cash and something heavy bolted into the trunk. Jack's crew agreed to meet him, mostly so they could kill him. Jesse is here too, in chains. Then Jack does something the show never let him finish: he offers Walt a deal.",
     caption: "One last visit, with a trunk.",
     scene: {set: "compound", cast: {walt: "keys", jack: "stand", jesse: "chained"}},
     variants: [
+      {when: "soldJesse", text: "Months in a New Hampshire cabin did not agree with Walt, and the federal indictment reads strangely when your brother-in-law is the chief witness and still alive. He has driven back with a car bought for cash and something heavy bolted into the trunk. Jesse is here, in the chains Walt sold him into. Then Jack does something the show never let him finish: he offers Walt a deal."},
+      {when: "hankLives", text: "Months in a New Hampshire cabin did not agree with Walt, and neither did the news bulletins, in which a federal agent who should be dead keeps giving statements about him. He has driven back with a car bought for cash and something heavy bolted into the trunk. Jesse is at Jack's compound, in chains. Then Jack does something the show never let him finish: he offers Walt a deal."},
       {when: "jesse>=70", text: "Months in a New Hampshire cabin did not agree with Walt. He has driven back with a car bought for cash and something heavy bolted into the trunk. Jesse came looking for him after the desert, and Jack's crew has kept him in chains ever since. Then Jack does something the show never let him finish: he offers Walt a deal."},
       {when: "carwash", text: "Months in a New Hampshire cabin did not agree with Walt, and the car wash chain is now evidence in forty-one counties. He has driven back with a car bought for cash and something heavy bolted into the trunk. Jesse is at Jack's compound, in chains. Then Jack does something the show never let him finish: he offers Walt a deal."}
     ]

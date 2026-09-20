@@ -11,7 +11,7 @@
 (window.JOURNEYS["matrix"] = window.JOURNEYS["matrix"] || {}).chapters =
   window.JOURNEYS["matrix"].chapters || [];
 window.JOURNEYS["matrix"].chapters.push({
-  n: 4, canon: "a", id: "morpheus", code: "M1", episode: "The Matrix", title: "The Agents have Morpheus",
+  n: 7, canon: "a", id: "morpheus", code: "M1", episode: "The Matrix", title: "The Agents have Morpheus",
   setup: {
     kicker: "The Nebuchadnezzar, the morning after.",
     text: "Cypher sold them out. The Agents ambushed the crew on the way back from the Oracle, and Mouse, Apoc, Switch and Dozer are dead. Morpheus fought Agent Smith so the others could escape, and now he is strapped to a chair in a government building while the Agents break into his mind for the codes to Zion. Tank has his hand on Morpheus's plug.",
