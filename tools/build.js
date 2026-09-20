@@ -269,7 +269,7 @@ ${endingItems}
     const prev = chapters[i - 1], next = chapters[i + 1];
     const setupText = c.setup && c.setup.text ? c.setup.text : '';
     const choices = c.choices.map(ch => `<li><b>${esc(ch.label)}</b><span>${esc(ch.tag)}</span></li>`).join('\n');
-    const body = `<div class="eyebrow">${esc(c.code)} · Chapter ${c.n} of ${ns.length} · ${esc(c.episode)}</div>
+    const body = `<div class="eyebrow">${esc(c.code)} · Chapter ${c.n} of up to ${ns.length} · ${esc(c.episode)}</div>
 <h1>${esc(q)}</h1>
 <p>${esc(setupText)}</p>
 <h2>${esc(c.question)}</h2>

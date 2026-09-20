@@ -13,8 +13,10 @@ window.JOURNEYS["breaking-bad"].chapters.push({
     caption: "Two stools, one story, no music.",
     scene: {set: "bar", cast: {mike: "stand", walt: "stand"}},
     variants: [
-      {when: "janeAlive", text: "Jesse is going after two of Gus's dealers, and Gus wants the problem to go away before it costs him a distribution network. Jane is the only reason Jesse still answers his phone. Mike buys Walt a drink and tells him a long story about a drunk, a wife and a cop who did half of what was needed."},
-      {when: "jesse<=30", text: "Jesse is going after two of Gus's dealers and has stopped taking Walt's calls entirely. Mike buys Walt a drink and tells him a long story about a drunk, a wife and a cop who did half of what was needed. The moral is not subtle, and it is aimed at Walt."}
+      /* Jesse can only fall this low by Jane surviving her bedside chapter, so the combined
+         variant has to sit above the plain janeAlive one or it would never be shown. */
+      {when: "janeAlive && jesse<=30", text: "Jesse is going after two of Gus's dealers and has stopped taking Walt's calls entirely. Jane still answers hers, and the messages she passes on get shorter every week. Mike buys Walt a drink and tells him a long story about a drunk, a wife and a cop who did half of what was needed. The moral is not subtle, and it is aimed at Walt."},
+      {when: "janeAlive", text: "Jesse is going after two of Gus's dealers, and Gus wants the problem to go away before it costs him a distribution network. Jane is the only reason Jesse still answers his phone. Mike buys Walt a drink and tells him a long story about a drunk, a wife and a cop who did half of what was needed."}
     ]
   },
   question: "Mike is offering to handle Jesse. What does Walt say?",

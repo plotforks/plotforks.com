@@ -14,7 +14,7 @@ window.JOURNEYS["breaking-bad"].chapters.push({
     scene: {set: "office", cast: {saul: "pitch", walt: "stand"}},
     variants: [
       {when: "!saul", text: "Walt has decided that Gus has to go, and every piece of a plan like that has to pass through somebody. Saul Goodman is not his lawyer, but Saul is the only man in Albuquerque who sells the things Walt now needs, and Saul has sat across a desk from Gus.", scene: {set: "office", cast: {saul: "pitch", walt: "stand"}}},
-      {when: "gusArrested", text: "Gus is in federal custody and still running everything through three lawyers, which is arguably worse. Every piece of a plan against a man in that position has to pass through somebody. Saul is the somebody, and Saul has sat across a desk from Gus."}
+      {when: "mikeRespect", text: "Walt has decided that Gus has to go, and every piece of a plan like that has to pass through somebody. Saul is the somebody. Saul has also sat across a desk from Gus, and so, in a quieter and far more dangerous way, has Mike, who is still on the other side of this and still takes Walt's calls."}
     ]
   },
   question: "Walt needs a lawyer he can trust. He has a lawyer instead. What does he tell him?",

@@ -13,7 +13,7 @@ window.JOURNEYS["breaking-bad"].chapters.push({
     scene: {set: "storage", cast: {skyler: "stand", walt: "stand"}},
     variants: [
       {when: "licensed", text: "Skyler brings Walt to a storage unit and pulls back a tarp. Underneath is a pile of cash so big she has stopped counting it, and Declan's royalty payments keep arriving in shoeboxes. The car wash could not launder it in a hundred years, and she wants to know how much is enough."},
-      {when: "family<40", text: "Skyler brings Walt to a storage unit and pulls back a tarp without looking at him. Underneath is a pile of cash so big she has stopped counting it. The car wash could not launder it in a hundred years, and she wants to know how much is enough."}
+      {when: "family<55", text: "Skyler brings Walt to a storage unit and pulls back a tarp without looking at him. Underneath is a pile of cash so big she has stopped counting it. The car wash could not launder it in a hundred years, and she wants to know how much is enough."}
     ]
   },
   question: "What does Walt do with the pile?",

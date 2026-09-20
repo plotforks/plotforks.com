@@ -14,7 +14,7 @@ window.JOURNEYS["breaking-bad"].chapters.push({
     scene: {set: "park", cast: {mike: "sit", walt: "stand"}},
     variants: [
       {when: "mikeRespect", text: "Mike is leaving town this afternoon and for good. The DEA has the names of his nine men and his money is frozen. He is out of patience generally, but he still stops the car for Walt, which he would not do for most people, and that is the whole problem with this afternoon."},
-      {when: "ninePaid", text: "Mike is leaving town this afternoon and for good. The DEA has the names of his nine men, though the men themselves have been quietly looked after, and the bag with his passport is in Walt's boot."}
+      {when: "noSaul", text: "Mike is leaving town this afternoon and for good. The DEA has the names of his nine men, his money is frozen, and the one lawyer in Albuquerque who could quietly unfreeze any of it is a man Walt decided months ago he could do without. The bag with his passport and his cash is in Walt's boot."}
     ]
   },
   question: "Mike is walking away and Walt wants the names of the nine men. What does he do?",

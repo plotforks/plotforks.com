@@ -1657,7 +1657,8 @@ if (typeof document !== 'undefined'){
 
   function freshJourneyState(journey){
     return {journeyId: journey.id, scores: Object.assign({}, journey.start), flags: new Set(),
-      afterN: 0, path: [], status: 'active', ending: null, earnedBadges: [], step: 0, activeChoiceId: null, tracked: false, endSent: false};
+      afterN: 0, path: [], status: 'active', ending: null, earnedBadges: [], step: 0, activeChoiceId: null, tracked: false, endSent: false,
+      startOffset: 0};
   }
   const RESUME_SENT = new Set();
   function loadJourneyState(journey){
@@ -1667,14 +1668,14 @@ if (typeof document !== 'undefined'){
       const resumed = !!((raw.path && raw.path.length) || raw.activeChoiceId);
       if (resumed && !RESUME_SENT.has(journey.id)){ RESUME_SENT.add(journey.id); track({t: 'resume', j: journey.id}); }
       return {journeyId: journey.id, tracked: resumed, endSent: false, scores: Object.assign({}, journey.start, raw.scores || {}),
-        flags: new Set(raw.flags || []), afterN: raw.afterN || 0, path: raw.path || [],
+        flags: new Set(raw.flags || []), afterN: raw.afterN || 0, path: raw.path || [], startOffset: raw.startOffset || 0,
         status: 'active', ending: null, earnedBadges: [], step: raw.step || 0, activeChoiceId: raw.activeChoiceId || null};
     }
     return freshJourneyState(journey);
   }
   function saveJourneyState(journey, st){
     try { localStorage.setItem('up-journey-' + journey.id, JSON.stringify({
-      scores: st.scores, flags: [...st.flags], afterN: st.afterN,
+      scores: st.scores, flags: [...st.flags], afterN: st.afterN, startOffset: st.startOffset || 0,
       path: st.path, status: st.status, step: st.step, activeChoiceId: st.activeChoiceId})); } catch (e) {}
   }
   function clearJourneyState(journey){ try { localStorage.removeItem('up-journey-' + journey.id); } catch (e) {} }
@@ -1941,7 +1942,12 @@ if (typeof document !== 'undefined'){
       resumeRowEl.hidden = false;
       resumeRowEl.innerHTML = `<div class="resume-note"><span>Resume your journey - chapter ${chapter.n} of ${totalSteps(journey)}.</span><button class="btn ghost" data-journey-restart>Start over</button></div>`;
     }
-    eyebrowEl.textContent = `${chapter.code} · Chapter ${chapter.n} of ${totalSteps(journey)} · ${chapter.title}`;
+    /* Numbered by the chapters this run actually plays, not by chapter.n: a run that skips a
+       conditional step (e.g. the desert standoff) would otherwise jump from 16 to 19. The total
+       is the most any run can play, hence "up to". A deep link starts mid-journey, so the
+       chapters it skipped before the entry point are counted once in startOffset. */
+    const stepNo = (JST.startOffset || 0) + JST.path.length + 1;
+    eyebrowEl.textContent = `${chapter.code} · Chapter ${stepNo} of up to ${totalSteps(journey)} · ${chapter.title}`;
 
     if (!JST.activeChoiceId){
       const setup = resolveSetup(chapter, JST);
@@ -2116,6 +2122,7 @@ if (typeof document !== 'undefined'){
       JST = freshJourneyState(journey);
       satisfyWhen(chapter.when, JST);
       JST.afterN = chapter.n - 1;
+      JST.startOffset = chapterNs(journey).filter(n => n < chapter.n).length;
       saveJourneyState(journey, JST);
     }
     try { history.replaceState(null, '', location.pathname); } catch (e) {}
