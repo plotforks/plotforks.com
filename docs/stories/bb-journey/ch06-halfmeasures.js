@@ -6,7 +6,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 6, canon: "b", id: "halfmeasures", code: "S3E12", episode: "Half Measures", title: "Mike buys a drink",
+  n: 7, canon: "b", id: "halfmeasures", code: "S3E12", episode: "Half Measures", title: "Mike buys a drink",
   setup: {
     kicker: "A bar with no music, mid-afternoon.",
     text: "Jesse is going after two of Gus's dealers, and Gus wants the problem to go away before it costs him a distribution network. Mike buys Walt a drink and tells him a long story about a drunk, a wife and a cop who did half of what was needed. The moral is not subtle.",

@@ -27,16 +27,25 @@ const BASE_URL = siteVal('baseUrl').replace(/\/$/, '');           // the one pla
 const CF_TOKEN = siteVal('cfAnalyticsToken');                     // empty string = no analytics
 const SITE_NAME = 'plotforks';
 const COUNT_NOTE = 'We count anonymous plays, choices and endings, with no cookies and no personal data. A free copy of this site is kept at plotforks.github.io, so the stories stay available even if this domain ever lapses.';   // also in the footer of index.html
+/* Any Chromium will do; they all take the same headless flags. Chrome is tried first because Edge on this machine
+   started refusing to read the temp file and screenshotting its own file-not-found page instead, and Brave hangs
+   in headless here. Set PF_BROWSER to force a particular binary. */
 const EDGE_CANDIDATES = [
+  process.env.PF_BROWSER || '',
+  'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+  'C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
+  'C:\\Program Files (x86)\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
+  'C:\\Users\\' + (process.env.USERNAME || '') + '\\AppData\\Local\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
+  'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
   'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
   'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe'
-];
+].filter(Boolean);
 
 /* Per-journey site copy. Slugs must match JOURNEY_META in index.html. */
 const JOURNEY_SITE = {
   'breaking-bad': {
     slug: 'breaking-bad', series: 'Breaking Bad', short: 'Breaking Bad what-if',
-    description: 'Play the whole run of Breaking Bad and change the story at twenty-five turning points. Every choice shifts Walt, Jesse, Hank and the family, and the ending is computed from how you played.',
+    description: 'Play the whole run of Breaking Bad and change the story at twenty-six turning points. Every choice shifts Walt, Jesse, Hank and the family, and the ending is computed from how you played.',
     intro: 'An interactive what-if through the whole of Breaking Bad. At each turning point you pick one of three alternatives, watch a short cartoon scene, and carry the consequences into the next chapter. Where you land depends on how far you turned into Heisenberg, who still trusts you, what Hank suspects and what is left of the family.',
     legal: 'An unofficial Breaking Bad what-if, made as a fan parody. Not affiliated with Sony Pictures Television or AMC. All characters are drawn from scratch.',
     theme: '',
@@ -50,6 +59,7 @@ const JOURNEY_SITE = {
       deadfreight: 'What if nobody killed the boy on the dirt bike in Dead Freight?',
       tuco: 'What if Walter White never became Heisenberg in front of Tuco?',
       faceoff: 'What if Walter White never used Hector Salamanca to kill Gus Fring?',
+      granite: 'What if Walter White stayed in the cabin in New Hampshire?',
       ninemen: 'What if Walter White never had the nine men killed in prison?',
       garage: 'What if Walter White confessed to Hank in the garage in Blood Money?',
       skylername: 'What if Walter White never made the phone call that cleared Skyler?',

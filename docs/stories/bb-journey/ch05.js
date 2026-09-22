@@ -4,7 +4,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 5, canon: "c", id: "phoenix", code: "S2E12", episode: "Phoenix", title: "Jane's bedside",
+  n: 6, canon: "c", id: "phoenix", code: "S2E12", episode: "Phoenix", title: "Jane's bedside",
   setup: {
     kicker: "Jesse's apartment, 3:00 a.m.",
     text: "Walt came to talk Jesse out of leaving town with Jane and his share of the money. He finds them both passed out. He shakes Jesse, hard. Jesse doesn't wake, but Jane rolls onto her back and starts to choke.",

@@ -23,6 +23,15 @@
    summary: "Ninety seconds of shouting in the dirt, and then everybody drove away. Walt lost the money, the partner and the case, and kept the one thing he never asks for: a family that is all still alive.",
    share: "My timeline: The Standoff. Ninety seconds of shouting, and not one shot. Heisenberg meter {meter}/100."},
 
+  /* Gave up in New Hampshire (ch25-granite.js choice c): the run never plays Felina, so without these two it would
+     fall through every group below and land on a safety fallback. Checked right after the no-shots group. */
+  {id: "theBarStool", when: "gaveUp && confessed", name: "The Bar Stool",
+   summary: "He gave his own name to a field office from a payphone in New Hampshire and then did the hard part, which was staying on the stool while the television explained that he had never contributed anything to anything. He told them where the barrel was on the first morning, and nobody has ever been able to account for that.",
+   share: "My timeline: The Bar Stool. He called it in and then waited. Heisenberg meter {meter}/100."},
+  {id: "pageEleven", when: "gaveUp", name: "Page Eleven",
+   summary: "There is no compound, no last drive and no final list. There is a hearing schedule, an enormous amount of cooperation, and a man who gets steadily smaller in the newspapers until he is a paragraph on page eleven, which is the one punishment he never planned for.",
+   share: "My timeline: Page Eleven. He turned himself in from a bar in New Hampshire. Heisenberg meter {meter}/100."},
+
   /* Hank lived: only reachable on shootout runs, through ch17-jack.js (n:21). Checked first, because a living
      federal agent changes every finale more than anything Walt does at the compound afterwards. */
   /* Top of the hankLives group: every atLarge run ends on gunTrunk, jackDeal or jesseKeys, so a rule placed
@@ -48,6 +57,9 @@
 
 
   /* Shootout, then "Felina" (ch11a) */
+  {id: "theFoundation", when: "moneyOnly", name: "A Charitable Foundation with a Dull Name",
+   summary: "He drove eighteen hundred miles for one conversation in a living room, said almost nothing, and went back north. On his son's eighteenth birthday a great deal of money arrives from strangers, and the family spends a long evening deciding whether to keep it. They keep it.",
+   share: "My timeline: A Charitable Foundation with a Dull Name. He went back for the money and nothing else. Heisenberg meter {meter}/100."},
   {id: "sideBySide", when: "gunTrunk && jesse>=80", name: "Side by Side",
    summary: "Jesse drives, and Walt rides in the passenger seat for the first time since the RV. They make it as far as a hospital in Farmington. Walt insists on correcting the doctor's chemistry.",
    share: "My timeline: Side by Side. Jesse drove Walt away from Jack's compound. Heisenberg meter {meter}/100."},

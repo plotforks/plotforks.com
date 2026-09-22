@@ -10,7 +10,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 21, canon: "c", when: "shotsFired", id: "jacksprice", code: "S5E14", episode: "Ozymandias", title: "Jack names a price",
+  n: 23, canon: "c", when: "shotsFired", id: "jacksprice", code: "S5E14", episode: "Ozymandias", title: "Jack names a price",
   setup: {
     kicker: "Aftertaste of a gunfight. To'hajiilee, four minutes later.",
     text: "The desert goes quiet. Walt is on his knees in the dirt in his own handcuffs, and Hank is alive, face down, ten feet away. This is the minute the show spends about forty seconds on. Jack takes his time instead, because Jack is a businessman before he is anything else, and there are eight barrels buried within a hundred yards of this conversation.",

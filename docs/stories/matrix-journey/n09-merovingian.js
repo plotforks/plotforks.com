@@ -8,7 +8,7 @@
 (window.JOURNEYS["matrix"] = window.JOURNEYS["matrix"] || {}).chapters =
   window.JOURNEYS["matrix"].chapters || [];
 window.JOURNEYS["matrix"].chapters.push({
-  n: 9, canon: "a", id: "merovingian", code: "M2", episode: "Reloaded", title: "The Frenchman's dessert",
+  n: 10, canon: "a", id: "merovingian", code: "M2", episode: "Reloaded", title: "The Frenchman's dessert",
   setup: {
     kicker: "A restaurant where everyone is beautiful and nobody is kind.",
     text: "The Keymaker is being held by a very old program who calls himself the Merovingian, owns a château, a wine list and a great many men with sunglasses, and enjoys explaining that nobody in this room has ever made a choice in their life. He orders dessert while he says it, which he considers a demonstration.",

@@ -8,7 +8,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 25, canon: "a", when: "!atLarge", id: "sentencing", code: "S5E16+", episode: "After Felina", title: "Sentencing day",
+  n: 26, canon: "a", id: "sentencing", code: "S5E16+", episode: "After Felina", title: "Sentencing day",
   setup: {
     kicker: "Aftertaste. Federal court, Albuquerque.",
     text: "Walter White has pleaded guilty to everything he could remember and several things he could not. Hank sits two rows back with his arms folded. Before the sentence is read, the judge asks whether Walt has anything to say.",

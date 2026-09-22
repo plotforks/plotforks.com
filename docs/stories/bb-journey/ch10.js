@@ -4,7 +4,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 19, canon: "b", id: "tohajiilee", code: "S5E13", episode: "To'hajiilee", title: "Cornered in the desert",
+  n: 21, canon: "b", id: "tohajiilee", code: "S5E13", episode: "To'hajiilee", title: "Cornered in the desert",
   setup: {
     kicker: "To'hajiilee, New Mexico.",
     text: "Hank has tricked Walt into the desert, and Walt is pinned behind a rock with Hank closing in. In a panic he has already called Jack's crew for help. They are on their way.",

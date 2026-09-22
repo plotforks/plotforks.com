@@ -7,7 +7,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 11, canon: "a", id: "deadfreight", code: "S5E5", episode: "Dead Freight", title: "The boy on the ridge",
+  n: 13, canon: "a", id: "deadfreight", code: "S5E5", episode: "Dead Freight", title: "The boy on the ridge",
   setup: {
     kicker: "A dry wash under a railway bridge, mid-morning.",
     text: "The train is stopped, the hoses are running, and a thousand gallons of methylamine are moving out of a tanker car into a buried tank without a single person in the world knowing it happened. It is the cleanest thing Walt has ever planned. Then Jesse looks up at the ridge, and there is a boy on a dirt bike, fourteen at most, who has been sitting there for some time, and who raises one hand and waves.",

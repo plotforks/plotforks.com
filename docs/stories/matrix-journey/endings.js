@@ -22,11 +22,17 @@
   {id: "mandatorySequel", when: "sequel && belief>=85", name: "Mandatory Sequel",
    summary: "The machines rebuild the One because a legend that big is good for business. Thomas Anderson spends the sequel making a game about his own life, under protest, and it sells very well.",
    share: "My timeline: Mandatory Sequel. Neo believed so hard they had to bring him back. Belief {meter}/100."},
+  {id: "heNeverLanded", when: "sequel && flewAway", name: "He Never Landed",
+   summary: "Neo goes up through a courtyard roof and more or less keeps going, and the sequel is about a man who has learned that the fastest way out of any room is straight up. The Smiths are still down there, still multiplying, still counting.",
+   share: "My timeline: He Never Landed. Straight up, out of every room. Belief {meter}/100."},
   {id: "versionSeven", when: "sequel", name: "Version Seven",
    summary: "The Architect is retired and a friendlier program runs a friendlier Matrix, with more cats. Neo lives in it without knowing, and so, for a while, does everyone else.",
    share: "My timeline: Version Seven. The peace held until somebody rebuilt the Matrix. Belief {meter}/100."},
 
   /* "Wake everyone up" */
+  {id: "emptyBlock", when: "wakeAll && stoodAndFought", name: "The Block That Was Empty",
+   summary: "Neo stayed in that courtyard for forty minutes and won every single exchange, and by the end there was nobody left on the street who was not Smith. When everybody is unplugged at once the first thing anyone does is a headcount, and that block comes back short.",
+   share: "My timeline: The Block That Was Empty. He won the fight and the street paid for it. Belief {meter}/100."},
   {id: "breakfast", when: "wakeAll && zion>=80", name: "Breakfast for Billions",
    summary: "Zion survives the siege and then the refugees: a few billion hungry people and one kitchen. The porridge runs out on day three. The machines, to their own surprise, start farming.",
    share: "My timeline: Breakfast for Billions. Neo saved Zion and then everyone moved in. Belief {meter}/100."},
@@ -62,6 +68,9 @@
   {id: "stayed", when: "peaceHold && sacrifice && trinitySafe && !trinityLost", name: "The One Who Stayed",
    summary: "Trinity lives because Neo left her behind, and she never entirely forgives him for it. She flies the first ship out of Zion into open sky, and takes his old coat.",
    share: "My timeline: The One Who Stayed. Neo went alone, and Trinity lived. Belief {meter}/100."},
+  {id: "theInvitation", when: "peaceHold && letHimCopy && belief>=70", name: "The Invitation",
+   summary: "Neo put his hands down in a courtyard years earlier and learned that the copying was never a weapon, it was an offer. He spends the rest of it knowing exactly how this ends and telling nobody, which is either the loneliest thing in the trilogy or the kindest.",
+   share: "My timeline: The Invitation. He knew the ending from the courtyard. Belief {meter}/100."},
   {id: "blindChampion", when: "peaceHold && brawl", name: "Blind Champion",
    summary: "Neo beats Smith the hard way and lives, blind in the real world and flawless in the Matrix. He teaches kung fu to the newly freed, and nobody lands a punch on him, ever.",
    share: "My timeline: Blind Champion. Neo refused the ending and won the fight. Belief {meter}/100."},
@@ -89,10 +98,12 @@
   {id: "manWhoChecked", when: "peaceHold && noJump", name: "The Man Who Checked",
    summary: "He refused the jump on the first day and said so out loud, and then believed nothing he had not verified himself, all the way to the Machine City. It takes longer. It works.",
    share: "My timeline: The Man Who Checked. Neo never believed anything he had not checked. Belief {meter}/100."},
-  {id: "truce", when: "peaceHold", name: "The Truce",
+  /* Every peaceHold run now matches one of the rules above, so this no longer catches anything and is kept
+     only as the safety net for that group. Marked fallback, which takes it out of the gallery count:
+     an ending nobody can reach should not be advertised as findable. */
+  {id: "truce", when: "peaceHold", fallback: true, name: "The Truce",
    summary: "The machines keep their word, and so do the humans, mostly. Nobody quite trusts the peace, which is probably why it lasts.",
    share: "My timeline: The Truce. Neo won the peace. Belief {meter}/100."},
-
   {id: "theOne", fallback: true, when: "belief>=80", name: "The One",
    summary: "Whatever else happened, he believed it, and it was true.",
    share: "My timeline: The One. Belief {meter}/100."},

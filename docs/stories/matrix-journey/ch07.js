@@ -11,7 +11,7 @@
 (window.JOURNEYS["matrix"] = window.JOURNEYS["matrix"] || {}).chapters =
   window.JOURNEYS["matrix"].chapters || [];
 window.JOURNEYS["matrix"].chapters.push({
-  n: 12, canon: "a", id: "revolutions", code: "M3", episode: "The Matrix Revolutions", title: "Machine City or Zion",
+  n: 13, canon: "a", id: "revolutions", code: "M3", episode: "The Matrix Revolutions", title: "Machine City or Zion",
   setup: {
     kicker: "Zion, the last day.",
     text: "Trinity got Neo out of a train station between worlds by pointing a gun at a man in a very expensive suit. Now a quarter of a million Sentinels are drilling toward Zion's dock, and Smith has copied himself onto almost everyone in the Matrix, the Oracle included. Neo is sure the answer is in the Machine City, where no human has ever gone and come back. Zion needs every fighter it has.",

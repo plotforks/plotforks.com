@@ -12,7 +12,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 20, canon: "b", when: "shootout", id: "standoff", code: "S5E13", episode: "To'hajiilee", title: "Behind the cars",
+  n: 22, canon: "b", when: "shootout", id: "standoff", code: "S5E13", episode: "To'hajiilee", title: "Behind the cars",
   setup: {
     kicker: "Aftertaste. To'hajiilee, ninety seconds after the cars stop.",
     text: "Jack's crew came in fast and are now behind three trucks. Hank and his partner are behind theirs, badges held up, shouting that they are federal agents. Walt is on his knees in the dirt between them in his own handcuffs, screaming at everybody to stop. In the show, this is the last ninety seconds before the worst hour of television ever made. Nobody has fired yet.",

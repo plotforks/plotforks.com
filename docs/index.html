@@ -271,6 +271,7 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
 <script src="stories/bb-journey/ch01.js"></script>
 <script src="stories/bb-journey/ch02.js"></script>
 <script src="stories/bb-journey/ch03.js"></script>
+<script src="stories/bb-journey/ch04-tuco.js"></script>
 <script src="stories/bb-journey/ch04.js"></script>
 <script src="stories/bb-journey/ch05.js"></script>
 <script src="stories/bb-journey/ch06-halfmeasures.js"></script>
@@ -278,6 +279,7 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
 <script src="stories/bb-journey/ch07.js"></script>
 <script src="stories/bb-journey/ch08-boxcutter.js"></script>
 <script src="stories/bb-journey/ch09-saul.js"></script>
+<script src="stories/bb-journey/ch12-faceoff.js"></script>
 <script src="stories/bb-journey/ch11-deadfreight.js"></script>
 <script src="stories/bb-journey/ch08.js"></script>
 <script src="stories/bb-journey/ch12-saymyname.js"></script>
@@ -290,6 +292,7 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
 <script src="stories/bb-journey/ch17-standoff.js"></script>
 <script src="stories/bb-journey/ch17-jack.js"></script>
 <script src="stories/bb-journey/ch22-skyler.js"></script>
+<script src="stories/bb-journey/ch25-granite.js"></script>
 <script src="stories/bb-journey/ch11a.js"></script>
 <script src="stories/bb-journey/ch11b.js"></script>
 <script src="stories/bb-journey/endings.js"></script>
@@ -297,6 +300,7 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
 <script src="stories/matrix-journey/n01-ledge.js"></script>
 <script src="stories/matrix-journey/n02-interrogation.js"></script>
 <script src="stories/matrix-journey/n04-jump.js"></script>
+<script src="stories/matrix-journey/n09-burlybrawl.js"></script>
 <script src="stories/matrix-journey/n09-merovingian.js"></script>
 <script src="stories/matrix-journey/n11-mobilave.js"></script>
 <script src="stories/matrix-journey/n13-deusdeal.js"></script>
@@ -1009,15 +1013,17 @@ const CAST_DRAW = {
   badger: badgerFigure,
   declan: declanFigure,
   jack: jackFigure,
+  hector: hectorFigure,
+  tuco: tucoFigure,
   judge: judgeFigure, todd: toddFigure,
   neo: neoFigure, trinity: trinityFigure, morpheus: morpheusFigure, smith: smithFigure, cypher: cypherFigure,
   oracle: oracleFigure, architect: architectFigure, tank: tankFigure, niobe: niobeFigure, sati: satiFigure,
   analyst: analystFigure, deus: deusFigure
 };
 const SLOT_X = {1:[240], 2:[165,330], 3:[100,240,380]};
-const SLOT_PRIORITY = ['walt','skyler','jesse','jane','hank','saul','lydia','elliott','mike','gus','gale','krazy8','badger','declan','jack','judge','todd','neo','trinity','morpheus','smith','cypher','oracle','architect','tank','niobe','sati','analyst','deus','merovingian','persephone','trainman'];
-const DRAW_ORDER = ['deus','skyler','jesse','jane','hank','saul','lydia','elliott','mike','gus','gale','krazy8','badger','declan','jack','judge','todd','smith','oracle','architect','morpheus','cypher','tank','niobe','analyst','sati','trinity','neo','walt','merovingian','persephone','trainman'];
-const HEAD_TOP = {walt:-178, jesse:-152, jane:-150, skyler:-152, hank:-148, saul:-148, lydia:-152, elliott:-148, mike:-148, gus:-148, merovingian:-148, persephone:-150, trainman:-150, gale:-148, krazy8:-144, badger:-145, declan:-148, jack:-148,
+const SLOT_PRIORITY = ['walt','skyler','jesse','jane','hank','saul','lydia','elliott','mike','gus','gale','krazy8','badger','declan','jack','hector','tuco','judge','todd','neo','trinity','morpheus','smith','cypher','oracle','architect','tank','niobe','sati','analyst','deus','merovingian','persephone','trainman'];
+const DRAW_ORDER = ['deus','skyler','jesse','jane','hank','saul','lydia','elliott','mike','gus','gale','krazy8','badger','declan','jack','hector','tuco','judge','todd','smith','oracle','architect','morpheus','cypher','tank','niobe','analyst','sati','trinity','neo','walt','merovingian','persephone','trainman'];
+const HEAD_TOP = {walt:-178, jesse:-152, jane:-150, skyler:-152, hank:-148, saul:-148, lydia:-152, elliott:-148, mike:-148, gus:-148, merovingian:-148, persephone:-150, trainman:-150, gale:-148, krazy8:-144, badger:-145, declan:-148, jack:-148, hector:-124, tuco:-148,
   judge:-124, todd:-148, neo:-148, trinity:-150, morpheus:-146, smith:-148, cypher:-146, oracle:-150, architect:-150,
   tank:-146, niobe:-155, sati:-100, analyst:-148, deus:-240};
 const HEAD_TOP_POSE = {'neo:sit':-124,'neo:bench':-124,'neo:down':-40,'neo:pod':-70,'neo:fly':-150,'trinity:cafe':-124,'trinity:fall':-160,'morpheus:sit':-122,'morpheus:chair':-122,'oracle:sit':-126,'architect:sit':-126,'skyler:sit':-112,'jesse:chained':-152,'jesse:drive':-124,'walt:floor':-46,'mike:sit':-124,'hank:cuffed':-122};
@@ -1038,6 +1044,39 @@ const SKY_BASE = `<rect width="480" height="300" fill="#0F1B28"/>
   <path d="M0 300 V262 h30 v-14 h24 v20 h18 v-30 h26 v24 h30 v-10 h22 v18 h40 v-26 h20 v12 h36 v-18 h28 v26 h30 v-12 h26 v20 h40 v-30 h24 v22 h36 v-14 h30 V300 Z" fill="#16242E"/>
   <g fill="#F2B45A" opacity=".8"><rect x="80" y="244" width="3" height="3"/><rect x="88" y="252" width="3" height="3"/><rect x="176" y="248" width="3" height="3"/><rect x="250" y="262" width="3" height="3"/><rect x="330" y="244" width="3" height="3"/><rect x="338" y="256" width="3" height="3"/><rect x="420" y="260" width="3" height="3"/></g>`;
 const PLANE = `M-26 0 L18 -3 Q28 0 18 3 Z M-4 -2 L-14 -16 L-8 -16 L6 -2 Z M-4 2 L-14 16 L-8 16 L6 2 Z M-24 -1 L-30 -9 L-25 -9 L-18 -1 Z`;
+
+/* ---------- BB additions 2026-09-22: Hector in the wheelchair, Tuco ---------- */
+/* Hector: an old man in a wheelchair with a bell on the armrest. person({sit:true}) puts the upper body
+   in a group translated down by 24, while pre and post stay in the outer space, so the chair is drawn
+   around y = -40..0 and the head lands near y = -100. Nothing about him moves except the breathing. */
+function hectorFigure(){
+  const spokes = (cx, cy, r) => `<g stroke="#8F8A78" stroke-width="1.2" stroke-opacity=".75">` +
+    `<path d="M${cx - r + 3} ${cy} h${2 * r - 6}"/><path d="M${cx} ${cy - r + 3} v${2 * r - 6}"/>` +
+    `<path d="M${cx - r * 0.65} ${cy - r * 0.65} l${r * 1.3} ${r * 1.3}"/><path d="M${cx + r * 0.65} ${cy - r * 0.65} l${-r * 1.3} ${r * 1.3}"/></g>`;
+  const wheel = (cx, cy, r) => `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#8F8A78" stroke-width="3"/>` +
+    spokes(cx, cy, r) + `<circle cx="${cx}" cy="${cy}" r="2.6" fill="#8F8A78"/>`;
+  return person({sit: true, skin: '#C9996E', torso: shirtT('#6E6A62'), legCol: '#4A443C', hr: 13,
+    hair: `<path d="M-13 -129 Q-13 -136 -9 -139 Q-4 -136 0 -138 Q5 -136 9 -139 Q13 -136 13 -129 Q8 -133 0 -133 Q-8 -133 -13 -129 Z" fill="#C7C2B6" fill-opacity=".85"/>`,
+    mouth: '<path d="M-6 -114 h12" stroke="#5A2A22" stroke-width="2.2"/>',
+    extra: '<path d="M-9 -119 q4 2 8 0 M1 -119 q4 2 8 0" stroke="#8A6A52" stroke-width="1" fill="none" stroke-opacity=".6"/>',
+    pre: `<rect x="-34" y="-52" width="7" height="46" rx="3" fill="#5A5248"/>` +
+         `<rect x="-34" y="-56" width="40" height="7" rx="3" fill="#5A5248"/>` + wheel(-10, -16, 21),
+    armL: arm('L', 'lap', '#6E6A62', '#C9996E'),
+    armR: arm('R', 'lap', '#6E6A62', '#C9996E'),
+    post: `<rect x="10" y="-44" width="26" height="6" rx="3" fill="#5A5248"/>` +
+          `<g transform="translate(26 -47)"><path d="M-7 0 q0 -11 7 -13 q7 2 7 13 Z" fill="#D9B84A" stroke="#8F7F5E" stroke-width="1.2" stroke-linejoin="round"/>` +
+          `<path d="M-8 0 h16" stroke="#8F7F5E" stroke-width="1.6" stroke-linecap="round"/><circle cx="0" cy="-15" r="1.8" fill="#8F7F5E"/></g>` +
+          wheel(26, -12, 15)});
+}
+/* Tuco: loud shirt, gold chain, a grin with one gold tooth in it, one hand always half raised. */
+function tucoFigure(){
+  return person({skin: '#C08A5E', torso: shirtT('#8B2E2E'), legCol: '#2A2622',
+    hair: `<path d="M-13 -128 Q-14 -143 0 -143 Q14 -143 13 -128 Q8 -136 0 -136 Q-8 -136 -13 -128 Z" fill="#241C16"/>`,
+    mouth: '<path d="M-7 -117 Q0 -109 7 -117 Z" fill="#5A2A22"/><rect x="0.5" y="-116" width="2.6" height="3" fill="#D9B84A"/>',
+    extra: `<path d="M-13 -105 q13 8 26 0" stroke="#D9B84A" stroke-width="2" fill="none"/>`,
+    armL: arm('L', 'wide', '#8B2E2E', '#C08A5E'),
+    armR: arm('R', 'guard', '#8B2E2E', '#C08A5E')});
+}
 
 const SET = {
   bedroom: () => `<rect width="480" height="300" fill="#1E2C27"/>
@@ -1325,7 +1364,20 @@ const SET = {
     <rect x="34" y="158" width="30" height="48" fill="#6E4A3A"/><path d="M0 80 h150" stroke="#8F6B3E" stroke-width="6"/>
     <rect y="206" width="480" height="20" fill="#A8A08E"/><line x1="0" y1="206" x2="480" y2="206" stroke="#8A8272" stroke-width="2"/>
     <rect y="226" width="480" height="74" fill="#55575A"/><g stroke="#EEF0E6" stroke-width="3" stroke-dasharray="26 22" opacity=".7"><path d="M0 264 H480"/></g>
-    <g><rect x="196" y="184" width="86" height="8" rx="2" fill="#8F6B4A"/><rect x="196" y="168" width="86" height="6" rx="2" fill="#8F6B4A"/><rect x="202" y="192" width="6" height="14" fill="#4A3226"/><rect x="270" y="192" width="6" height="14" fill="#4A3226"/></g>`
+    <g><rect x="196" y="184" width="86" height="8" rx="2" fill="#8F6B4A"/><rect x="196" y="168" width="86" height="6" rx="2" fill="#8F6B4A"/><rect x="202" y="192" width="6" height="14" fill="#4A3226"/><rect x="270" y="192" width="6" height="14" fill="#4A3226"/></g>`,
+  /* A room in a care home: high window, a rail on the wall, a wipe-clean floor and one plant somebody else waters. */
+  nursinghome: () => `<rect width="480" height="250" fill="#2D3630"/>
+    <rect y="250" width="480" height="50" fill="#3A443C"/>
+    <line x1="0" y1="250" x2="480" y2="250" stroke="#4E5C51" stroke-width="2"/>
+    <rect x="300" y="34" width="132" height="104" rx="3" fill="#7FA9C9" fill-opacity=".18" stroke="#EEF0E6" stroke-opacity=".55" stroke-width="3"/>
+    <path d="M366 35 V137 M301 86 H431" stroke="#EEF0E6" stroke-opacity=".35" stroke-width="2"/>
+    <rect x="36" y="150" width="200" height="7" rx="3.5" fill="#8F8A78" fill-opacity=".8"/>
+    <g fill="#8F8A78" fill-opacity=".8"><rect x="44" y="157" width="6" height="16" rx="2"/><rect x="222" y="157" width="6" height="16" rx="2"/></g>
+    <rect x="60" y="188" width="96" height="8" rx="3" fill="#6E5236"/>
+    <g fill="#6E5236"><rect x="66" y="196" width="6" height="54"/><rect x="144" y="196" width="6" height="54"/></g>
+    <g transform="translate(108 172)"><path d="M0 16 h-12 l3 -16 h18 l3 16 Z" fill="#8B5A3C"/>
+      <path d="M0 0 q-16 -6 -18 -22 q16 2 18 18 q2 -18 18 -22 q-2 18 -18 24 Z" fill="#4E7A52"/></g>
+    <g stroke="#EEF0E6" stroke-opacity=".18" stroke-width="2"><path d="M0 214 H480"/></g>`
 };
 /* ---------- fx ---------- */
 function bubblesFx(){
@@ -1516,6 +1568,8 @@ const SUPPORTED = {
     jack: ['stand'],
     judge: ['sit'],
     todd: ['stand'],
+    hector: ['sit'],
+    tuco: ['stand'],
     neo: ['sit','stand','pod','coat','fight','down','fly','blind','rain','bench'],
     trinity: ['stand','coat','fall','cafe'],
     morpheus: ['sit','stand','chair'],
@@ -1684,7 +1738,9 @@ if (typeof document !== 'undefined'){
       {id: 'theKidRodeHome', name: 'The Kid Rode Home', desc: 'Nobody touched the boy on the ridge.', test: st => st.flags.has('boySafe')},
       {id: 'noNamesOnTheNapkin', name: 'No Names on the Napkin', desc: 'Nine men in prison, and not one of them killed.', test: st => st.flags.has('silentNine')},
       {id: 'toldHimEverything', name: 'Told Him Everything', desc: 'Confessed to Hank on the garage floor.', test: st => st.flags.has('cameClean')},
-      {id: 'clearedHerName', name: 'Cleared Her Name', desc: 'Made the call, or signed the pages, so Skyler walked.', test: st => st.flags.has('clearedSkyler') || st.flags.has('signedConfession')}
+      {id: 'clearedHerName', name: 'Cleared Her Name', desc: 'Made the call, or signed the pages, so Skyler walked.', test: st => st.flags.has('clearedSkyler') || st.flags.has('signedConfession')},
+      {id: 'neverSaidTheName', name: 'Never Said the Name', desc: "Went up the staircase over the junkyard as himself.", test: st => st.flags.has('talkedToTuco')},
+      {id: 'theBellBadge', name: 'One Finger, One Bell', desc: 'Let Hector settle it his own way.', test: st => st.flags.has('theBell')}
     ],
     'matrix': [
       {id: 'bothPills', name: 'Took Both Pills', desc: 'Swallowed the red and the blue. Somehow it worked.', test: st => st.flags.has('bothPills')},
@@ -1695,7 +1751,9 @@ if (typeof document !== 'undefined'){
       {id: 'outTheWindow', name: 'Out the Window', desc: 'Climbed onto the scaffold at Metacortex.', test: st => st.flags.has('ledgeJump')},
       {id: 'askedForTrinity', name: 'Asked for Trinity', desc: 'Asked the machines to bring her back.', test: st => st.flags.has('askedTrinity')},
       {id: 'openDoor', name: 'The Open Door', desc: 'Won everyone the right to leave.', test: st => st.flags.has('freeAll')},
-      {id: 'cheatedTheJump', name: 'Cheated the Jump', desc: 'Asked for less gravity instead of believing.', test: st => st.flags.has('cheatJump')}
+      {id: 'cheatedTheJump', name: 'Cheated the Jump', desc: 'Asked for less gravity instead of believing.', test: st => st.flags.has('cheatJump')},
+      {id: 'stayedInTheCourtyard', name: 'Stayed in the Courtyard', desc: 'Fought a hundred Smiths to the end of the afternoon.', test: st => st.flags.has('stoodAndFought')},
+      {id: 'handsDown', name: 'Put His Hands Down', desc: 'Let a Smith reach him, to find out what it was.', test: st => st.flags.has('letHimCopy')}
     ]
   };
   function badgeDefs(journey){ return (JOURNEY_BADGES[journey.id] || []).concat(GENERIC_BADGES); }

@@ -4,10 +4,14 @@
 'use strict';
 const fs = require('fs'), path = require('path'), os = require('os'), vm = require('vm'), cp = require('child_process');
 const ROOT = path.join(__dirname, '..');
+/* Same browser list as tools/build.js: any Chromium, Brave first, PF_BROWSER overrides. */
 const EDGE = [
-  'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
-  'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe'
-].find(fs.existsSync);
+  process.env.PF_BROWSER || '',
+  'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+  'C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
+  'C:\\Program Files (x86)\\BraveSoftware\\Brave-Browser\\Application\\brave.exe',
+  'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'
+].filter(Boolean).find(fs.existsSync);
 if (!EDGE) { console.error('Edge not found'); process.exit(2); }
 
 // Edge writes nothing when --screenshot is given a forward-slash path on Windows, so normalize it.

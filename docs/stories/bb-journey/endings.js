@@ -23,6 +23,15 @@
    summary: "Ninety seconds of shouting in the dirt, and then everybody drove away. Walt lost the money, the partner and the case, and kept the one thing he never asks for: a family that is all still alive.",
    share: "My timeline: The Standoff. Ninety seconds of shouting, and not one shot. Heisenberg meter {meter}/100."},
 
+  /* Gave up in New Hampshire (ch25-granite.js choice c): the run never plays Felina, so without these two it would
+     fall through every group below and land on a safety fallback. Checked right after the no-shots group. */
+  {id: "theBarStool", when: "gaveUp && confessed", name: "The Bar Stool",
+   summary: "He gave his own name to a field office from a payphone in New Hampshire and then did the hard part, which was staying on the stool while the television explained that he had never contributed anything to anything. He told them where the barrel was on the first morning, and nobody has ever been able to account for that.",
+   share: "My timeline: The Bar Stool. He called it in and then waited. Heisenberg meter {meter}/100."},
+  {id: "pageEleven", when: "gaveUp", name: "Page Eleven",
+   summary: "There is no compound, no last drive and no final list. There is a hearing schedule, an enormous amount of cooperation, and a man who gets steadily smaller in the newspapers until he is a paragraph on page eleven, which is the one punishment he never planned for.",
+   share: "My timeline: Page Eleven. He turned himself in from a bar in New Hampshire. Heisenberg meter {meter}/100."},
+
   /* Hank lived: only reachable on shootout runs, through ch17-jack.js (n:21). Checked first, because a living
      federal agent changes every finale more than anything Walt does at the compound afterwards. */
   /* Top of the hankLives group: every atLarge run ends on gunTrunk, jackDeal or jesseKeys, so a rule placed
@@ -48,6 +57,9 @@
 
 
   /* Shootout, then "Felina" (ch11a) */
+  {id: "theFoundation", when: "moneyOnly", name: "A Charitable Foundation with a Dull Name",
+   summary: "He drove eighteen hundred miles for one conversation in a living room, said almost nothing, and went back north. On his son's eighteenth birthday a great deal of money arrives from strangers, and the family spends a long evening deciding whether to keep it. They keep it.",
+   share: "My timeline: A Charitable Foundation with a Dull Name. He went back for the money and nothing else. Heisenberg meter {meter}/100."},
   {id: "sideBySide", when: "gunTrunk && jesse>=80", name: "Side by Side",
    summary: "Jesse drives, and Walt rides in the passenger seat for the first time since the RV. They make it as far as a hospital in Farmington. Walt insists on correcting the doctor's chemistry.",
    share: "My timeline: Side by Side. Jesse drove Walt away from Jack's compound. Heisenberg meter {meter}/100."},
@@ -87,16 +99,18 @@
    share: "My timeline: Jesse's Call. Walt gave Jesse the keys and let him decide. Heisenberg meter {meter}/100."},
 
   /* Surrender, then sentencing (ch11b) */
+  /* Moved above the other two confessed rules: darkness at or under 30 after twenty-five chapters is the
+     rarest thing a run can do, and it was being swallowed by the jesse and family variants below. */
+  {id: "almostGood", when: "surrendered && confessed && darkness<=30", name: "Almost a Good Man",
+   summary: "Walt surrenders with his conscience mostly intact and admits the rest in open court. He did terrible things, but fewer than he could have, and in this timeline that turns out to matter.",
+   share: "My timeline: Almost a Good Man. Walt surrendered before he became Heisenberg. Heisenberg meter {meter}/100."},
+  /* Below almostGood on purpose: that one is already the rarest rule in the journey and must keep its runs. */
   {id: "characterWitness", when: "surrendered && confessed && jesse>=70", name: "Character Witness",
    summary: "Jesse testifies at sentencing, for Walt, and calls him the best teacher he ever had. The judge takes five years off, and the family is in the front row.",
    share: "My timeline: Character Witness. Walt surrendered and Jesse spoke for him. Heisenberg meter {meter}/100."},
   {id: "visitingHours", when: "surrendered && confessed && family>=60", name: "Visiting Hours",
    summary: "Walt goes to prison, and his family visits every Sunday. Holly learns to read from his letters, which are grammatically perfect.",
    share: "My timeline: Visiting Hours. Walt surrendered, told the truth, and his family kept visiting. Heisenberg meter {meter}/100."},
-  {id: "almostGood", when: "surrendered && confessed && darkness<=30", name: "Almost a Good Man",
-   summary: "Walt surrenders with his conscience mostly intact and admits the rest in open court. He did terrible things, but fewer than he could have, and in this timeline that turns out to matter.",
-   share: "My timeline: Almost a Good Man. Walt surrendered before he became Heisenberg. Heisenberg meter {meter}/100."},
-  /* Below almostGood on purpose: that one is already the rarest rule in the journey and must keep its runs. */
   {id: "threePrisons", when: "surrendered && tenInTwo", name: "Three Prisons, Two Minutes",
    summary: "He walks out from behind the rock with his hands up, and the file that follows him has ten counts of murder in it that no plea in the state will touch. The chemistry gets four pages at sentencing. The two minutes get four hundred.",
    share: "My timeline: Three Prisons, Two Minutes. The ten names were the only ones that mattered. Heisenberg meter {meter}/100."},
@@ -109,6 +123,8 @@
   {id: "theSharedSentence", when: "surrendered && sharedBlame", name: "The Shared Sentence",
    summary: "He surrenders and says nothing at all about his wife, which the prosecution reads, correctly, as permission. They are sentenced eleven days apart in the same building, and Marie drives Holly to two different visiting rooms for four years.",
    share: "My timeline: The Shared Sentence. He said nothing about her, and it cost her four years. Heisenberg meter {meter}/100."},
+  /* The three new chapters get a home in the two biggest groups, so a first-season and a fourth-season choice
+     can still decide the last screen. Placed below the Skyler rules, which are later and more decisive. */
   {id: "counselOfRecord", when: "surrendered && saulLoyal", name: "Counsel of Record",
    summary: "The lawyer Walt once tested with a fake address defends him for four months, badly paid and entirely straight. He gets the sentence down by nine years and never once mentions the Thursday Walt spent watching an empty door.",
    share: "My timeline: Counsel of Record. Walt tested his lawyer, and his lawyer showed up anyway. Heisenberg meter {meter}/100."},
@@ -124,12 +140,20 @@
   {id: "postcardMike", when: "surrendered && mikeLives", name: "Postcard From Mike",
    summary: "Twice a year a postcard arrives at the prison with no message, no signature and a different postmark. The guards assume it is a code. It is a man with a granddaughter, saying nothing at all, on purpose.",
    share: "My timeline: Postcard From Mike. Walt let Mike go, and Mike remembered it. Heisenberg meter {meter}/100."},
+  {id: "theManWhoStayedWalter", when: "surrendered && talkedToTuco", name: "The Man Who Stayed Walter",
+   summary: "He went up that staircase over the junkyard as a chemistry teacher with a folder and came back down as one, and in five years he never once told anybody to say his name. At sentencing there is no Heisenberg to sentence, which the prosecutor finds inconvenient and the judge finds worse.",
+   share: "My timeline: The Man Who Stayed Walter. He never invented the name. Heisenberg meter {meter}/100."},
+  {id: "theFirstStaircase", when: "surrendered && sentJesse", name: "The First Staircase",
+   summary: "Walt walks out of the desert with his hands up, and the one thing Jesse says about him in eleven hours of interviews is about a metal staircase over a junkyard: who went up it, and who waited three streets away with the engine running.",
+   share: "My timeline: The First Staircase. He sent Jesse up, and Jesse never forgot which car he waited in. Heisenberg meter {meter}/100."},
+  {id: "elevenPeopleEatingChicken", when: "surrendered && ownHands", name: "Eleven People Eating Chicken",
+   summary: "That one he did himself, through the front door, at lunchtime, in a room with a camera in the corner. The footage is nine seconds long, has been enhanced four times, and is the first exhibit at every hearing he ever attends.",
+   share: "My timeline: Eleven People Eating Chicken. He stopped arranging things and did one himself. Heisenberg meter {meter}/100."},
   {id: "inmate", when: "surrendered", name: "Walter White, Inmate",
    summary: "Walt serves his sentence alone, writing long letters nobody answers. When the cancer comes back, he faces it the way he should have faced it the first time: honestly.",
    share: "My timeline: Walter White, Inmate. Walt surrendered, alone. Heisenberg meter {meter}/100."},
 
   /* Deal, then sentencing (ch11b) */
-  /* Above hankSaysNo, which was catching one run in five on its own. */
   {id: "bothOfThem", when: "deal && sharedBlame", name: "Both of Them",
    summary: "Walt trades everything he knows for protection for his family, and then leaves his wife's name sitting in the file untouched, which cancels most of what he just bought. The deal is honoured to the letter. The letter turns out to be a great deal shorter than he thought it was.",
    share: "My timeline: Both of Them. He bought protection and then forgot to name who for. Heisenberg meter {meter}/100."},
@@ -163,6 +187,16 @@
   {id: "noLawyer", when: "deal && noSaul", name: "No Lawyer Present",
    summary: "The man who never trusted a lawyer negotiates his own plea, alone, against three federal attorneys, and gets a deal that is eleven years worse than the one he was offered on day one. He is still proud of the footnotes.",
    share: "My timeline: No Lawyer Present. Walt cut out his lawyer and negotiated his own sentence. Heisenberg meter {meter}/100."},
+  {id: "noNameOnTheFile", when: "deal && talkedToTuco", name: "No Name on the File",
+   summary: "Forty pages of confession about a man who never had a street name, never wore the hat, and negotiated his first distribution deal with a folder and a margin calculation. Half the office thinks the file is about somebody else entirely. The other half is disappointed.",
+   share: "My timeline: No Name on the File. A career built out of purity and margins. Heisenberg meter {meter}/100."},
+  {id: "twoOldMen", when: "deal && hectorTalks", name: "Two Old Men and a Stenographer",
+   summary: "Gus Fring went down because a man who could only ring a bell spent eleven hours spelling out names with one finger, and Walt hands over forty more pages years later. The two confessions end up filed in the same building, and the two men never meet again.",
+   share: "My timeline: Two Old Men and a Stenographer. Hector talked, and eventually so did Walt. Heisenberg meter {meter}/100."},
+  {id: "arrangedNotDone", when: "deal && theBell", name: "A Man Who Arranges Things",
+   summary: "An old man in a wheelchair rang a bell and two people stopped existing three miles from where Walt was standing, which is exactly how he prefers it. He confesses to all of it in the flat voice of a project manager, and in forty pages he never once describes being in a room when anything happened.",
+   share: "My timeline: A Man Who Arranges Things. He was never in the room, and that was the plan. Heisenberg meter {meter}/100."},
+  /* Above hankSaysNo, which was catching one run in five on its own. */
   {id: "theDeal", when: "deal", name: "The Deal",
    summary: "The family gets protection, the DEA gets the network, and Walt gets a small room and a long sentence. For once, he negotiated for someone else.",
    share: "My timeline: The Deal. Walt traded everything for his family's safety. Heisenberg meter {meter}/100."},
