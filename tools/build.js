@@ -36,7 +36,7 @@ const EDGE_CANDIDATES = [
 const JOURNEY_SITE = {
   'breaking-bad': {
     slug: 'breaking-bad', series: 'Breaking Bad', short: 'Breaking Bad what-if',
-    description: 'Play the whole run of Breaking Bad and change the story at nineteen turning points. Every choice shifts Walt, Jesse, Hank and the family, and the ending is computed from how you played.',
+    description: 'Play the whole run of Breaking Bad and change the story at twenty-three turning points. Every choice shifts Walt, Jesse, Hank and the family, and the ending is computed from how you played.',
     intro: 'An interactive what-if through the whole of Breaking Bad. At each turning point you pick one of three alternatives, watch a short cartoon scene, and carry the consequences into the next chapter. Where you land depends on how far you turned into Heisenberg, who still trusts you, what Hank suspects and what is left of the family.',
     legal: 'An unofficial Breaking Bad what-if, made as a fan parody. Not affiliated with Sony Pictures Television or AMC. All characters are drawn from scratch.',
     theme: '',
@@ -47,6 +47,10 @@ const JOURNEY_SITE = {
       lawyer: 'What if Walter White never hired Saul Goodman?',
       phoenix: 'What if Walter White saved Jane?',
       halfmeasures: 'What if Walter White let Mike handle Jesse in Half Measures?',
+      deadfreight: 'What if nobody killed the boy on the dirt bike in Dead Freight?',
+      ninemen: 'What if Walter White never had the nine men killed in prison?',
+      garage: 'What if Walter White confessed to Hank in the garage in Blood Money?',
+      skylername: 'What if Walter White never made the phone call that cleared Skyler?',
       boxcutter: 'What if Walter White spoke up for Victor in Box Cutter?',
       trustsaul: 'What if Walter White stopped telling Saul everything?',
       saymyname: 'What if Walter White let Mike walk away in Say My Name?',

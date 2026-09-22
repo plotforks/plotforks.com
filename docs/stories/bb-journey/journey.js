@@ -5,7 +5,7 @@ window.JOURNEYS = window.JOURNEYS || {};
 window.JOURNEYS["breaking-bad"] = Object.assign(window.JOURNEYS["breaking-bad"] || {}, {
   id: "breaking-bad",
   title: "The Uncertainty Principle",
-  subtitle: "Play the whole series. Nineteen chapters, thirty-eight endings.",
+  subtitle: "Play the whole series. Twenty-three chapters, fifty endings.",
   start: {darkness: 10, jesse: 50, hank: 0, family: 70},
   scoreLabels: {darkness: "Heisenberg", jesse: "Jesse's trust", hank: "Hank's suspicion", family: "Family"},
   exits: {

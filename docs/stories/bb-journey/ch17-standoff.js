@@ -1,8 +1,8 @@
 /* Journey chapter 17: S5E13/14, the minute between To'hajiilee and Ozymandias. Content only (Opus pass).
    Dimos's premise: Jack's crew take cover behind the cars and nobody fires at all.
    Plays only on shootout runs (chapter-level when). Decides whether a shot is ever fired:
-     a -> noShots + hankLives            (Walt is arrested; the run finishes at the sentencing chapter, n:19b)
-     b -> shotsFired + atLarge  (canon)  (the run continues to ch17-jack.js, n:18, then Felina, n:19a)
+     a -> noShots + hankLives            (Walt is arrested; the run finishes at the sentencing chapter, n:23b)
+     b -> shotsFired + atLarge  (canon)  (the run continues to ch17-jack.js, n:21, then Felina, n:23a)
      c -> noShots + hankLives + hostages + atLarge  (no shot fired, but Walt stays free; finishes at Felina)
    `atLarge` is the flag the two aftertaste chapters switch on, so it must be set by every branch that leaves
    Walt free. No gun is ever drawn, described or shown.
@@ -12,7 +12,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 17, canon: "b", when: "shootout", id: "standoff", code: "S5E13", episode: "To'hajiilee", title: "Behind the cars",
+  n: 20, canon: "b", when: "shootout", id: "standoff", code: "S5E13", episode: "To'hajiilee", title: "Behind the cars",
   setup: {
     kicker: "Aftertaste. To'hajiilee, ninety seconds after the cars stop.",
     text: "Jack's crew came in fast and are now behind three trucks. Hank and his partner are behind theirs, badges held up, shouting that they are federal agents. Walt is on his knees in the dirt between them in his own handcuffs, screaming at everybody to stop. In the show, this is the last ninety seconds before the worst hour of television ever made. Nobody has fired yet.",

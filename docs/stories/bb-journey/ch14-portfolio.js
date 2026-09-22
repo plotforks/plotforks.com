@@ -1,6 +1,6 @@
 /* Journey chapter 14: after S5E8 "Gliding Over All". Content only (Opus pass).
    Dimos's premise: a rational businessman with this much money would not leave it in a barrel.
-   Plays after the cash pile (n:13) and before Hank's bathroom (n:15). Sets portfolio / chainTycoon / barrel.
+   Plays after the cash pile (n:15) and before Hank's bathroom (n:17). Sets portfolio / chainTycoon / barrel.
    Never instructional: no real vehicles, structures or jurisdictions are described, and Skyler's
    spreadsheet does all the actual work, as usual.
    New art used here: fx "chart" (a rising line chart drawn on a wall or a screen). Sets office, storage,
@@ -9,7 +9,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 14, canon: "c", id: "portfolio", code: "S5E8", episode: "Gliding Over All", title: "What money does when it sits",
+  n: 16, canon: "c", id: "portfolio", code: "S5E8", episode: "Gliding Over All", title: "What money does when it sits",
   setup: {
     kicker: "A storage unit, measured in pallets.",
     text: "Walt reads an article about inflation and does the arithmetic on the pile. It is losing value every month it sits in a metal room in the desert, and the man who once recalculated a restaurant bill to the cent cannot live with that. Skyler finds him at the kitchen table at two in the morning with a legal pad and three columns.",

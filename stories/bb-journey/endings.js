@@ -1,12 +1,12 @@
 /* Breaking Bad journey: finale endings. Content only (Opus pass).
-   Evaluated in order after the last chapter played (ch11a or ch11b, the aftertaste); the first `when` that holds wins.
-   Every finale path has exactly one of surrendered / shootout / deal from ch10, plus one ch11 flag:
+   Evaluated in order after the last chapter played (ch11a or ch11b at n:23, the aftertaste); the first `when` that holds wins.
+   Every finale path has exactly one of surrendered / shootout / deal from ch10.js (n:19), plus one n:23 flag:
    shootout runs play ch11a (gunTrunk / jackDeal / jesseKeys), the others play ch11b (confessed / lectured / silent).
    Rules are grouped by those flags; the last three are safety fallbacks and do not count in the gallery.
    {meter} in share lines = final darkness score. */
 (window.JOURNEYS = window.JOURNEYS || {});
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).endings = [
-  /* Nobody fired: ch17-standoff.js (n:17) choice a or c. Checked before everything else, because a desert
+  /* Nobody fired: ch17-standoff.js (n:20) choice a or c. Checked before everything else, because a desert
      where no shot was fired changes more than any decision taken afterwards. */
   {id: "quietDesert", when: "noShots && confessed", name: "The Quiet Desert",
    summary: "Not one round was fired at To'hajiilee, so there is nothing to bury and nobody to mourn, and the trial is about chemistry and tax law. Hank testifies for two days and then goes back to work, which is all he ever wanted.",
@@ -14,12 +14,22 @@
   {id: "nobodyFired", when: "noShots && hostages", name: "Nobody Fired",
    summary: "Two federal agents spend six weeks in a shed and come out alive, which is six weeks longer than the show gave them. Walt is a free man with the best-informed witnesses in the country and a compound full of people who now call him a partner.",
    share: "My timeline: Nobody Fired. Walt talked Jack out of a gunfight and took hostages instead. Heisenberg meter {meter}/100."},
+  /* Above The Standoff so that a run which crossed neither line gets its own name for it. boySafe comes from
+     ch11-deadfreight.js (n:11), the two lines being the boy on the ridge and the first shot in the desert. */
+  {id: "notTheKid", when: "noShots && boySafe", name: "The Two He Did Not Cross",
+   summary: "No shot was fired in that desert, and years earlier a boy on a dirt bike rode home from a train robbery with a story nobody believed. Every other line Walt crossed is on the indictment. These are the two he did not, and they are the only two his son ever asks him about.",
+   share: "My timeline: The Two He Did Not Cross. No shot in the desert, and the kid rode home. Heisenberg meter {meter}/100."},
   {id: "theStandoff", when: "noShots", name: "The Standoff",
    summary: "Ninety seconds of shouting in the dirt, and then everybody drove away. Walt lost the money, the partner and the case, and kept the one thing he never asks for: a family that is all still alive.",
    share: "My timeline: The Standoff. Ninety seconds of shouting, and not one shot. Heisenberg meter {meter}/100."},
 
-  /* Hank lived: only reachable on shootout runs, through ch17-jack.js (n:18). Checked first, because a living
+  /* Hank lived: only reachable on shootout runs, through ch17-jack.js (n:21). Checked first, because a living
      federal agent changes every finale more than anything Walt does at the compound afterwards. */
+  /* Top of the hankLives group: every atLarge run ends on gunTrunk, jackDeal or jesseKeys, so a rule placed
+     below those three could never fire. A confession given months earlier outranks all of them anyway. */
+  {id: "theGarageConfession", when: "hankLives && cameClean", name: "The Garage Confession",
+   summary: "Walt told Hank all of it on a garage floor months before the desert, sitting on the concrete with his back against a shelf, and Hank walked out of To'hajiilee alive to write it down. It is the most complete case the district has ever filed and it is built almost entirely out of the defendant's own patience.",
+   share: "My timeline: The Garage Confession. Walt told Hank everything, and Hank lived to write it down. Heisenberg meter {meter}/100."},
   {id: "soldNotSaved", when: "hankLives && soldJesse", name: "Sold, Not Saved",
    summary: "Hank lives, testifies, and spends the rest of his career quoting one sentence from the desert to juries. Walt bought a brother-in-law and paid for him with a partner, and both of them know the exchange rate.",
    share: "My timeline: Sold, Not Saved. Hank lived, because Walt handed Jack the cook. Heisenberg meter {meter}/100."},
@@ -47,6 +57,10 @@
   {id: "mikeWaiting", when: "mikeLives && gunTrunk", name: "Mike Was Waiting",
    summary: "A man who retired properly reads about the compound in a newspaper two time zones away, folds it, and finishes his coffee. He sends Jesse a bus ticket and no note, because notes are evidence.",
    share: "My timeline: Mike Was Waiting. Walt let Mike retire, and Mike quietly returned the favor. Heisenberg meter {meter}/100."},
+  /* Keyed on boySafe, not on drewDead, so that the all-canon walk still lands on Felina itself. */
+  {id: "theBoyLived", when: "gunTrunk && boySafe", name: "The Boy on the Ridge Lived",
+   summary: "Walt settles every account at the compound and goes down on a laboratory floor with the same list of names as always, minus one. Somewhere south of Alamogordo a man in his twenties rides a dirt bike badly at weekends and has no idea he was ever on anybody's list.",
+   share: "My timeline: The Boy on the Ridge Lived. One name that never made it onto the list. Heisenberg meter {meter}/100."},
   {id: "felina", when: "gunTrunk", name: "Felina",
    summary: "The timeline closest to the show. Walt settles every account, frees Jesse, and dies on the floor of a meth lab, among the only things he ever fully trusted.",
    share: "My timeline: Felina. Almost exactly what happened on TV. Heisenberg meter {meter}/100."},
@@ -59,6 +73,9 @@
   {id: "cleanGetaway", when: "jackDeal && carwash", name: "Clean Getaway",
    summary: "Walt drives his barrels from one car wash to the next, laundering as he goes, like a man in a very clean witness protection program. The trunk stays shut for good.",
    share: "My timeline: Clean Getaway. Walt took Jack's deal and vanished into his own car washes. Heisenberg meter {meter}/100."},
+  {id: "signedAndGone", when: "jackDeal && signedConfession", name: "Nine Pages, Posted",
+   summary: "Walt shakes hands with Jack and keeps the empire, and the nine signed pages that clear his wife are already sitting in three separate post boxes. He is a free man, his family is legally innocent, and there is nobody left alive who would sit at his table.",
+   share: "My timeline: Nine Pages, Posted. Walt kept the empire and cleared her name by post. Heisenberg meter {meter}/100."},
   {id: "kingOfNothing", when: "jackDeal", name: "King of Nothing",
    summary: "Walt gets some of his money back and none of anything else. The cancer returns in the spring. He spends it alone in a rented house, next to barrels he no longer has any use for.",
    share: "My timeline: King of Nothing. Walt took Jack's deal and kept almost nothing. Heisenberg meter {meter}/100."},
@@ -79,6 +96,19 @@
   {id: "almostGood", when: "surrendered && confessed && darkness<=30", name: "Almost a Good Man",
    summary: "Walt surrenders with his conscience mostly intact and admits the rest in open court. He did terrible things, but fewer than he could have, and in this timeline that turns out to matter.",
    share: "My timeline: Almost a Good Man. Walt surrendered before he became Heisenberg. Heisenberg meter {meter}/100."},
+  /* Below almostGood on purpose: that one is already the rarest rule in the journey and must keep its runs. */
+  {id: "threePrisons", when: "surrendered && tenInTwo", name: "Three Prisons, Two Minutes",
+   summary: "He walks out from behind the rock with his hands up, and the file that follows him has ten counts of murder in it that no plea in the state will touch. The chemistry gets four pages at sentencing. The two minutes get four hundred.",
+   share: "My timeline: Three Prisons, Two Minutes. The ten names were the only ones that mattered. Heisenberg meter {meter}/100."},
+  {id: "herNameCleared", when: "surrendered && clearedSkyler", name: "Her Name, Cleared",
+   summary: "Walt surrenders in the desert and then spends his one recorded call being the worst man he can convincingly be, at volume, for an audience of four listening officers. Skyler keeps the house. He keeps the sentence and the transcript, and she never tells anybody that she understood what he was doing.",
+   share: "My timeline: Her Name, Cleared. One phone call, performed perfectly, for somebody else. Heisenberg meter {meter}/100."},
+  {id: "thePayrollTrust", when: "surrendered && silentNine", name: "The Payroll That Outlived Him",
+   summary: "Nine men in three prisons never said a word, because the money never stopped arriving, and it does not stop when Walt is sentenced either. A trust with a very boring name pays nine families every quarter for another eleven years, and not one investigator ever works out what it is for.",
+   share: "My timeline: The Payroll That Outlived Him. Nine men, paid, quiet, for eleven years. Heisenberg meter {meter}/100."},
+  {id: "theSharedSentence", when: "surrendered && sharedBlame", name: "The Shared Sentence",
+   summary: "He surrenders and says nothing at all about his wife, which the prosecution reads, correctly, as permission. They are sentenced eleven days apart in the same building, and Marie drives Holly to two different visiting rooms for four years.",
+   share: "My timeline: The Shared Sentence. He said nothing about her, and it cost her four years. Heisenberg meter {meter}/100."},
   {id: "counselOfRecord", when: "surrendered && saulLoyal", name: "Counsel of Record",
    summary: "The lawyer Walt once tested with a fake address defends him for four months, badly paid and entirely straight. He gets the sentence down by nine years and never once mentions the Thursday Walt spent watching an empty door.",
    share: "My timeline: Counsel of Record. Walt tested his lawyer, and his lawyer showed up anyway. Heisenberg meter {meter}/100."},
@@ -99,6 +129,19 @@
    share: "My timeline: Walter White, Inmate. Walt surrendered, alone. Heisenberg meter {meter}/100."},
 
   /* Deal, then sentencing (ch11b) */
+  /* Above hankSaysNo, which was catching one run in five on its own. */
+  {id: "bothOfThem", when: "deal && sharedBlame", name: "Both of Them",
+   summary: "Walt trades everything he knows for protection for his family, and then leaves his wife's name sitting in the file untouched, which cancels most of what he just bought. The deal is honoured to the letter. The letter turns out to be a great deal shorter than he thought it was.",
+   share: "My timeline: Both of Them. He bought protection and then forgot to name who for. Heisenberg meter {meter}/100."},
+  {id: "coercedByADeadMan", when: "deal && blamedDead", name: "Coerced by a Dead Man",
+   summary: "Walt hands over a version in which every fact is true and every arrangement of them is a lie, and Gus Fring, being dead, declines to correct it. Duress is extremely hard to disprove against a man who cannot take the stand. Walt is sentenced to nine years and is out in six.",
+   share: "My timeline: Coerced by a Dead Man. Every fact true, and every fact in the wrong order. Heisenberg meter {meter}/100."},
+  {id: "countFourteen", when: "deal && drewDead", name: "Count Fourteen",
+   summary: "Forty pages, footnoted, and the prosecutor still opens with the same page every single time: a fourteen-year-old on a dirt bike who stopped to wave at a train. Walt is not charged with that one, because he did not do it, and no jury in the state hears the difference.",
+   share: "My timeline: Count Fourteen. Everything he confessed, and the one thing he did not do. Heisenberg meter {meter}/100."},
+  {id: "oneInsteadOfTen", when: "deal && lawyerOnly", name: "One Instead of Ten",
+   summary: "He gives the DEA everything and explains, patiently, that he could have had ten men killed and chose one, as though arithmetic were a defence. The nine survivors testify one after another across five days, which is nine more witnesses than the state expected to have.",
+   share: "My timeline: One Instead of Ten. He thought the number was the point. Heisenberg meter {meter}/100."},
   {id: "hankSaysNo", when: "deal && hank>=70", name: "Hank Says No",
    summary: "Hank has waited too long to settle for a deal. He takes the confession and the man, and gives Walt nothing but his own words read back to him in court.",
    share: "My timeline: Hank Says No. Walt offered everything and Hank took it all, without a deal. Heisenberg meter {meter}/100."},

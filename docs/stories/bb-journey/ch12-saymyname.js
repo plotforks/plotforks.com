@@ -1,12 +1,12 @@
 /* Journey chapter 12: S5E7 "Say My Name". Content only (Opus pass). The second Mike chapter.
-   Plays after Buyout (n:11) and before the cash pile (n:13). Sets mikeLives / mikeDead, used by the endings.
+   Plays after Buyout (n:12) and before the nine men in prison (n:14). Sets mikeLives / mikeDead, used by the endings.
    The killing is stated plainly in one line and never drawn or joked about.
    New art used here: cast mike "sit" (on a bench, forearms on knees, coffee). Set park already exists. */
 (window.JOURNEYS = window.JOURNEYS || {});
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 12, canon: "a", id: "saymyname", code: "S5E7", episode: "Say My Name", title: "Mike's go-bag",
+  n: 13, canon: "a", id: "saymyname", code: "S5E7", episode: "Say My Name", title: "Mike's go-bag",
   setup: {
     kicker: "A park by the river. A duffel bag in a car boot.",
     text: "Mike is leaving town this afternoon and for good. The DEA has the names of his nine men, his money is frozen, his granddaughter has a lawyer's letter about a trust fund, and the bag with his passport and his cash is in Walt's boot. He is out of patience generally and out of patience with Walt specifically.",

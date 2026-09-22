@@ -243,14 +243,18 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
 <script src="stories/bb-journey/ch07.js"></script>
 <script src="stories/bb-journey/ch08-boxcutter.js"></script>
 <script src="stories/bb-journey/ch09-saul.js"></script>
+<script src="stories/bb-journey/ch11-deadfreight.js"></script>
 <script src="stories/bb-journey/ch08.js"></script>
 <script src="stories/bb-journey/ch12-saymyname.js"></script>
+<script src="stories/bb-journey/ch14-ninemen.js"></script>
 <script src="stories/bb-journey/ch09.js"></script>
 <script src="stories/bb-journey/ch14-portfolio.js"></script>
 <script src="stories/bb-journey/ch15-hank.js"></script>
+<script src="stories/bb-journey/ch18-garage.js"></script>
 <script src="stories/bb-journey/ch10.js"></script>
 <script src="stories/bb-journey/ch17-standoff.js"></script>
 <script src="stories/bb-journey/ch17-jack.js"></script>
+<script src="stories/bb-journey/ch22-skyler.js"></script>
 <script src="stories/bb-journey/ch11a.js"></script>
 <script src="stories/bb-journey/ch11b.js"></script>
 <script src="stories/bb-journey/endings.js"></script>
@@ -1641,7 +1645,11 @@ if (typeof document !== 'undefined'){
       {id: 'hankLived', name: 'Hank Lived', desc: 'Hank survived the desert.', test: st => st.flags.has('hankLives')},
       {id: 'nobodyFired', name: 'Nobody Fired', desc: 'Not a single shot in the desert.', test: st => st.flags.has('noShots')},
       {id: 'neverTrustedSaul', name: 'Never Trusted Saul', desc: 'Cut the lawyer out of the plan.', test: st => st.flags.has('noSaul')},
-      {id: 'missedItByThatMuch', name: 'Missed It By That Much', desc: 'Hank left the book on the shelf.', test: st => st.flags.has('bookMissed')}
+      {id: 'missedItByThatMuch', name: 'Missed It By That Much', desc: 'Hank left the book on the shelf.', test: st => st.flags.has('bookMissed')},
+      {id: 'theKidRodeHome', name: 'The Kid Rode Home', desc: 'Nobody touched the boy on the ridge.', test: st => st.flags.has('boySafe')},
+      {id: 'noNamesOnTheNapkin', name: 'No Names on the Napkin', desc: 'Nine men in prison, and not one of them killed.', test: st => st.flags.has('silentNine')},
+      {id: 'toldHimEverything', name: 'Told Him Everything', desc: 'Confessed to Hank on the garage floor.', test: st => st.flags.has('cameClean')},
+      {id: 'clearedHerName', name: 'Cleared Her Name', desc: 'Made the call, or signed the pages, so Skyler walked.', test: st => st.flags.has('clearedSkyler') || st.flags.has('signedConfession')}
     ],
     'matrix': [
       {id: 'bothPills', name: 'Took Both Pills', desc: 'Swallowed the red and the blue. Somehow it worked.', test: st => st.flags.has('bothPills')},

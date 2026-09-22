@@ -1,5 +1,37 @@
 # Breaking Bad journey: blueprint (Opus design, 2026-09-19)
 
+## EXPANSION 2026-09-22 (Opus pass, live)
+Dimos asked for the prison killings of the nine, plus two or three more scenarios chosen by what the fanbase argues
+about most. Research (episode rankings and fan discussion) put Ozymandias, Dead Freight and Blood Money at the top of
+the uncovered moments, so those three plus the requested one were written. The journey went from **19 to 23 chapters**
+and from 38 to **50 endings**. Old ids and URLs are unchanged, only `n` moved. CURRENT map, source of truth:
+
+| n | file | chapter |
+|---|---|---|
+| 1-10 | ch01..ch05, ch06-halfmeasures, ch06, ch08-boxcutter, ch09-saul, ch07 | unchanged |
+| 11 | **ch11-deadfreight.js** | S5E5 Dead Freight, the boy on the ridge (new) |
+| 12 | ch08.js | Buyout (was n11) |
+| 13 | ch12-saymyname.js | Say My Name (was n12) |
+| 14 | **ch14-ninemen.js** | S5E8 the nine men in prison, ten names in two minutes (new, requested) |
+| 15 | ch09.js | cash pile (was n13) |
+| 16 | ch14-portfolio.js | diversify the money (was n14) |
+| 17 | ch15-hank.js | Hank's turn in the bathroom (was n15) |
+| 18 | **ch18-garage.js** | `when: "!bookMissed"`, S5E9 Blood Money, the garage (new) |
+| 19 | ch10.js | To'hajiilee (was n16) |
+| 20 | ch17-standoff.js | `when: "shootout"` (was n17) |
+| 21 | ch17-jack.js | `when: "shotsFired"` (was n18) |
+| 22 | **ch22-skyler.js** | S5E14 Ozymandias, the call that clears Skyler (new) |
+| 23 | ch11a.js / ch11b.js | aftertaste pair (was n19) |
+
+New flags: drewDead / boySafe / boyPaid / clockRunning (n11), tenInTwo / silentNine / lawyerOnly (n14),
+treadLightly / cameClean / blamedDead (n18), clearedSkyler / sharedBlame / signedConfession (n22).
+Twelve new endings were added and placed so that the rare ones (almostGood, felina) keep their runs: the all-canon
+walk still lands on Felina. The ending spread is much flatter than before, with the biggest bucket down from 20% to 11%.
+Four new badges: The Kid Rode Home, No Names on the Napkin, Told Him Everything, Cleared Her Name.
+No new art was needed: set `prison`, fx `train` and the cast figures all existed already.
+
+## OLDER, superseded by the table above
+
 ## EXPANSION 2026-09-20 (Opus pass done, Sonnet pass pending)
 Dimos asked for more Gus, more Mike, more Saul, a Hank-decides-about-the-book chapter, a Jack-spares-Hank branch and a
 "rational investor" money chapter. The journey went from 11 to **18 chapters**; ids and URLs of the old chapters are unchanged,

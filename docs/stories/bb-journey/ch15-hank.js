@@ -1,13 +1,13 @@
 /* Journey chapter 15: S5E8 "Gliding Over All", the last ninety seconds. Content only (Opus pass).
    Dimos's premise: Hank decides whether to read books in the toilet. The only chapter played as Hank.
-   Continuity rule: Hank still closes in on Walt in every branch, so n:16 (To'hajiilee) keeps its premise;
+   Continuity rule: Hank still closes in on Walt in every branch, so n:19 (To'hajiilee) keeps its premise;
    only the route and the timing change. Sets bookFound / bookMissed / bookLab.
    No new art: set bathroom and cast hank "read" / "suspicious" / "laugh" all exist. */
 (window.JOURNEYS = window.JOURNEYS || {});
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 15, canon: "a", id: "bathroom", code: "S5E8", episode: "Gliding Over All", title: "Hank's turn",
+  n: 17, canon: "a", id: "bathroom", code: "S5E8", episode: "Gliding Over All", title: "Hank's turn",
   setup: {
     kicker: "A guest bathroom, halfway through a barbecue.",
     text: "For one chapter you are not Walt. You are Hank Schrader, you have had two beers and a burger, the ballgame is on outside, and there is a stack of reading material beside the toilet because your brother-in-law is that kind of host. The book on top has a handwritten dedication inside the cover.",
