@@ -145,7 +145,7 @@ function audit(J){
     lo = nl; hi = nh;
   });
   bounds.END = {lo: lo, hi: hi};
-  const impossible = (w, where, at, own) => {
+  const impossible = (w, where, at, own, delta) => {
     if (!w) return;
     const t = String(w).split('&&').map(s => s.trim());
     const pos = t.filter(x => /^[A-Za-z]\w*$/.test(x) && !scoreKeys.has(x));
@@ -156,8 +156,14 @@ function audit(J){
       const src = owner[p] ? Math.min(...owner[p].map(s => +s.split('.')[0])) : null;
       if (src !== null && at !== null && (own ? src > at : src >= at)) problems.push(where + ' reads flag "' + p + '", ' + (src === at ? "which is set only by that same chapter, by its own choices, so the setup can never see it" : 'first set at step n:' + src + ', later than n:' + at));
     });
-    const b = bounds[at === null ? 'END' : at];
+    let b = bounds[at === null ? 'END' : at];
     if (!b) return;
+    /* A beat is shown after its own choice has been applied, so shift the window by that choice's effects. */
+    if (delta){
+      const lo2 = {}, hi2 = {};
+      [...scoreKeys].forEach(k => { lo2[k] = clamp(b.lo[k] + (delta[k] || 0)); hi2[k] = clamp(b.hi[k] + (delta[k] || 0)); });
+      b = {lo: lo2, hi: hi2};
+    }
     t.forEach(x => {
       const m = x.match(/^(\w+)\s*(>=|<=|==|<|>)\s*(-?\d+)$/);
       if (!m || !scoreKeys.has(m[1])) return;
@@ -169,7 +175,7 @@ function audit(J){
   chapters.forEach(c => {
     impossible(c.when, 'chapter ' + c.id + ' gate', c.n);
     (c.setup.variants || []).forEach((v, i) => impossible(v.when, 'setup variant ' + c.id + '#' + i, c.n));
-    c.choices.forEach(x => (x.beats || []).forEach((b, i) => impossible(b.when, 'beat ' + c.id + '.' + x.id + '#' + i, c.n, true)));
+    c.choices.forEach(x => (x.beats || []).forEach((b, i) => impossible(b.when, 'beat ' + c.id + '.' + x.id + '#' + i, c.n, true, x.effects || {})));
   });
   (J.endings || []).forEach(e => impossible(e.when, 'ending ' + e.id, null));
 

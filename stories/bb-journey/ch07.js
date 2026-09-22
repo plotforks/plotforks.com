@@ -5,7 +5,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 10, canon: "a", id: "endtimes", code: "S4E12", episode: "End Times", title: "Getting Jesse back",
+  n: 11, canon: "a", id: "endtimes", code: "S4E12", episode: "End Times", title: "Getting Jesse back",
   setup: {
     kicker: "The White house, a pool, a garden.",
     text: "Gus has pulled Jesse close and pushed Walt out. Walt can't reach Gus without Jesse, and Jesse no longer trusts him. Walt is out of time and out of ideas, except for one.",

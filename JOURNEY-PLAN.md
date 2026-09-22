@@ -1,5 +1,27 @@
 # Breaking Bad journey: blueprint (Opus design, 2026-09-19)
 
+## EXPANSION 2026-09-22b: Face Off and Tuco
+Dimos asked for the Hector-and-the-bell chapter and for any other big gaps. Research put Face Off (S4E13) and
+Crazy Handful of Nothin' (S1E6) at the top of what was still missing. The journey is now **25 chapters, 56 endings**
+(53 findable + 3 exits). Only `n` moved on the old chapters; ids and URLs are unchanged.
+
+| n | file | chapter |
+|---|---|---|
+| 1-3 | ch01, ch02, ch03 | unchanged |
+| 4 | **ch04-tuco.js** | S1E6, the staircase over the junkyard, where Heisenberg is invented (new) |
+| 5-11 | ch04, ch05, ch06-halfmeasures, ch06, ch08-boxcutter, ch09-saul, ch07 | each +1 |
+| 12 | **ch12-faceoff.js** | S4E13, Hector and the bell, and how Gus goes (new) |
+| 13-25 | ch11-deadfreight, ch08, ch12-saymyname, ch14-ninemen, ch09, ch14-portfolio, ch15-hank, ch18-garage, ch10, ch17-standoff, ch17-jack, ch22-skyler, ch11a/ch11b | each +2 |
+
+New flags: heisenbergBorn / talkedToTuco / sentJesse (n4), theBell / hectorTalks / ownHands (n12). hectorTalks also
+sets the existing gusArrested, so the legal route to removing Gus reuses the variants already written for it.
+New art: figure `hector` (wheelchair, bell on the armrest), figure `tuco`, set `nursinghome`.
+Six new endings, placed BELOW the existing specific rules of their group so nothing already there was starved.
+`almostGood` was moved above the other two confessed rules, because it kept being swallowed and is the rarest
+thing a run can do.
+
+## EXPANSION 2026-09-22a, superseded by the table above
+
 ## EXPANSION 2026-09-22 (Opus pass, live)
 Dimos asked for the prison killings of the nine, plus two or three more scenarios chosen by what the fanbase argues
 about most. Research (episode rankings and fan discussion) put Ozymandias, Dead Freight and Blood Money at the top of

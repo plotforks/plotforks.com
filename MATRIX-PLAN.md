@@ -1,3 +1,12 @@
+## EXPANSION 2026-09-22: the Burly Brawl
+A new chapter at **n:9**, `n09-burlybrawl.js` (Reloaded, the courtyard full of Smiths), which was the biggest
+uncovered moment in the trilogy. Everything from the Merovingian onwards moved up one: merovingian 10, architect 11,
+mobilave 12, revolutions 13, terms 14, lastfight 15, park 16. The journey is now **16 chapters, 31 endings**
+(29 findable + 2 exits). No new art: set `street` and cast smith "many" already existed.
+New flags: flewAway / stoodAndFought / letHimCopy. Three new endings.
+`truce` was the peaceHold catch-all and had stopped catching anything at all, so it is now marked `fallback: true`
+and no longer counts as findable. An ending nobody can reach should not be advertised in the gallery.
+
 # The Matrix journey: blueprint (Opus design, 2026-09-19)
 
 ## EXPANSION 2026-09-20 (Opus pass done, Sonnet pass pending)

@@ -36,7 +36,7 @@ const EDGE_CANDIDATES = [
 const JOURNEY_SITE = {
   'breaking-bad': {
     slug: 'breaking-bad', series: 'Breaking Bad', short: 'Breaking Bad what-if',
-    description: 'Play the whole run of Breaking Bad and change the story at twenty-three turning points. Every choice shifts Walt, Jesse, Hank and the family, and the ending is computed from how you played.',
+    description: 'Play the whole run of Breaking Bad and change the story at twenty-five turning points. Every choice shifts Walt, Jesse, Hank and the family, and the ending is computed from how you played.',
     intro: 'An interactive what-if through the whole of Breaking Bad. At each turning point you pick one of three alternatives, watch a short cartoon scene, and carry the consequences into the next chapter. Where you land depends on how far you turned into Heisenberg, who still trusts you, what Hank suspects and what is left of the family.',
     legal: 'An unofficial Breaking Bad what-if, made as a fan parody. Not affiliated with Sony Pictures Television or AMC. All characters are drawn from scratch.',
     theme: '',
@@ -48,6 +48,8 @@ const JOURNEY_SITE = {
       phoenix: 'What if Walter White saved Jane?',
       halfmeasures: 'What if Walter White let Mike handle Jesse in Half Measures?',
       deadfreight: 'What if nobody killed the boy on the dirt bike in Dead Freight?',
+      tuco: 'What if Walter White never became Heisenberg in front of Tuco?',
+      faceoff: 'What if Walter White never used Hector Salamanca to kill Gus Fring?',
       ninemen: 'What if Walter White never had the nine men killed in prison?',
       garage: 'What if Walter White confessed to Hank in the garage in Blood Money?',
       skylername: 'What if Walter White never made the phone call that cleared Skyler?',
@@ -69,7 +71,7 @@ const JOURNEY_SITE = {
   },
   'matrix': {
     slug: 'the-matrix', series: 'The Matrix', short: 'Matrix what-if',
-    description: 'Play the whole Matrix trilogy and change the story at fifteen turning points. Every choice shifts Neo\'s belief, Trinity, the Agents and Zion, and the ending is computed from how you played.',
+    description: 'Play the whole Matrix trilogy and change the story at sixteen turning points. Every choice shifts Neo\'s belief, Trinity, the Agents and Zion, and the ending is computed from how you played.',
     intro: 'An interactive what-if through the whole Matrix trilogy. At each turning point you pick one of three alternatives, watch a short cartoon scene, and carry the consequences into the next chapter. Where you land depends on what Neo believes, how close Trinity is, how hard the Agents are looking, and whether Zion survives.',
     legal: 'An unofficial Matrix what-if, made as a fan parody. Not affiliated with Warner Bros. or the creators of the films. All characters are drawn from scratch and are not likenesses of any actor.',
     theme: 'matrix',
@@ -83,6 +85,7 @@ const JOURNEY_SITE = {
       interrogation: "What if Neo took Agent Smith's deal?",
       jump: 'What if Neo refused to jump in the training program?',
       merovingian: "What if Neo took apart the Merovingian's restaurant?",
+      burlybrawl: 'What if Neo stood and fought a hundred Agent Smiths instead of flying away?',
       mobilave: 'What if Neo fought the Trainman at Mobil Ave?',
       terms: 'What if Neo asked the machines for Trinity?',
       architect: 'What if Neo chose the right door in The Matrix Reloaded?',
@@ -490,6 +493,36 @@ function runEdge(htmlFile, outFile, w, h){
     child.on('exit', () => { clearTimeout(timer); rm(profile); resolve(fs.existsSync(outFile)); });
   });
 }
+/* Top-left pixel of a PNG. The first pixel of the first row is unfiltered under every PNG filter type,
+   so inflating the image data and skipping one filter byte is enough. Returns null if anything looks unusual. */
+function firstPixel(file){
+  let buf;
+  try { buf = fs.readFileSync(file); } catch (e) { return null; }
+  if (buf.length < 30 || buf.readUInt32BE(0) !== 0x89504e47) return null;
+  const parts = [];
+  for (let p = 8; p + 8 <= buf.length; ){
+    const len = buf.readUInt32BE(p), type = buf.toString('ascii', p + 4, p + 8);
+    if (type === 'IDAT') parts.push(buf.subarray(p + 8, p + 8 + len));
+    if (type === 'IEND') break;
+    p += 12 + len;
+  }
+  if (!parts.length) return null;
+  try {
+    const raw = zlib.inflateSync(Buffer.concat(parts));
+    if (raw.length < 4) return null;
+    return [raw[1], raw[2], raw[3]];
+  } catch (e) { return null; }
+}
+/* A real card is dark and green-tinted (#22332D, or #050A06 on the Matrix theme). Edge's error page is neutral grey,
+   so anything with no colour cast at all is rejected rather than cached. */
+function cardLooksRendered(file){
+  const px = firstPixel(file);
+  if (!px) return true;                       // cannot tell: do not throw away a card over a parsing doubt
+  const [r, g, b] = px;
+  const neutral = Math.abs(r - g) < 5 && Math.abs(g - b) < 5 && Math.abs(r - b) < 5;
+  return !(neutral && r > 20 && r < 80);
+}
+
 async function renderCards(list, dirBase){
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'pf-cards-'));
   let done = 0, failed = 0, skipped = 0, i = 0;
@@ -502,7 +535,11 @@ async function renderCards(list, dirBase){
       fs.mkdirSync(path.dirname(out), { recursive: true });
       const w = c.w || 1200, h = c.h || 630;
       const f = path.join(tmp, `c${n}.html`); fs.writeFileSync(f, cardHtml(c, w, h));
-      const ok = await runEdge(f, out, w, h);
+      let ok = await runEdge(f, out, w, h);
+      /* Headless Edge sometimes cannot read the temp file and screenshots its own "File not found" page instead,
+         which is a valid PNG of the right size and would otherwise be cached and shipped as a social card.
+         Every real card has a green-tinted background; the error page is neutral grey. */
+      if (ok && !cardLooksRendered(out)){ fs.rmSync(out, { force: true }); ok = false; }
       ok ? done++ : failed++;
     }
   }

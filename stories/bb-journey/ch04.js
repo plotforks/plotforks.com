@@ -4,7 +4,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 4, canon: "a", id: "lawyer", code: "S2E8", episode: "Better Call Saul", title: "Badger is arrested",
+  n: 5, canon: "a", id: "lawyer", code: "S2E8", episode: "Better Call Saul", title: "Badger is arrested",
   setup: {
     kicker: "A bus bench, Albuquerque.",
     text: "Jesse's friend Badger has been arrested selling to an undercover DEA agent, and the DEA wants to know who cooks the blue stuff. If Badger talks, it's over. Jesse has seen a lawyer's ads on late-night TV.",

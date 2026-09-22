@@ -29,6 +29,13 @@ function check(scene, where){
     const svg = buildScene(scene);
     if (typeof svg !== 'string' || svg.length < 50) problems.push(`${where}: empty svg`);
     if (/undefined|NaN/.test(svg)) problems.push(`${where}: svg contains undefined/NaN`);
+    /* A cast name that is in SUPPORTED but missing from the engine's draw order is skipped in silence and the
+       scene still renders, so compare against the same scene with that person removed: identical means not drawn. */
+    Object.keys(scene.cast || {}).forEach(n => {
+      const without = Object.assign({}, scene, { cast: Object.assign({}, scene.cast) });
+      delete without.cast[n];
+      try { if (buildScene(without) === svg) problems.push(`${where}: "${n}" is never drawn (missing from DRAW_ORDER / SLOT_PRIORITY?)`); } catch (e) {}
+    });
   } catch (e) { problems.push(`${where}: buildScene threw ${e.message}`); }
 }
 const beats = (bs, w) => (bs || []).forEach((b, i) => check(b.scene, `${w} beat${i}`));

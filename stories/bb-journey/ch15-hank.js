@@ -7,7 +7,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 17, canon: "a", id: "bathroom", code: "S5E8", episode: "Gliding Over All", title: "Hank's turn",
+  n: 19, canon: "a", id: "bathroom", code: "S5E8", episode: "Gliding Over All", title: "Hank's turn",
   setup: {
     kicker: "A guest bathroom, halfway through a barbecue.",
     text: "For one chapter you are not Walt. You are Hank Schrader, you have had two beers and a burger, the ballgame is on outside, and there is a stack of reading material beside the toilet because your brother-in-law is that kind of host. The book on top has a handwritten dedication inside the cover.",

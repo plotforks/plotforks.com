@@ -4,7 +4,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 7, canon: "a", id: "gale", code: "S3E13", episode: "Full Measure", title: "Gale",
+  n: 8, canon: "a", id: "gale", code: "S3E13", episode: "Full Measure", title: "Gale",
   setup: {
     kicker: "The desert, at night.",
     text: "Gus has a replacement ready: Gale, Walt's gentle lab assistant, who knows the method. Once Gale can cook alone, Walt and Jesse are finished. Mike has Walt in the desert, and Walt has one phone call left.",

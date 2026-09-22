@@ -9,7 +9,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 22, canon: "a", id: "skylername", code: "S5E14", episode: "Ozymandias", title: "What Skyler gets to keep",
+  n: 24, canon: "a", id: "skylername", code: "S5E14", episode: "Ozymandias", title: "What Skyler gets to keep",
   setup: {
     kicker: "A payphone, and a house with four police cars outside.",
     text: "Skyler's name is on the car wash, on the accounts, on the tax returns and in a filing cabinet at the DEA, and there is a version of the next two years in which she goes to prison as a partner rather than a witness. There are police in her kitchen right now. Walt has a payphone, a stolen minute and a daughter in the back of the car, and whatever he says next will be recorded, transcribed and read out loud by a prosecutor.",
