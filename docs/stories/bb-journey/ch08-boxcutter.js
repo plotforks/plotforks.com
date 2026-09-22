@@ -7,7 +7,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 9, canon: "a", id: "boxcutter", code: "S4E1", episode: "Box Cutter", title: "Gus comes downstairs",
+  n: 11, canon: "a", id: "boxcutter", code: "S4E1", episode: "Box Cutter", title: "Gus comes downstairs",
   setup: {
     kicker: "The laundry, downstairs. The floor has a drain.",
     text: "Gus arrives at the lab in a clean shirt and says nothing for a very long time. Victor, who has been running the equipment all night, wants everyone to know he watched every step of the cook and could do it himself tomorrow. Everybody in the room understands what that sentence has just cost him, except Victor.",

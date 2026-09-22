@@ -6,7 +6,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 10, canon: "a", id: "trustsaul", code: "S4E11", episode: "Crawl Space", title: "How much does Saul get to know?",
+  n: 12, canon: "a", id: "trustsaul", code: "S4E11", episode: "Crawl Space", title: "How much does Saul get to know?",
   setup: {
     kicker: "A strip-mall office with inflatable columns.",
     text: "Walt has decided that Gus has to go, and every piece of a plan like that has to pass through somebody. Saul is the somebody. Saul has also sat across a desk from Gus, bills three other clients Walt has never met, and has a strong professional instinct for which side of a room is going to still be standing next month.",

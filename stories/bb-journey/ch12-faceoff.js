@@ -9,7 +9,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 12, canon: "a", id: "faceoff", code: "S4E13", episode: "Face Off", title: "The man with the bell",
+  n: 14, canon: "a", id: "faceoff", code: "S4E13", episode: "Face Off", title: "The man with the bell",
   setup: {
     kicker: "A care home in Albuquerque. One room, one bell.",
     text: "Gus Fring cannot be reached at work, at home, in a car or anywhere with more than one exit, and Walt has run out of clever ideas. What is left is an old man in a wheelchair who cannot speak, who has one working finger and a bell screwed to his armrest, and who has spent four years waiting for exactly this conversation. He hates Gus more than Walt hates anybody.",

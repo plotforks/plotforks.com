@@ -11,7 +11,7 @@
 (window.JOURNEYS["matrix"] = window.JOURNEYS["matrix"] || {}).chapters =
   window.JOURNEYS["matrix"].chapters || [];
 window.JOURNEYS["matrix"].chapters.push({
-  n: 11, canon: "a", id: "architect", code: "M2", episode: "The Matrix Reloaded", title: "The Architect's two doors",
+  n: 12, canon: "a", id: "architect", code: "M2", episode: "The Matrix Reloaded", title: "The Architect's two doors",
   setup: {
     kicker: "The Source. A white room made of television screens.",
     text: "Neo can fly now, and Smith has come back as something worse. Behind the last door, a tidy old man in a white suit, the Architect, explains at length that Neo is the sixth One and the prophecy was a control system. The right door saves Zion, in a way. The left door leads to Trinity, falling from a building with a bullet in her.",

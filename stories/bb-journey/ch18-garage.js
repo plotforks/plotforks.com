@@ -8,7 +8,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 20, canon: "a", when: "!bookMissed", id: "garage", code: "S5E9", episode: "Blood Money", title: "The garage door comes down",
+  n: 22, canon: "a", when: "!bookMissed", id: "garage", code: "S5E9", episode: "Blood Money", title: "The garage door comes down",
   setup: {
     kicker: "A garage in Albuquerque, with the door coming down.",
     text: "Walt found the tracker under his car, which is how he knows, and he drove straight over instead of thinking about it, which is how Hank knows that he knows. The door comes down. Hank asks one question, does not wait for the answer, and throws a punch that has been nine months in the post. Then they are standing in a garage, both of them breathing hard, and one of them has to speak first.",

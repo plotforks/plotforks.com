@@ -5,7 +5,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 17, canon: "b", id: "cashpile", code: "S5E8", episode: "Gliding Over All", title: "The cash pile",
+  n: 19, canon: "b", id: "cashpile", code: "S5E8", episode: "Gliding Over All", title: "The cash pile",
   setup: {
     kicker: "A storage unit, Albuquerque.",
     text: "Skyler brings Walt to a storage unit and pulls back a tarp. Underneath is a pile of cash so big she has stopped counting it. The car wash could not launder it in a hundred years, and she wants to know how much is enough.",

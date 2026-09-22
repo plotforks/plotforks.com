@@ -7,7 +7,7 @@
 (window.JOURNEYS["matrix"] = window.JOURNEYS["matrix"] || {}).chapters =
   window.JOURNEYS["matrix"].chapters || [];
 window.JOURNEYS["matrix"].chapters.push({
-  n: 14, canon: "a", when: "machineCity", id: "terms", code: "M3", episode: "Revolutions", title: "The terms",
+  n: 15, canon: "a", when: "machineCity", id: "terms", code: "M3", episode: "Revolutions", title: "The terms",
   setup: {
     kicker: "The Machine City. A face assembled out of insects.",
     text: "Neo has walked through a war to stand in front of a thing that speaks in a voice made of thousands of small machines, and it has asked the shortest question in the trilogy: what do you want. He has one offer, which is Smith, and Smith is now eating the Matrix from the inside at a rate that frightens even the machines.",

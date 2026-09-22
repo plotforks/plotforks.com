@@ -237,8 +237,10 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
 <script src="stories/bb-journey/ch02.js"></script>
 <script src="stories/bb-journey/ch03.js"></script>
 <script src="stories/bb-journey/ch04-tuco.js"></script>
+<script src="stories/bb-journey/ch05-grilled.js"></script>
 <script src="stories/bb-journey/ch04.js"></script>
 <script src="stories/bb-journey/ch05.js"></script>
+<script src="stories/bb-journey/ch08-cousins.js"></script>
 <script src="stories/bb-journey/ch06-halfmeasures.js"></script>
 <script src="stories/bb-journey/ch06.js"></script>
 <script src="stories/bb-journey/ch07.js"></script>
@@ -253,6 +255,8 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
 <script src="stories/bb-journey/ch14-portfolio.js"></script>
 <script src="stories/bb-journey/ch15-hank.js"></script>
 <script src="stories/bb-journey/ch18-garage.js"></script>
+<script src="stories/bb-journey/ch23-confessions.js"></script>
+<script src="stories/bb-journey/ch24-rabiddog.js"></script>
 <script src="stories/bb-journey/ch10.js"></script>
 <script src="stories/bb-journey/ch17-standoff.js"></script>
 <script src="stories/bb-journey/ch17-jack.js"></script>
@@ -274,6 +278,7 @@ footer{font-size:12.5px;color:var(--chalk-faint);border-top:1px solid rgba(238,2
 <script src="stories/matrix-journey/ch03.js"></script>
 <script src="stories/matrix-journey/ch04.js"></script>
 <script src="stories/matrix-journey/ch05.js"></script>
+<script src="stories/matrix-journey/n11-highway.js"></script>
 <script src="stories/matrix-journey/ch06.js"></script>
 <script src="stories/matrix-journey/ch07.js"></script>
 <script src="stories/matrix-journey/ch08.js"></script>
@@ -979,6 +984,7 @@ const CAST_DRAW = {
   declan: declanFigure,
   jack: jackFigure,
   hector: hectorFigure,
+  cousins: cousinsFigure,
   tuco: tucoFigure,
   judge: judgeFigure, todd: toddFigure,
   neo: neoFigure, trinity: trinityFigure, morpheus: morpheusFigure, smith: smithFigure, cypher: cypherFigure,
@@ -986,9 +992,9 @@ const CAST_DRAW = {
   analyst: analystFigure, deus: deusFigure
 };
 const SLOT_X = {1:[240], 2:[165,330], 3:[100,240,380]};
-const SLOT_PRIORITY = ['walt','skyler','jesse','jane','hank','saul','lydia','elliott','mike','gus','gale','krazy8','badger','declan','jack','hector','tuco','judge','todd','neo','trinity','morpheus','smith','cypher','oracle','architect','tank','niobe','sati','analyst','deus','merovingian','persephone','trainman'];
-const DRAW_ORDER = ['deus','skyler','jesse','jane','hank','saul','lydia','elliott','mike','gus','gale','krazy8','badger','declan','jack','hector','tuco','judge','todd','smith','oracle','architect','morpheus','cypher','tank','niobe','analyst','sati','trinity','neo','walt','merovingian','persephone','trainman'];
-const HEAD_TOP = {walt:-178, jesse:-152, jane:-150, skyler:-152, hank:-148, saul:-148, lydia:-152, elliott:-148, mike:-148, gus:-148, merovingian:-148, persephone:-150, trainman:-150, gale:-148, krazy8:-144, badger:-145, declan:-148, jack:-148, hector:-124, tuco:-148,
+const SLOT_PRIORITY = ['walt','skyler','jesse','jane','hank','saul','lydia','elliott','mike','gus','gale','krazy8','badger','declan','jack','hector','tuco','cousins','judge','todd','neo','trinity','morpheus','smith','cypher','oracle','architect','tank','niobe','sati','analyst','deus','merovingian','persephone','trainman'];
+const DRAW_ORDER = ['deus','skyler','jesse','jane','hank','saul','lydia','elliott','mike','gus','gale','krazy8','badger','declan','jack','hector','tuco','cousins','judge','todd','smith','oracle','architect','morpheus','cypher','tank','niobe','analyst','sati','trinity','neo','walt','merovingian','persephone','trainman'];
+const HEAD_TOP = {walt:-178, jesse:-152, jane:-150, skyler:-152, hank:-148, saul:-148, lydia:-152, elliott:-148, mike:-148, gus:-148, merovingian:-148, persephone:-150, trainman:-150, gale:-148, krazy8:-144, badger:-145, declan:-148, jack:-148, hector:-124, tuco:-148, cousins:-146,
   judge:-124, todd:-148, neo:-148, trinity:-150, morpheus:-146, smith:-148, cypher:-146, oracle:-150, architect:-150,
   tank:-146, niobe:-155, sati:-100, analyst:-148, deus:-240};
 const HEAD_TOP_POSE = {'neo:sit':-124,'neo:bench':-124,'neo:down':-40,'neo:pod':-70,'neo:fly':-150,'trinity:cafe':-124,'trinity:fall':-160,'morpheus:sit':-122,'morpheus:chair':-122,'oracle:sit':-126,'architect:sit':-126,'skyler:sit':-112,'jesse:chained':-152,'jesse:drive':-124,'walt:floor':-46,'mike:sit':-124,'hank:cuffed':-122};
@@ -1041,6 +1047,19 @@ function tucoFigure(){
     extra: `<path d="M-13 -105 q13 8 26 0" stroke="#D9B84A" stroke-width="2" fill="none"/>`,
     armL: arm('L', 'wide', '#8B2E2E', '#C08A5E'),
     armR: arm('R', 'guard', '#8B2E2E', '#C08A5E')});
+}
+
+/* The Cousins: always a pair, so one entry draws both. Grey suits, silver boots, no expression at all.
+   No weapon is ever drawn; the axe exists only in the prose and not even much there. */
+function cousinsFigure(){
+  const skin = '#B08056', suit = '#6E6E78';
+  const boots = '<ellipse cx="-10" cy="-1" rx="10" ry="4" fill="#C6C6D0"/><ellipse cx="10" cy="-1" rx="10" ry="4" fill="#C6C6D0"/>';
+  const one = () => person({skin: skin, torso: suitT(suit, '#D8D8D2', '#2A2A30'), legCol: '#4C4C56',
+    hair: `<path d="M-13 -128 Q-14 -143 0 -143 Q14 -143 13 -128 Q9 -137 0 -137 Q-9 -137 -13 -128 Z" fill="#17120F"/>`,
+    mouth: '<path d="M-5 -114 h10" stroke="#5A2A22" stroke-width="1.8"/>',
+    pre: boots,
+    armL: arm('L', 'stiff', suit, skin), armR: arm('R', 'stiff', suit, skin)});
+  return `<g transform="translate(-27 0) scale(.94)">${one()}</g><g transform="translate(27 0) scale(.94)">${one()}</g>`;
 }
 
 const SET = {
@@ -1534,6 +1553,7 @@ const SUPPORTED = {
     judge: ['sit'],
     todd: ['stand'],
     hector: ['sit'],
+    cousins: ['stand'],
     tuco: ['stand'],
     neo: ['sit','stand','pod','coat','fight','down','fly','blind','rain','bench'],
     trinity: ['stand','coat','fall','cafe'],

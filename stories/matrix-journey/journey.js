@@ -6,7 +6,7 @@ window.JOURNEYS = window.JOURNEYS || {};
 window.JOURNEYS["matrix"] = Object.assign(window.JOURNEYS["matrix"] || {}, {
   id: "matrix",
   title: "There Is No Spoiler",
-  subtitle: "Play the whole trilogy. Sixteen chapters, thirty-one endings.",
+  subtitle: "Play the whole trilogy. Seventeen chapters, thirty-three endings.",
   start: {belief: 20, trinity: 30, agents: 10, zion: 50},
   scoreLabels: {belief: "Belief", trinity: "Trinity", agents: "Agents on his trail", zion: "Zion's odds"},
   meterScore: "belief",

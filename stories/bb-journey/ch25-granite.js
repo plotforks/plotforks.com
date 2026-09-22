@@ -8,7 +8,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 25, canon: "a", when: "atLarge", id: "granite", code: "S5E15", episode: "Granite State", title: "Eight weeks of snow",
+  n: 29, canon: "a", when: "atLarge", id: "granite", code: "S5E15", episode: "Granite State", title: "Eight weeks of snow",
   setup: {
     kicker: "A cabin in New Hampshire, with two rooms and no road.",
     text: "A man who fixes vacuum cleaners drove Walt eighteen hundred miles and left him in a cabin with a barrel of money, a stack of DVDs and no telephone. He comes once a month with groceries and charges ten thousand dollars an hour for company. Walt has been here eight weeks. The cancer is back, he has lost enough weight that the wedding ring slides off, and everything he did all of this for is somewhere he cannot reach.",

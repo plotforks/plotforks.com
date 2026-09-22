@@ -9,7 +9,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 18, canon: "c", id: "portfolio", code: "S5E8", episode: "Gliding Over All", title: "What money does when it sits",
+  n: 20, canon: "c", id: "portfolio", code: "S5E8", episode: "Gliding Over All", title: "What money does when it sits",
   setup: {
     kicker: "A storage unit, measured in pallets.",
     text: "Walt reads an article about inflation and does the arithmetic on the pile. It is losing value every month it sits in a metal room in the desert, and the man who once recalculated a restaurant bill to the cent cannot live with that. Skyler finds him at the kitchen table at two in the morning with a legal pad and three columns.",

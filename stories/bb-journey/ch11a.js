@@ -12,7 +12,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 26, canon: "a", when: "atLarge && !gaveUp", id: "felina", code: "S5E16", episode: "Felina", title: "Jack's compound",
+  n: 30, canon: "a", when: "atLarge && !gaveUp", id: "felina", code: "S5E16", episode: "Felina", title: "Jack's compound",
   setup: {
     kicker: "Aftertaste. A compound outside Albuquerque.",
     text: "Months in a New Hampshire cabin did not agree with Walt. He has driven back with a car bought for cash and something heavy bolted into the trunk. Jack's crew agreed to meet him, mostly so they could kill him. Jesse is here too, in chains. Then Jack does something the show never let him finish: he offers Walt a deal.",

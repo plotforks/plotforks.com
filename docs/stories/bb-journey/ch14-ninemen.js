@@ -8,7 +8,7 @@
 (window.JOURNEYS["breaking-bad"] = window.JOURNEYS["breaking-bad"] || {}).chapters =
   window.JOURNEYS["breaking-bad"].chapters || [];
 window.JOURNEYS["breaking-bad"].chapters.push({
-  n: 16, canon: "a", id: "ninemen", code: "S5E8", episode: "Gliding Over All", title: "Ten men, two minutes",
+  n: 18, canon: "a", id: "ninemen", code: "S5E8", episode: "Gliding Over All", title: "Ten men, two minutes",
   setup: {
     kicker: "A diner booth. Three prisons, two states, one list.",
     text: "Nine of Mike's men are in custody in three different prisons, and their lawyer is the one who carries the money to their families, which makes him the tenth name and the only one who can actually trade. Lydia slides the list across the table without looking at it. Jack Welker reads it, counts, and starts explaining why three prisons at once is not how any of this normally works.",

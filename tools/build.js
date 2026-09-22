@@ -45,7 +45,7 @@ const EDGE_CANDIDATES = [
 const JOURNEY_SITE = {
   'breaking-bad': {
     slug: 'breaking-bad', series: 'Breaking Bad', short: 'Breaking Bad what-if',
-    description: 'Play the whole run of Breaking Bad and change the story at twenty-six turning points. Every choice shifts Walt, Jesse, Hank and the family, and the ending is computed from how you played.',
+    description: 'Play the whole run of Breaking Bad and change the story at thirty turning points. Every choice shifts Walt, Jesse, Hank and the family, and the ending is computed from how you played.',
     intro: 'An interactive what-if through the whole of Breaking Bad. At each turning point you pick one of three alternatives, watch a short cartoon scene, and carry the consequences into the next chapter. Where you land depends on how far you turned into Heisenberg, who still trusts you, what Hank suspects and what is left of the family.',
     legal: 'An unofficial Breaking Bad what-if, made as a fan parody. Not affiliated with Sony Pictures Television or AMC. All characters are drawn from scratch.',
     theme: '',
@@ -60,6 +60,10 @@ const JOURNEY_SITE = {
       tuco: 'What if Walter White never became Heisenberg in front of Tuco?',
       faceoff: 'What if Walter White never used Hector Salamanca to kill Gus Fring?',
       granite: 'What if Walter White stayed in the cabin in New Hampshire?',
+      grilled: 'What if Walter White talked to Hector Salamanca in the desert shack?',
+      cousins: 'What if Walter White warned Hank about the Cousins?',
+      confessions: 'What if Walter White never made the fake confession video about Hank?',
+      rabiddog: 'What if Walter White never called Jack about Jesse?',
       ninemen: 'What if Walter White never had the nine men killed in prison?',
       garage: 'What if Walter White confessed to Hank in the garage in Blood Money?',
       skylername: 'What if Walter White never made the phone call that cleared Skyler?',
@@ -81,7 +85,7 @@ const JOURNEY_SITE = {
   },
   'matrix': {
     slug: 'the-matrix', series: 'The Matrix', short: 'Matrix what-if',
-    description: 'Play the whole Matrix trilogy and change the story at sixteen turning points. Every choice shifts Neo\'s belief, Trinity, the Agents and Zion, and the ending is computed from how you played.',
+    description: 'Play the whole Matrix trilogy and change the story at seventeen turning points. Every choice shifts Neo\'s belief, Trinity, the Agents and Zion, and the ending is computed from how you played.',
     intro: 'An interactive what-if through the whole Matrix trilogy. At each turning point you pick one of three alternatives, watch a short cartoon scene, and carry the consequences into the next chapter. Where you land depends on what Neo believes, how close Trinity is, how hard the Agents are looking, and whether Zion survives.',
     legal: 'An unofficial Matrix what-if, made as a fan parody. Not affiliated with Warner Bros. or the creators of the films. All characters are drawn from scratch and are not likenesses of any actor.',
     theme: 'matrix',
@@ -96,6 +100,7 @@ const JOURNEY_SITE = {
       jump: 'What if Neo refused to jump in the training program?',
       merovingian: "What if Neo took apart the Merovingian's restaurant?",
       burlybrawl: 'What if Neo stood and fought a hundred Agent Smiths instead of flying away?',
+      highway: 'What if Neo got to the freeway before the chase started?',
       mobilave: 'What if Neo fought the Trainman at Mobil Ave?',
       terms: 'What if Neo asked the machines for Trinity?',
       architect: 'What if Neo chose the right door in The Matrix Reloaded?',
