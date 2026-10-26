@@ -600,7 +600,7 @@ function buildItchHtml(){
     if (/<\/script/i.test(code)) throw new Error('story file contains </script>: ' + f);
     return `<script>${code}</script>`;
   });
-  return `<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>plotforks: The Uncertainty Principle and There Is No Spoiler</title>\n</head>\n<body>\n${frag}\n</body>\n</html>\n`;
+  return `<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>plotforks: The Uncertainty Principle and There Is No Spoiler</title>\n<style>/* The itch page says "No payments", so the open-books totals would only confuse visitors there. Hidden on itch only. */#fundsShort,#fundsFull{display:none!important}</style>\n</head>\n<body>\n${frag}\n</body>\n</html>\n`;
 }
 
 /* ---------- main ---------- */
