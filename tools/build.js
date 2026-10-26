@@ -628,6 +628,9 @@ function buildItchHtml(){
   /* itch.io */
   const itchHtml = buildItchHtml();
   const qr = fs.readFileSync(path.join(ROOT, 'assets', 'paypal-qr.png'));
+  /* Store-page screenshots live in assets/itch-shots (made by tools/shots.js) so the rm(ITCH) at the top of main does not lose them. */
+  const shotsSrc = path.join(ROOT, 'assets', 'itch-shots');
+  if (fs.existsSync(shotsSrc)) copyDir(shotsSrc, path.join(ITCH, 'shots'));
   fs.writeFileSync(path.join(ITCH, 'plotforks-itch.zip'), makeZip([{ name: 'index.html', data: Buffer.from(itchHtml, 'utf8') }, { name: 'assets/paypal-qr.png', data: qr }]));
   let coverOk = false;
   if (!NO_IMAGES && EDGE){
