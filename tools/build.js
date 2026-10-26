@@ -438,6 +438,10 @@ function buildStatics(){
   write('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${abs('/sitemap.xml')}\n`);
   write('CNAME', BASE_URL.replace(/^https?:\/\//, '') + '\n');
   write('.nojekyll', '');
+  /* Site-ownership files for Search Console and Bing (assets/verify/*) are copied to the site root as they are.
+     They must stay deployed for as long as the property is owned, so they live in the build, not in docs/ by hand. */
+  const vdir = path.join(ROOT, 'assets', 'verify');
+  if (fs.existsSync(vdir)) fs.readdirSync(vdir).forEach(f => write(f, fs.readFileSync(path.join(vdir, f))));
   const notFound = shell({
     path: '/404.html', title: `Page not found | ${SITE_NAME}`, description: 'This page does not exist. Head back to the what-if stories.', noindex: true,
     crumbs: [['Home', '/']],

@@ -2,7 +2,7 @@
 const fs = require('fs'), path = require('path');
 const DIST = path.join(__dirname, '..', 'dist'), ITCH = path.join(__dirname, '..', 'dist-itch');
 const walk = d => fs.readdirSync(d).flatMap(f => { const p = path.join(d, f); return fs.statSync(p).isDirectory() ? walk(p) : [p]; });
-const files = walk(DIST), htmls = files.filter(f => f.endsWith('.html') && !f.includes(path.sep + 'assets' + path.sep));
+const files = walk(DIST), htmls = files.filter(f => f.endsWith('.html') && !f.includes(path.sep + 'assets' + path.sep) && !/^google[0-9a-f]+\.html$/.test(path.basename(f)));   // Search Console ownership files are not pages
 const problems = [], titles = new Map(); let links = 0;
 const exists = u => { const rel = decodeURIComponent(u.split('#')[0].split('?')[0]); if (!rel) return true; const p = path.join(DIST, rel); return fs.existsSync(p) && (fs.statSync(p).isFile() || fs.existsSync(path.join(p, 'index.html'))); };
 htmls.forEach(f => {
